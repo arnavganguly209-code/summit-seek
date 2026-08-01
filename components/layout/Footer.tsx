@@ -220,7 +220,7 @@ export function Footer() {
         <div className="grid gap-12 sm:grid-cols-2 lg:grid-cols-5 lg:gap-8">
           {/* Brand */}
           <div className="sm:col-span-2 lg:col-span-1">
-            <Logo className="[&_img]:brightness-110" />
+            <Logo />
             <p className="mt-5 max-w-[300px] text-[13px] leading-[1.75] text-white/60">
               Summit Seek creates unforgettable trekking, climbing and cultural experiences
               across Nepal with expert local guides and personalized adventures.
