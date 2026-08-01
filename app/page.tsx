@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Hero } from "@/components/home/Hero";
+import { AboutIntro } from "@/components/home/AboutIntro";
 import { TrustedBy } from "@/components/home/TrustedBy";
 import { FeaturedTreks } from "@/components/home/FeaturedTreks";
 import { LuxuryPackages } from "@/components/home/LuxuryPackages";
@@ -31,6 +32,7 @@ export default function HomePage() {
   return (
     <>
       <Hero />
+      <AboutIntro />
       <TrustedBy />
       <FeaturedTreks />
       <LuxuryPackages />
