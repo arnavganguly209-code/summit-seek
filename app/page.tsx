@@ -3,6 +3,8 @@ import { Hero } from "@/components/home/Hero";
 import { AboutIntro } from "@/components/home/AboutIntro";
 import { PopularTrekkingPackages } from "@/components/home/PopularTrekkingPackages";
 import { WhatWeOffer } from "@/components/home/WhatWeOffer";
+import { TravelerReviews } from "@/components/home/TravelerReviews";
+import { WhyChooseSummitSeek } from "@/components/home/WhyChooseSummitSeek";
 import { TrustedBy } from "@/components/home/TrustedBy";
 import { FeaturedTreks } from "@/components/home/FeaturedTreks";
 import { LuxuryPackages } from "@/components/home/LuxuryPackages";
@@ -37,6 +39,8 @@ export default function HomePage() {
       <AboutIntro />
       <PopularTrekkingPackages />
       <WhatWeOffer />
+      <TravelerReviews />
+      <WhyChooseSummitSeek />
       <TrustedBy />
       <FeaturedTreks />
       <LuxuryPackages />
