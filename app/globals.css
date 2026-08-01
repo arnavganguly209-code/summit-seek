@@ -1,11 +1,11 @@
 @import "tailwindcss";
 
 :root {
-  --midnight: #0b1d36;
-  --midnight-deep: #061018;
+  --midnight: #08121e;
+  --midnight-deep: #040d18;
   --midnight-soft: #132a45;
-  --gold: #c9a84c;
-  --gold-dark: #a8892e;
+  --gold: #d8a73c;
+  --gold-dark: #c49630;
   --gold-light: #e8d5a3;
   --snow: #ffffff;
   --mist: #f5f7fa;
@@ -53,6 +53,28 @@ body {
   font-family: var(--font-display), Georgia, "Times New Roman", serif;
 }
 
+/* Nav underline hover */
+.nav-link {
+  position: relative;
+}
+
+.nav-link::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: 1.65rem;
+  width: 100%;
+  height: 1.5px;
+  background: #d8a73c;
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 0.35s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.nav-link:hover::after {
+  transform: scaleX(1);
+}
+
 .field-input {
   width: 100%;
   height: 2.75rem;
@@ -78,18 +100,16 @@ body {
   font-weight: 500;
 }
 
-/* Luxury glass header over hero */
+/* Legacy header utilities kept for compatibility */
 .header-glass {
-  background: color-mix(in srgb, var(--snow) 72%, transparent);
-  backdrop-filter: blur(18px) saturate(1.2);
-  -webkit-backdrop-filter: blur(18px) saturate(1.2);
-  border-bottom: 1px solid color-mix(in srgb, var(--snow) 40%, transparent);
+  background: transparent;
 }
 
 .header-solid {
-  background: var(--snow);
-  border-bottom: 1px solid var(--border);
-  box-shadow: 0 8px 30px color-mix(in srgb, var(--midnight) 6%, transparent);
+  background: rgba(5, 12, 20, 0.92);
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
 }
 
 /* Hero atmosphere */

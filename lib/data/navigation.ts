@@ -1,16 +1,12 @@
 import type { NavItem, MegaCategory } from "@/types";
 
 export const mainNav: NavItem[] = [
-  { label: "Home", href: "/" },
   { label: "Destinations", href: "/destinations", mega: true },
-  { label: "Trekking", href: "/trekking", mega: true },
-  { label: "Peak Climbing", href: "/peak-climbing" },
-  { label: "Expeditions", href: "/expeditions" },
-  { label: "Tours", href: "/tours" },
-  { label: "About", href: "/about" },
-  { label: "Travel Guide", href: "/travel-guide" },
-  { label: "Blog", href: "/blog" },
-  { label: "Contact", href: "/contact" },
+  { label: "Trekking In Nepal", href: "/trekking", mega: true },
+  { label: "Travel Info", href: "/travel-guide" },
+  { label: "Company", href: "/about" },
+  { label: "Travel Blogs", href: "/blog" },
+  { label: "Contact Us", href: "/contact" },
 ];
 
 export const megaCategories: MegaCategory[] = [

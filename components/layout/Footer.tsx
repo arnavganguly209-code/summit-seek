@@ -77,8 +77,8 @@ export function Footer() {
         <div className="grid gap-12 lg:grid-cols-[1.35fr_repeat(4,1fr)] lg:gap-8">
           {/* Brand column */}
           <div className="max-w-sm">
-            {/* Official logo — asset includes its own backdrop; keep crisp, no shadow */}
-            <div className="rounded-xl bg-snow/95 px-3 py-2 inline-block">
+            {/* Light plate only in dark footer so navy logo mark stays readable */}
+            <div className="inline-block rounded-xl bg-snow px-3 py-2">
               <Logo />
             </div>
             <p className="mt-5 text-sm leading-relaxed text-snow/65">
