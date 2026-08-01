@@ -37,11 +37,11 @@ const socials = [
 
 function HimalayanLandscape() {
   return (
-    <div className="relative mt-0 w-full overflow-hidden leading-none" aria-hidden>
+    <div className="relative z-0 mt-6 w-full overflow-hidden leading-none sm:mt-8" aria-hidden>
       <svg
-        viewBox="0 0 1440 360"
+        viewBox="0 40 1440 320"
         preserveAspectRatio="xMidYMax slice"
-        className="block h-[220px] w-full sm:h-[280px] lg:h-[340px]"
+        className="block h-[200px] w-full sm:h-[260px] lg:h-[300px]"
       >
         <defs>
           <linearGradient id="skyFade" x1="0" y1="0" x2="0" y2="1">
@@ -243,9 +243,9 @@ export function Footer() {
   const [email, setEmail] = useState("");
 
   return (
-    <footer className="relative w-full overflow-hidden bg-white">
-      {/* ===== TOP WHITE: logo + partners ===== */}
-      <div className="relative z-10 bg-white px-5 pb-8 pt-8 sm:px-8 sm:pb-10 sm:pt-10 lg:px-10 lg:pb-12 lg:pt-12">
+    <footer className="relative w-full bg-white">
+      {/* ===== TOP WHITE: logo + partners (must stay fully above landscape) ===== */}
+      <div className="relative z-20 bg-white px-5 pb-10 pt-6 sm:px-8 sm:pb-12 sm:pt-8 lg:px-10 lg:pb-14 lg:pt-10">
         <div className="mx-auto flex max-w-[1320px] flex-col items-center">
           <Link href="/" aria-label="Summit Seek — Home" className="bg-transparent">
             <Image
@@ -254,12 +254,12 @@ export function Footer() {
               width={1024}
               height={576}
               unoptimized
-              className="h-auto w-[320px] bg-transparent object-contain sm:w-[400px] lg:w-[440px]"
-              sizes="(max-width: 640px) 320px, (max-width: 1024px) 400px, 440px"
+              className="h-auto w-[260px] bg-transparent object-contain sm:w-[320px] lg:w-[360px]"
+              sizes="(max-width: 640px) 260px, (max-width: 1024px) 320px, 360px"
             />
           </Link>
 
-          <div className="mt-3 flex flex-wrap items-center justify-center gap-3 sm:mt-4 sm:gap-4 lg:gap-5">
+          <div className="relative z-20 mt-2 flex flex-wrap items-center justify-center gap-3 sm:mt-3 sm:gap-4 lg:gap-5">
             {footerPartners.map((partner, i) => (
               <motion.a
                 key={partner.id}
@@ -271,7 +271,7 @@ export function Footer() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ duration: 0.4, delay: i * 0.06, ease }}
-                className="box-border flex h-[100px] w-[100px] items-center justify-center rounded-[14px] border border-[#e8ebf0] bg-white p-2.5 shadow-[0_10px_28px_rgba(8,18,30,0.08)] transition-all duration-300 hover:-translate-y-1.5 hover:shadow-[0_14px_32px_rgba(8,18,30,0.12)] sm:h-[112px] sm:w-[112px] sm:p-3"
+                className="box-border flex h-[108px] w-[108px] shrink-0 items-center justify-center rounded-[14px] border border-[#e8ebf0] bg-white p-2.5 shadow-[0_10px_28px_rgba(8,18,30,0.08)] transition-all duration-300 hover:-translate-y-1.5 hover:shadow-[0_14px_32px_rgba(8,18,30,0.12)] sm:h-[120px] sm:w-[120px] sm:p-3"
               >
                 <Image
                   src={partner.logo}
