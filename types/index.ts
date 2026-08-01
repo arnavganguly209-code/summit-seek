@@ -45,7 +45,7 @@ export interface NavItem {
 
 export interface MegaCategory {
   id: string;
-  label: TrekRegion;
+  label: string;
   href: string;
   icon: string;
   description: string;

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { motion } from "framer-motion";
@@ -11,33 +11,13 @@ const ease = [0.22, 1, 0.36, 1] as const;
 const fadeUp = (delay = 0) => ({
   initial: { opacity: 0, y: 16 },
   animate: { opacity: 1, y: 0 },
-  transition: { duration: 0.6, delay, ease },
+  transition: { duration: 0.65, delay, ease },
 });
 
-const titleContainer = {
-  initial: {},
-  animate: {
-    transition: { staggerChildren: 0.09, delayChildren: 0.15 },
-  },
-};
-
-const titleWord = {
-  initial: { opacity: 0, y: 40, filter: "blur(8px)" },
-  animate: {
-    opacity: 1,
-    y: 0,
-    filter: "blur(0px)",
-    transition: { duration: 0.8, ease },
-  },
-};
-
-const titleWords = [
-  { text: "Explore", gold: false },
-  { text: "Nepal", gold: false },
-  { text: "Beyond", gold: true },
-  { text: "The", gold: false, breakBefore: true },
-  { text: "Ordinary", gold: false },
-] as const;
+const LINE_1 = "Explore Nepal Beyond";
+const LINE_2 = "The Ordinary";
+const BEYOND_START = LINE_1.indexOf("Beyond");
+const CHAR_MS = 38;
 
 const avatars = [
   "https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&w=80&q=80",
@@ -45,6 +25,93 @@ const avatars = [
   "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?auto=format&fit=crop&w=80&q=80",
   "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?auto=format&fit=crop&w=80&q=80",
 ];
+
+function TypewriterTitle() {
+  const [count, setCount] = useState(0);
+  const total = LINE_1.length + LINE_2.length;
+  const done = count >= total;
+
+  useEffect(() => {
+    let i = 0;
+    let timer: ReturnType<typeof setTimeout>;
+
+    const tick = () => {
+      i += 1;
+      setCount(i);
+      if (i < total) {
+        timer = setTimeout(tick, CHAR_MS);
+      }
+    };
+
+    timer = setTimeout(tick, 280);
+    return () => clearTimeout(timer);
+  }, [total]);
+
+  const line1Visible = Math.min(count, LINE_1.length);
+  const line2Visible = Math.max(0, count - LINE_1.length);
+  const beforeBeyond = LINE_1.slice(0, BEYOND_START);
+  const beyond = LINE_1.slice(BEYOND_START);
+
+  return (
+    <h1
+      className="font-[family-name:var(--font-display)] text-[1.95rem] font-bold leading-[1.12] tracking-[-0.02em] text-white sm:text-[2.55rem] md:text-[2.85rem] lg:text-[3.35rem]"
+      aria-label="Explore Nepal Beyond The Ordinary"
+    >
+      <span className="block">
+        {beforeBeyond.split("").map((char, index) => (
+          <span
+            key={`pre-${index}`}
+            style={{
+              opacity: index < line1Visible ? 1 : 0,
+              transition: "opacity 0.2s ease",
+            }}
+          >
+            {char === " " ? "\u00A0" : char}
+          </span>
+        ))}
+        <span className="bg-gradient-to-r from-[#F0D078] via-[#D8A73C] to-[#B8892A] bg-clip-text italic text-transparent">
+          {beyond.split("").map((char, index) => {
+            const globalIndex = BEYOND_START + index;
+            return (
+              <span
+                key={`beyond-${index}`}
+                style={{
+                  opacity: globalIndex < line1Visible ? 1 : 0,
+                  transition: "opacity 0.2s ease",
+                }}
+              >
+                {char}
+              </span>
+            );
+          })}
+        </span>
+      </span>
+      <span className="block">
+        {LINE_2.split("").map((char, index) => (
+          <span
+            key={`l2-${index}`}
+            style={{
+              opacity: index < line2Visible ? 1 : 0,
+              transition: "opacity 0.2s ease",
+            }}
+          >
+            {char === " " ? "\u00A0" : char}
+          </span>
+        ))}
+        <span
+          className="ml-0.5 inline-block w-[2px] translate-y-[0.08em] bg-[#D8A73C]"
+          style={{
+            height: "0.85em",
+            opacity: done ? 0 : 1,
+            transition: "opacity 0.4s ease",
+            animation: done ? undefined : "hero-caret 1s steps(1) infinite",
+          }}
+          aria-hidden
+        />
+      </span>
+    </h1>
+  );
+}
 
 export function Hero() {
   const [query, setQuery] = useState("");
@@ -69,45 +136,22 @@ export function Hero() {
       </div>
 
       <div className="relative z-10 flex h-full flex-col">
-        {/* Content lower — clear gap under header/logo */}
-        <div className="mx-auto flex w-full max-w-[1440px] flex-1 flex-col justify-center px-5 pt-[168px] pb-4 sm:px-8 lg:px-12 lg:pt-[180px]">
-          <div className="max-w-[560px]">
-            <motion.h1
-              variants={titleContainer}
-              initial="initial"
-              animate="animate"
-              className="font-[family-name:var(--font-display)] text-[1.9rem] font-bold leading-[1.08] tracking-[-0.02em] text-white sm:text-[2.45rem] md:text-[2.7rem] lg:text-[3.1rem]"
-            >
-              {titleWords.map((word) => (
-                <span key={word.text}>
-                  {"breakBefore" in word && word.breakBefore ? <br /> : null}
-                  <motion.span
-                    variants={titleWord}
-                    className={
-                      word.gold
-                        ? "mr-[0.28em] inline-block italic text-[#D8A73C] last:mr-0"
-                        : "mr-[0.28em] inline-block last:mr-0"
-                    }
-                  >
-                    {word.text}
-                  </motion.span>
-                </span>
-              ))}
-            </motion.h1>
+        <div className="mx-auto flex w-full max-w-[1440px] flex-1 flex-col justify-center px-5 pt-[160px] pb-3 sm:px-8 lg:px-12 lg:pt-[172px]">
+          <div className="max-w-[620px]">
+            <TypewriterTitle />
 
             <motion.p
-              {...fadeUp(0.72)}
-              className="mt-3 max-w-[460px] text-[13px] leading-[1.65] text-white/90 sm:mt-3.5 sm:text-[14px] md:text-[15px]"
+              {...fadeUp(1.35)}
+              className="mt-4 max-w-[480px] text-[13px] leading-[1.65] text-white/90 sm:mt-5 sm:text-[14px] md:text-[15px]"
             >
               Bespoke treks, peak climbs, and luxury journeys crafted for
               travelers who expect excellence — from the first step to the final
               summit.
             </motion.p>
 
-            {/* Search only — stats removed; positioned lower */}
             <motion.form
-              {...fadeUp(0.88)}
-              className="mt-10 flex h-[52px] w-full max-w-[640px] items-center rounded-full bg-white p-[5px] shadow-[0_18px_50px_rgba(0,0,0,0.28)] sm:mt-12 sm:h-[60px] sm:p-1.5"
+              {...fadeUp(1.55)}
+              className="mt-8 flex h-[52px] w-full max-w-[640px] items-center rounded-full border border-white/50 bg-white/92 p-[5px] shadow-[0_18px_50px_rgba(0,0,0,0.28)] backdrop-blur-xl sm:mt-10 sm:h-[60px] sm:p-1.5"
               onSubmit={(e) => e.preventDefault()}
             >
               <div className="flex min-w-0 flex-1 items-center gap-2.5 pl-3.5 sm:gap-3 sm:pl-5">
@@ -126,7 +170,7 @@ export function Hero() {
               </div>
               <button
                 type="submit"
-                className="h-full shrink-0 rounded-full bg-[#D8A73C] px-4 text-[10px] font-semibold tracking-wide text-[#08121E] transition-all duration-[350ms] ease-[cubic-bezier(0.22,1,0.36,1)] hover:-translate-y-px hover:bg-[#c49630] sm:px-6 sm:text-[13px]"
+                className="h-full shrink-0 rounded-full bg-[#D8A73C] px-4 text-[10px] font-semibold tracking-wide text-[#08121E] transition-all duration-[350ms] ease-[cubic-bezier(0.22,1,0.36,1)] hover:-translate-y-px hover:bg-[#c49630] hover:shadow-[0_8px_24px_rgba(216,167,60,0.45)] sm:px-6 sm:text-[13px]"
               >
                 SEARCH JOURNEYS
               </button>
@@ -136,7 +180,7 @@ export function Hero() {
 
         <div className="mx-auto w-full max-w-[1440px] px-5 pb-4 sm:px-8 lg:px-12 lg:pb-5">
           <motion.div
-            {...fadeUp(0.28)}
+            {...fadeUp(1.7)}
             className="flex flex-col gap-2.5 lg:flex-row lg:items-stretch lg:justify-between"
           >
             <Link

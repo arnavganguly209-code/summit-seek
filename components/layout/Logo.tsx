@@ -9,7 +9,7 @@ interface LogoProps {
   onLight?: boolean;
 }
 
-/** Official Summit Seek logo — +20% size, transparent, no box */
+/** Official Summit Seek logo — transparent, fixed 240px, never cropped */
 export function Logo({ className, priority = false, onLight = false }: LogoProps) {
   return (
     <Link
@@ -25,10 +25,10 @@ export function Logo({ className, priority = false, onLight = false }: LogoProps
         priority={priority}
         unoptimized
         className={cn(
-          "h-auto w-[180px] max-h-[86px] object-contain object-left md:w-[204px] md:max-h-[94px] lg:w-[240px] lg:max-h-[104px] xl:w-[264px] xl:max-h-[110px]",
+          "h-auto w-[200px] object-contain object-left sm:w-[220px] lg:w-[240px]",
           onLight ? "logo-clear-light" : "logo-clear",
         )}
-        sizes="(max-width: 768px) 180px, (max-width: 1024px) 204px, 264px"
+        sizes="240px"
       />
     </Link>
   );

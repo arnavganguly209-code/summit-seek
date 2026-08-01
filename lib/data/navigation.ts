@@ -9,18 +9,39 @@ export const mainNav: NavItem[] = [
   { label: "Contact Us", href: "/contact" },
 ];
 
-export const megaCategories: MegaCategory[] = [
+export type MegaKind = "destinations" | "trekking";
+
+export interface DestinationRegion {
+  id: string;
+  label: string;
+  href: string;
+  icon: string;
+  description: string;
+  packages: { title: string; href: string; duration: string }[];
+}
+
+export interface TrekkingColumn {
+  id: string;
+  heading: string;
+  href: string;
+  links: { title: string; href: string }[];
+}
+
+/** Destinations mega — left rail regions */
+export const destinationRegions: DestinationRegion[] = [
   {
     id: "everest",
-    label: "Everest Region",
+    label: "Everest",
     href: "/destinations/everest",
     icon: "mountain",
     description: "Iconic trails beneath the world's highest peak",
     packages: [
-      { title: "Everest Base Camp Trek", href: "/treks/everest-base-camp", duration: "14 Days" },
-      { title: "Gokyo Lakes Trek", href: "/treks/gokyo-lakes", duration: "12 Days" },
-      { title: "EBC with Helicopter Return", href: "/treks/ebc-heli-return", duration: "11 Days" },
-      { title: "Three Passes Trek", href: "/treks/three-passes", duration: "18 Days" },
+      { title: "Everest Base Camp", href: "/treks/everest-base-camp", duration: "14 Days" },
+      { title: "Everest Three Passes", href: "/treks/three-passes", duration: "18 Days" },
+      { title: "Gokyo Lakes", href: "/treks/gokyo-lakes", duration: "12 Days" },
+      { title: "Island Peak", href: "/peaks/island-peak", duration: "18 Days" },
+      { title: "Everest Luxury Trek", href: "/treks/everest-luxury", duration: "12 Days" },
+      { title: "Helicopter Return", href: "/treks/ebc-heli-return", duration: "11 Days" },
     ],
   },
   {
@@ -32,8 +53,10 @@ export const megaCategories: MegaCategory[] = [
     packages: [
       { title: "Annapurna Circuit", href: "/treks/annapurna-circuit", duration: "16 Days" },
       { title: "Annapurna Base Camp", href: "/treks/annapurna-base-camp", duration: "11 Days" },
-      { title: "Poon Hill Luxury Trek", href: "/treks/poon-hill-luxury", duration: "7 Days" },
-      { title: "Mardi Himal Trek", href: "/treks/mardi-himal", duration: "8 Days" },
+      { title: "Poon Hill Luxury", href: "/treks/poon-hill-luxury", duration: "7 Days" },
+      { title: "Mardi Himal", href: "/treks/mardi-himal", duration: "8 Days" },
+      { title: "Annapurna Sanctuary Luxury", href: "/treks/abc-luxury", duration: "10 Days" },
+      { title: "Ghorepani Trek", href: "/treks/ghorepani", duration: "6 Days" },
     ],
   },
   {
@@ -43,9 +66,10 @@ export const megaCategories: MegaCategory[] = [
     icon: "valley",
     description: "Close-to-Kathmandu alpine valleys and culture",
     packages: [
-      { title: "Langtang Valley Trek", href: "/treks/langtang-valley", duration: "9 Days" },
-      { title: "Gosaikunda Lake Trek", href: "/treks/gosaikunda", duration: "8 Days" },
+      { title: "Langtang Valley", href: "/treks/langtang-valley", duration: "9 Days" },
+      { title: "Gosaikunda Lake", href: "/treks/gosaikunda", duration: "8 Days" },
       { title: "Helambu Circuit", href: "/treks/helambu", duration: "7 Days" },
+      { title: "Tamang Heritage", href: "/treks/tamang-heritage", duration: "8 Days" },
     ],
   },
   {
@@ -55,9 +79,10 @@ export const megaCategories: MegaCategory[] = [
     icon: "trail",
     description: "Restricted circuit around the eighth-highest peak",
     packages: [
-      { title: "Manaslu Circuit Trek", href: "/treks/manaslu-circuit", duration: "16 Days" },
+      { title: "Manaslu Circuit", href: "/treks/manaslu-circuit", duration: "16 Days" },
       { title: "Manaslu with Tsum Valley", href: "/treks/manaslu-tsum", duration: "20 Days" },
       { title: "Manaslu Luxury Lodge", href: "/treks/manaslu-luxury", duration: "14 Days" },
+      { title: "Tsum Valley Trek", href: "/treks/tsum-valley", duration: "14 Days" },
     ],
   },
   {
@@ -67,9 +92,22 @@ export const megaCategories: MegaCategory[] = [
     icon: "desert",
     description: "Ancient kingdoms and wind-sculpted cliffs",
     packages: [
-      { title: "Upper Mustang Trek", href: "/treks/upper-mustang", duration: "14 Days" },
-      { title: "Lower Mustang Journey", href: "/treks/lower-mustang", duration: "10 Days" },
-      { title: "Mustang Helicopter Tour", href: "/tours/mustang-heli", duration: "1 Day" },
+      { title: "Upper Mustang", href: "/treks/upper-mustang", duration: "14 Days" },
+      { title: "Lower Mustang", href: "/treks/lower-mustang", duration: "10 Days" },
+      { title: "Mustang Helicopter", href: "/tours/mustang-heli", duration: "1 Day" },
+      { title: "Lo Manthang Journey", href: "/treks/lo-manthang", duration: "12 Days" },
+    ],
+  },
+  {
+    id: "dolpo",
+    label: "Dolpo",
+    href: "/destinations/dolpo",
+    icon: "remote",
+    description: "Trans-Himalayan mystique and high plateaus",
+    packages: [
+      { title: "Upper Dolpo", href: "/treks/upper-dolpo", duration: "24 Days" },
+      { title: "Lower Dolpo Circuit", href: "/treks/lower-dolpo", duration: "18 Days" },
+      { title: "Phoksundo Lake", href: "/treks/phoksundo", duration: "12 Days" },
     ],
   },
   {
@@ -80,18 +118,8 @@ export const megaCategories: MegaCategory[] = [
     description: "Remote eastern Himalaya wilderness",
     packages: [
       { title: "Kanchenjunga Base Camp", href: "/treks/kanchenjunga-bc", duration: "22 Days" },
-      { title: "North Base Camp Trek", href: "/treks/kanchenjunga-north", duration: "18 Days" },
-    ],
-  },
-  {
-    id: "dolpo",
-    label: "Dolpo",
-    href: "/destinations/dolpo",
-    icon: "remote",
-    description: "Trans-Himalayan mystique and high plateaus",
-    packages: [
-      { title: "Upper Dolpo Trek", href: "/treks/upper-dolpo", duration: "24 Days" },
-      { title: "Lower Dolpo Circuit", href: "/treks/lower-dolpo", duration: "18 Days" },
+      { title: "North Base Camp", href: "/treks/kanchenjunga-north", duration: "18 Days" },
+      { title: "South Base Camp", href: "/treks/kanchenjunga-south", duration: "20 Days" },
     ],
   },
   {
@@ -101,8 +129,9 @@ export const megaCategories: MegaCategory[] = [
     icon: "ridge",
     description: "Wild trails beneath the fifth-highest mountain",
     packages: [
-      { title: "Makalu Base Camp Trek", href: "/treks/makalu-bc", duration: "20 Days" },
+      { title: "Makalu Base Camp", href: "/treks/makalu-bc", duration: "20 Days" },
       { title: "Makalu Barun Valley", href: "/treks/makalu-barun", duration: "16 Days" },
+      { title: "Sherpani Col", href: "/treks/sherpani-col", duration: "24 Days" },
     ],
   },
   {
@@ -114,6 +143,7 @@ export const megaCategories: MegaCategory[] = [
     packages: [
       { title: "Dhaulagiri Circuit", href: "/treks/dhaulagiri-circuit", duration: "18 Days" },
       { title: "French Pass Trek", href: "/treks/french-pass", duration: "16 Days" },
+      { title: "Dhaulagiri Base Camp", href: "/treks/dhaulagiri-bc", duration: "14 Days" },
     ],
   },
   {
@@ -123,66 +153,181 @@ export const megaCategories: MegaCategory[] = [
     icon: "compass",
     description: "Off-map valleys for true explorers",
     packages: [
-      { title: "Nar Phu Valley Trek", href: "/treks/nar-phu", duration: "14 Days" },
-      { title: "Ruby Valley Trek", href: "/treks/ruby-valley", duration: "10 Days" },
+      { title: "Nar Phu Valley", href: "/treks/nar-phu", duration: "14 Days" },
+      { title: "Ruby Valley", href: "/treks/ruby-valley", duration: "10 Days" },
       { title: "Rolwaling Valley", href: "/treks/rolwaling", duration: "12 Days" },
+      { title: "Tsum Valley", href: "/treks/tsum-valley", duration: "14 Days" },
     ],
   },
   {
-    id: "peak",
-    label: "Peak Climbing",
-    href: "/peak-climbing",
-    icon: "iceaxe",
-    description: "Technical summits with expert guidance",
-    packages: [
-      { title: "Island Peak Climbing", href: "/peaks/island-peak", duration: "18 Days" },
-      { title: "Mera Peak Climbing", href: "/peaks/mera-peak", duration: "18 Days" },
-      { title: "Lobuche East", href: "/peaks/lobuche-east", duration: "16 Days" },
-    ],
-  },
-  {
-    id: "expeditions",
-    label: "Expeditions",
-    href: "/expeditions",
-    icon: "flag",
-    description: "Full-scale Himalayan mountaineering",
-    packages: [
-      { title: "Ama Dablam Expedition", href: "/expeditions/ama-dablam", duration: "30 Days" },
-      { title: "Himlung Himal", href: "/expeditions/himlung", duration: "28 Days" },
-    ],
-  },
-  {
-    id: "luxury",
-    label: "Luxury Trek",
-    href: "/luxury-trek",
+    id: "bhutan",
+    label: "Bhutan",
+    href: "/destinations/bhutan",
     icon: "gem",
-    description: "Lodge stays, private service, refined comfort",
+    description: "Himalayan kingdom journeys beyond Nepal",
     packages: [
-      { title: "Everest Luxury Lodge Trek", href: "/treks/everest-luxury", duration: "12 Days" },
-      { title: "Annapurna Sanctuary Luxury", href: "/treks/abc-luxury", duration: "10 Days" },
+      { title: "Druk Path Trek", href: "/treks/druk-path", duration: "10 Days" },
+      { title: "Snowman Trek", href: "/treks/snowman", duration: "25 Days" },
+      { title: "Paro Cultural Journey", href: "/tours/paro-cultural", duration: "7 Days" },
+      { title: "Bhutan Luxury Tour", href: "/tours/bhutan-luxury", duration: "8 Days" },
     ],
   },
   {
-    id: "heli",
-    label: "Helicopter Tour",
-    href: "/helicopter-tours",
-    icon: "heli",
-    description: "Aerial Himalayan experiences",
+    id: "tibet",
+    label: "Tibet",
+    href: "/destinations/tibet",
+    icon: "flag",
+    description: "High plateaus, monasteries, and sacred peaks",
     packages: [
-      { title: "Everest Scenic Flight", href: "/tours/everest-heli", duration: "4 Hours" },
-      { title: "Annapurna Heli Tour", href: "/tours/annapurna-heli", duration: "3 Hours" },
+      { title: "Lhasa Cultural Tour", href: "/tours/lhasa", duration: "8 Days" },
+      { title: "Everest North Base Camp", href: "/treks/tibet-ebc", duration: "10 Days" },
+      { title: "Tibet Overland Journey", href: "/tours/tibet-overland", duration: "12 Days" },
     ],
   },
   {
-    id: "day",
-    label: "Day Tours",
-    href: "/day-tours",
-    icon: "sun",
-    description: "Curated day journeys from Kathmandu & Pokhara",
+    id: "kailash",
+    label: "Mount Kailash",
+    href: "/destinations/mount-kailash",
+    icon: "summit",
+    description: "Sacred pilgrimage around the holy mountain",
     packages: [
-      { title: "Kathmandu Heritage Tour", href: "/tours/kathmandu-heritage", duration: "1 Day" },
-      { title: "Nagarkot Sunrise Tour", href: "/tours/nagarkot-sunrise", duration: "1 Day" },
-      { title: "Bhaktapur & Patan", href: "/tours/bhaktapur-patan", duration: "1 Day" },
+      { title: "Kailash Mansarovar Yatra", href: "/treks/kailash-mansarovar", duration: "14 Days" },
+      { title: "Kailash Outer Kora", href: "/treks/kailash-kora", duration: "16 Days" },
+      { title: "Kailash Helicopter Yatra", href: "/tours/kailash-heli", duration: "9 Days" },
     ],
   },
 ];
+
+/** Trekking In Nepal mega — multi-column */
+export const trekkingColumns: TrekkingColumn[] = [
+  {
+    id: "everest",
+    heading: "Everest Region",
+    href: "/destinations/everest",
+    links: [
+      { title: "Everest Base Camp Trek", href: "/treks/everest-base-camp" },
+      { title: "Gokyo Lakes Trek", href: "/treks/gokyo-lakes" },
+      { title: "Three Passes Trek", href: "/treks/three-passes" },
+      { title: "EBC with Helicopter", href: "/treks/ebc-heli-return" },
+      { title: "Everest Luxury Lodge", href: "/treks/everest-luxury" },
+      { title: "Island Peak Climbing", href: "/peaks/island-peak" },
+    ],
+  },
+  {
+    id: "annapurna",
+    heading: "Annapurna Region",
+    href: "/destinations/annapurna",
+    links: [
+      { title: "Annapurna Circuit", href: "/treks/annapurna-circuit" },
+      { title: "Annapurna Base Camp", href: "/treks/annapurna-base-camp" },
+      { title: "Poon Hill Trek", href: "/treks/poon-hill-luxury" },
+      { title: "Mardi Himal Trek", href: "/treks/mardi-himal" },
+      { title: "Annapurna Sanctuary", href: "/treks/abc-luxury" },
+      { title: "Khopra Ridge Trek", href: "/treks/khopra-ridge" },
+    ],
+  },
+  {
+    id: "langtang",
+    heading: "Langtang Region",
+    href: "/destinations/langtang",
+    links: [
+      { title: "Langtang Valley Trek", href: "/treks/langtang-valley" },
+      { title: "Gosaikunda Lake Trek", href: "/treks/gosaikunda" },
+      { title: "Helambu Circuit", href: "/treks/helambu" },
+      { title: "Tamang Heritage Trail", href: "/treks/tamang-heritage" },
+      { title: "Langtang Ganja La", href: "/treks/ganja-la" },
+    ],
+  },
+  {
+    id: "manaslu",
+    heading: "Manaslu Region",
+    href: "/destinations/manaslu",
+    links: [
+      { title: "Manaslu Circuit Trek", href: "/treks/manaslu-circuit" },
+      { title: "Manaslu Tsum Valley", href: "/treks/manaslu-tsum" },
+      { title: "Tsum Valley Trek", href: "/treks/tsum-valley" },
+      { title: "Manaslu Luxury Lodge", href: "/treks/manaslu-luxury" },
+      { title: "Rupina La Pass", href: "/treks/rupina-la" },
+    ],
+  },
+  {
+    id: "mustang",
+    heading: "Mustang Region",
+    href: "/destinations/mustang",
+    links: [
+      { title: "Upper Mustang Trek", href: "/treks/upper-mustang" },
+      { title: "Lower Mustang Journey", href: "/treks/lower-mustang" },
+      { title: "Lo Manthang Trek", href: "/treks/lo-manthang" },
+      { title: "Mustang Jeep Tour", href: "/tours/mustang-jeep" },
+      { title: "Mustang Helicopter", href: "/tours/mustang-heli" },
+    ],
+  },
+  {
+    id: "dolpo",
+    heading: "Dolpo Region",
+    href: "/destinations/dolpo",
+    links: [
+      { title: "Upper Dolpo Trek", href: "/treks/upper-dolpo" },
+      { title: "Lower Dolpo Circuit", href: "/treks/lower-dolpo" },
+      { title: "Phoksundo Lake Trek", href: "/treks/phoksundo" },
+      { title: "Dolpo to Jomsom", href: "/treks/dolpo-jomsom" },
+    ],
+  },
+  {
+    id: "makalu",
+    heading: "Makalu Region",
+    href: "/destinations/makalu",
+    links: [
+      { title: "Makalu Base Camp", href: "/treks/makalu-bc" },
+      { title: "Makalu Barun Valley", href: "/treks/makalu-barun" },
+      { title: "Sherpani Col Trek", href: "/treks/sherpani-col" },
+      { title: "Arun Valley Trek", href: "/treks/arun-valley" },
+    ],
+  },
+  {
+    id: "kanchenjunga",
+    heading: "Kanchenjunga Region",
+    href: "/destinations/kanchenjunga",
+    links: [
+      { title: "Kanchenjunga Base Camp", href: "/treks/kanchenjunga-bc" },
+      { title: "North Base Camp", href: "/treks/kanchenjunga-north" },
+      { title: "South Base Camp", href: "/treks/kanchenjunga-south" },
+      { title: "Kanchenjunga Circuit", href: "/treks/kanchenjunga-circuit" },
+    ],
+  },
+  {
+    id: "hidden",
+    heading: "Hidden Valleys",
+    href: "/destinations/hidden-himalayas",
+    links: [
+      { title: "Nar Phu Valley", href: "/treks/nar-phu" },
+      { title: "Ruby Valley Trek", href: "/treks/ruby-valley" },
+      { title: "Rolwaling Valley", href: "/treks/rolwaling" },
+      { title: "Tsum Valley", href: "/treks/tsum-valley" },
+      { title: "Panch Pokhari Trek", href: "/treks/panch-pokhari" },
+    ],
+  },
+  {
+    id: "peaks",
+    heading: "Peak Climbing",
+    href: "/peak-climbing",
+    links: [
+      { title: "Island Peak Climbing", href: "/peaks/island-peak" },
+      { title: "Mera Peak Climbing", href: "/peaks/mera-peak" },
+      { title: "Lobuche East", href: "/peaks/lobuche-east" },
+      { title: "Pisang Peak", href: "/peaks/pisang-peak" },
+      { title: "Chulu West", href: "/peaks/chulu-west" },
+      { title: "Ama Dablam Expedition", href: "/expeditions/ama-dablam" },
+    ],
+  },
+];
+
+/** Legacy alias — used by older imports / mobile fallbacks */
+export const megaCategories: MegaCategory[] = destinationRegions.map((r) => ({
+  id: r.id,
+  label: r.label,
+  href: r.href,
+  icon: r.icon,
+  description: r.description,
+  packages: r.packages,
+}));
