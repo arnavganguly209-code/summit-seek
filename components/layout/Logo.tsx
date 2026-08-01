@@ -5,12 +5,13 @@ import { cn } from "@/lib/utils";
 interface LogoProps {
   className?: string;
   priority?: boolean;
-  /** Kept for API compatibility — logo stays fully transparent, no filters */
+  /** Compact sticky header — ~10% smaller */
+  compact?: boolean;
   onLight?: boolean;
 }
 
-/** Official Summit Seek logo — transparent PNG, 240px, no background plate */
-export function Logo({ className, priority = false }: LogoProps) {
+/** Official Summit Seek logo — transparent PNG, no background plate */
+export function Logo({ className, priority = false, compact = false }: LogoProps) {
   return (
     <Link
       href="/"
@@ -24,8 +25,11 @@ export function Logo({ className, priority = false }: LogoProps) {
         height={576}
         priority={priority}
         unoptimized
-        className="h-auto w-[200px] bg-transparent object-contain object-left sm:w-[220px] lg:w-[240px]"
-        sizes="240px"
+        className={cn(
+          "h-auto bg-transparent object-contain object-left transition-[width] duration-[350ms] ease-[cubic-bezier(0.22,1,0.36,1)]",
+          compact ? "w-[180px] lg:w-[190px]" : "w-[190px] sm:w-[200px] lg:w-[210px]",
+        )}
+        sizes="210px"
       />
     </Link>
   );

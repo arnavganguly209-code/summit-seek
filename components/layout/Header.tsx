@@ -6,7 +6,7 @@ import { AnimatePresence, motion } from "framer-motion";
 import { Menu, X, ChevronDown, Mail, Phone, ArrowRight } from "lucide-react";
 import { Logo } from "@/components/layout/Logo";
 import { TopBar } from "@/components/layout/TopBar";
-import { DestinationsMegaMenu } from "@/components/layout/DestinationsMegaMenu";
+import { DestinationsDropdown } from "@/components/layout/DestinationsDropdown";
 import { TrekkingMegaMenu } from "@/components/layout/TrekkingMegaMenu";
 import { CategoryIcon } from "@/components/layout/CategoryIcon";
 import { Container } from "@/components/ui/Container";
@@ -51,48 +51,68 @@ export function Header() {
     ? "text-[#08121E] hover:text-[#D8A73C]"
     : "text-white hover:text-[#D8A73C]";
 
+  const headerH = scrolled ? "h-[62px]" : "h-[72px]";
+
   return (
     <header
       className={cn(
         "fixed inset-x-0 top-0 z-50 transition-all",
         ease,
         scrolled
-          ? "border-b border-black/[0.06] bg-[rgba(255,255,255,0.78)] shadow-[0_8px_32px_rgba(8,18,30,0.08)] backdrop-blur-[20px]"
+          ? "border-b border-black/[0.06] bg-white shadow-[0_6px_24px_rgba(8,18,30,0.08)]"
           : "bg-transparent",
       )}
     >
-      <TopBar scrolled={scrolled} />
+      {/* TopBar collapses after scroll for compact sticky header */}
+      <div
+        className={cn(
+          "overflow-hidden transition-all",
+          ease,
+          scrolled ? "max-h-0 opacity-0" : "max-h-12 opacity-100",
+        )}
+      >
+        <TopBar scrolled={scrolled} />
+      </div>
 
       <Container className="relative">
-        <div className="grid h-[100px] grid-cols-[auto_1fr_auto] items-center gap-4 lg:h-[108px] lg:gap-6">
-          <Logo priority onLight={scrolled} />
+        <div
+          className={cn(
+            "grid grid-cols-[auto_1fr_auto] items-center gap-3 transition-all lg:gap-5",
+            ease,
+            headerH,
+          )}
+        >
+          <Logo priority compact={scrolled} />
 
           <nav
             className="relative hidden min-w-0 justify-center xl:flex"
             aria-label="Primary"
             onMouseLeave={() => setMegaKind(null)}
           >
-            <ul className="flex flex-nowrap items-center justify-center gap-x-6 2xl:gap-x-8">
+            <ul className="flex flex-nowrap items-center justify-center gap-x-5 2xl:gap-x-7">
               {mainNav.map((item) => {
                 const showChevron = Boolean(item.dropdown || item.mega);
                 const kind = megaKindForLabel(item.label);
                 const opensMega = Boolean(kind);
 
-                if (opensMega && kind) {
+                if (opensMega && kind === "destinations") {
                   return (
-                    <li key={item.href} className="shrink-0">
+                    <li
+                      key={item.href}
+                      className="relative shrink-0"
+                      onMouseEnter={() => setMegaKind("destinations")}
+                      onFocus={() => setMegaKind("destinations")}
+                    >
                       <button
                         type="button"
-                        onMouseEnter={() => setMegaKind(kind)}
-                        onFocus={() => setMegaKind(kind)}
                         className={cn(
-                          "nav-link inline-flex items-center gap-1 whitespace-nowrap py-3 text-[13.5px] font-bold xl:text-[14.5px] 2xl:text-[15px]",
+                          "nav-link inline-flex items-center gap-1 whitespace-nowrap py-2 text-[16px] font-bold tracking-[-0.01em] xl:text-[17px]",
                           "transition-colors",
                           ease,
                           navText,
-                          megaKind === kind && "text-[#D8A73C]",
+                          megaKind === "destinations" && "text-[#D8A73C]",
                         )}
-                        aria-expanded={megaKind === kind}
+                        aria-expanded={megaKind === "destinations"}
                         aria-haspopup="true"
                       >
                         {item.label}
@@ -100,7 +120,41 @@ export function Header() {
                           className={cn(
                             "size-3.5 transition-transform",
                             ease,
-                            megaKind === kind && "rotate-180",
+                            megaKind === "destinations" && "rotate-180",
+                          )}
+                        />
+                      </button>
+                      <DestinationsDropdown
+                        open={megaKind === "destinations"}
+                        onClose={() => setMegaKind(null)}
+                      />
+                    </li>
+                  );
+                }
+
+                if (opensMega && kind === "trekking") {
+                  return (
+                    <li key={item.href} className="shrink-0">
+                      <button
+                        type="button"
+                        onMouseEnter={() => setMegaKind("trekking")}
+                        onFocus={() => setMegaKind("trekking")}
+                        className={cn(
+                          "nav-link inline-flex items-center gap-1 whitespace-nowrap py-2 text-[16px] font-bold tracking-[-0.01em] xl:text-[17px]",
+                          "transition-colors",
+                          ease,
+                          navText,
+                          megaKind === "trekking" && "text-[#D8A73C]",
+                        )}
+                        aria-expanded={megaKind === "trekking"}
+                        aria-haspopup="true"
+                      >
+                        {item.label}
+                        <ChevronDown
+                          className={cn(
+                            "size-3.5 transition-transform",
+                            ease,
+                            megaKind === "trekking" && "rotate-180",
                           )}
                         />
                       </button>
@@ -114,7 +168,7 @@ export function Header() {
                       href={item.href}
                       onMouseEnter={() => setMegaKind(null)}
                       className={cn(
-                        "nav-link inline-flex items-center gap-1 whitespace-nowrap py-3 text-[13.5px] font-bold xl:text-[14.5px] 2xl:text-[15px]",
+                        "nav-link inline-flex items-center gap-1 whitespace-nowrap py-2 text-[16px] font-bold tracking-[-0.01em] xl:text-[17px]",
                         "transition-colors",
                         ease,
                         navText,
@@ -128,24 +182,21 @@ export function Header() {
               })}
             </ul>
 
-            <DestinationsMegaMenu
-              open={megaKind === "destinations"}
-              onClose={() => setMegaKind(null)}
-            />
             <TrekkingMegaMenu
               open={megaKind === "trekking"}
               onClose={() => setMegaKind(null)}
             />
           </nav>
 
-          <div className="flex shrink-0 items-center justify-end gap-2.5 lg:gap-3">
+          <div className="flex shrink-0 items-center justify-end gap-2 lg:gap-3">
             <Link
               href="/plan-your-trip"
               className={cn(
-                "hidden h-[46px] items-center justify-center rounded-[12px] bg-[#D8A73C] px-5 text-[12px] font-semibold tracking-wide text-[#08121E] sm:inline-flex lg:h-[50px] lg:rounded-[14px] lg:px-6",
-                "shadow-[0_10px_28px_rgba(216,167,60,0.4)]",
+                "hidden items-center justify-center rounded-[10px] bg-[#D8A73C] px-4 text-[11px] font-semibold tracking-wide text-[#08121E] sm:inline-flex lg:rounded-[12px] lg:px-5 lg:text-[12px]",
+                "shadow-[0_8px_22px_rgba(216,167,60,0.35)]",
                 "transition-all hover:-translate-y-0.5 hover:bg-[#c49630]",
                 ease,
+                scrolled ? "h-9 lg:h-10" : "h-10 lg:h-11",
               )}
             >
               PLAN YOUR TRIP →
@@ -153,9 +204,10 @@ export function Header() {
             <button
               type="button"
               className={cn(
-                "inline-flex size-11 items-center justify-center rounded-[12px] xl:hidden",
+                "inline-flex items-center justify-center rounded-[10px] xl:hidden",
                 "transition-colors hover:border-[#D8A73C] hover:text-[#D8A73C]",
                 ease,
+                scrolled ? "size-9" : "size-10",
                 scrolled
                   ? "border border-black/15 text-[#08121E]"
                   : "border border-white/25 text-white",
@@ -176,7 +228,10 @@ export function Header() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 top-[100px] z-40 bg-[#08121E]/60 backdrop-blur-sm xl:hidden"
+            className={cn(
+              "fixed inset-0 z-40 bg-[#08121E]/60 backdrop-blur-sm xl:hidden",
+              scrolled ? "top-[62px]" : "top-[72px]",
+            )}
             onClick={() => setMobileOpen(false)}
           >
             <motion.nav

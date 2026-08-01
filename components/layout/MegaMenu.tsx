@@ -1,2 +1,2 @@
-/** @deprecated Use DestinationsMegaMenu — kept as thin re-export for safety */
-export { DestinationsMegaMenu as MegaMenu } from "@/components/layout/DestinationsMegaMenu";
+/** @deprecated Destinations now uses DestinationsDropdown — kept for safety */
+export { DestinationsDropdown as MegaMenu } from "@/components/layout/DestinationsDropdown";

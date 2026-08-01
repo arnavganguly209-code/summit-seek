@@ -26,7 +26,7 @@ export function TopBar({ scrolled = false }: TopBarProps) {
           : "border-white/10 bg-[#0a1018]/90",
       )}
     >
-      <Container className="flex h-10 items-center justify-between text-[12px] font-medium">
+      <Container className="flex h-8 items-center justify-between text-[11px] font-medium">
         <div className="flex items-center gap-4">
           <a href={`mailto:${SITE.email}`} className={link}>
             <Mail className="size-3.5 text-[#D8A73C]" />
