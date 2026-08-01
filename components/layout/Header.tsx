@@ -51,24 +51,27 @@ export function Header() {
     ? "text-[#08121E] hover:text-[#D8A73C]"
     : "text-white hover:text-[#D8A73C]";
 
-  /** Main nav bar heights — logo is constrained inside these bounds */
-  const headerH = scrolled ? "h-[72px]" : "h-[96px]";
-  const mobileOverlayTop = scrolled ? "top-[72px]" : "top-[96px]";
+  /**
+   * Sticky white bar must fully wrap the logo (no half-cut look).
+   * Before scroll: 96px · After scroll: 108px solid white
+   */
+  const barHeight = scrolled ? 108 : 96;
+  const mobileOverlayTop = scrolled ? "top-[108px]" : "top-[96px]";
 
   return (
     <header
       className={cn(
-        "fixed inset-x-0 top-0 z-50 overflow-visible transition-[background-color,box-shadow,border-color] duration-300 ease-[cubic-bezier(0.22,1,0.36,1)]",
+        "fixed inset-x-0 top-0 z-50 transition-[background-color,box-shadow,border-color] duration-300 ease-[cubic-bezier(0.22,1,0.36,1)]",
         scrolled
-          ? "border-b border-black/[0.06] bg-white shadow-[0_6px_24px_rgba(8,18,30,0.08)]"
-          : "border-b border-transparent bg-transparent shadow-none",
+          ? "overflow-hidden border-b border-black/[0.06] bg-white shadow-[0_6px_24px_rgba(8,18,30,0.08)]"
+          : "overflow-visible border-b border-transparent bg-transparent shadow-none",
       )}
     >
       {/* TopBar collapses after scroll for compact sticky header */}
       <div
         className={cn(
           "overflow-hidden transition-all duration-300 ease-[cubic-bezier(0.22,1,0.36,1)]",
-          scrolled ? "max-h-0 opacity-0" : "max-h-12 opacity-100",
+          scrolled ? "pointer-events-none max-h-0 opacity-0" : "max-h-12 opacity-100",
         )}
       >
         <TopBar scrolled={scrolled} />
@@ -77,11 +80,11 @@ export function Header() {
       <Container className="relative">
         <div
           className={cn(
-            "grid grid-cols-[auto_1fr_auto] items-center gap-3 overflow-hidden py-2 lg:gap-5",
+            "grid grid-cols-[auto_1fr_auto] items-center gap-3 overflow-hidden lg:gap-5",
             "transition-[height,padding] duration-300 ease-[cubic-bezier(0.22,1,0.36,1)]",
-            headerH,
-            scrolled ? "py-1.5" : "py-2",
+            scrolled ? "py-3" : "py-2",
           )}
+          style={{ height: barHeight }}
         >
           <Logo priority compact={scrolled} />
 
