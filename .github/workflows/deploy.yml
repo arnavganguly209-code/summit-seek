@@ -10,17 +10,46 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      - name: Check required secrets
+        env:
+          VPS_HOST: ${{ secrets.VPS_HOST }}
+          VPS_USER: ${{ secrets.VPS_USER }}
+          VPS_SSH_KEY: ${{ secrets.VPS_SSH_KEY }}
+          PROJECT_PATH: ${{ secrets.PROJECT_PATH }}
+          PM2_APP: ${{ secrets.PM2_APP }}
+        run: |
+          missing=0
+          for name in VPS_HOST VPS_USER VPS_SSH_KEY PROJECT_PATH PM2_APP; do
+            if [ -z "${!name}" ]; then
+              echo "::error::Secret $name is missing or empty. Add it in Repo Settings → Secrets and variables → Actions."
+              missing=1
+            else
+              echo "Secret $name is set."
+            fi
+          done
+          exit $missing
+
       - name: Deploy via SSH
         uses: appleboy/ssh-action@v1.2.0
+        env:
+          PROJECT_PATH: ${{ secrets.PROJECT_PATH }}
+          PM2_APP: ${{ secrets.PM2_APP }}
         with:
           host: ${{ secrets.VPS_HOST }}
           username: ${{ secrets.VPS_USER }}
           key: ${{ secrets.VPS_SSH_KEY }}
+          port: 22
+          script_stop: true
+          command_timeout: 20m
+          envs: PROJECT_PATH,PM2_APP
           script: |
-            cd ${{ secrets.PROJECT_PATH }}
+            set -euo pipefail
+            echo "Deploying in: $PROJECT_PATH"
+            cd "$PROJECT_PATH"
             git fetch origin
             git reset --hard origin/main
             npm install
             npm run build
-            pm2 restart ${{ secrets.PM2_APP }} --update-env
+            pm2 restart "$PM2_APP" --update-env
             pm2 save
+            echo "Deploy finished."
