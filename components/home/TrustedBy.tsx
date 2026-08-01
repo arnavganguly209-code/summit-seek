@@ -30,7 +30,7 @@ const trusts = [
 
 export function TrustedBy() {
   return (
-    <section className="relative z-20 -mt-16 pb-4 md:-mt-20">
+    <section className="relative z-20 -mt-8 bg-snow pb-4 pt-2 md:-mt-10">
       <Container>
         <motion.div
           initial={{ opacity: 0, y: 24 }}

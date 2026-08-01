@@ -7,12 +7,12 @@ interface LogoProps {
   priority?: boolean;
 }
 
-/** Official Summit Seek logo — no background box, no crop, no stretch */
+/** Official Summit Seek logo — transparent, sharp, no box, no crop */
 export function Logo({ className, priority = false }: LogoProps) {
   return (
     <Link
       href="/"
-      className={cn("relative inline-block shrink-0 leading-none", className)}
+      className={cn("relative z-10 inline-block shrink-0 leading-none", className)}
       aria-label="Summit Seek — Home"
     >
       <Image
@@ -22,8 +22,8 @@ export function Logo({ className, priority = false }: LogoProps) {
         height={572}
         priority={priority}
         unoptimized
-        className="h-auto w-[170px] md:w-[190px] lg:w-[240px]"
-        sizes="(max-width: 768px) 170px, (max-width: 1024px) 190px, 240px"
+        className="logo-clear h-auto w-[150px] max-h-[72px] object-contain object-left md:w-[170px] md:max-h-[78px] lg:w-[200px] lg:max-h-[86px] xl:w-[220px] xl:max-h-[92px]"
+        sizes="(max-width: 768px) 150px, (max-width: 1024px) 170px, 220px"
       />
     </Link>
   );

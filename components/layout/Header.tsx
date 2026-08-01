@@ -22,7 +22,7 @@ export function Header() {
   const [mobileMega, setMobileMega] = useState<string | null>(null);
 
   useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 24);
+    const onScroll = () => setScrolled(window.scrollY > 20);
     onScroll();
     window.addEventListener("scroll", onScroll, { passive: true });
     return () => window.removeEventListener("scroll", onScroll);
@@ -41,63 +41,64 @@ export function Header() {
         "fixed inset-x-0 top-0 z-50 transition-all",
         ease,
         scrolled
-          ? "border-b border-white/[0.08] bg-[rgba(5,12,20,0.92)] shadow-[0_10px_40px_rgba(0,0,0,0.25)] backdrop-blur-[18px]"
-          : "border-b border-transparent bg-transparent",
+          ? "border-b border-white/[0.08] bg-[rgba(5,12,20,0.92)] backdrop-blur-[18px]"
+          : "bg-transparent",
       )}
     >
       <TopBar />
 
       <Container className="relative">
-        <div className="flex h-[95px] items-center justify-between gap-4">
+        <div className="flex h-[100px] items-center justify-between gap-3 lg:h-[110px]">
           <Logo priority />
 
           <nav
-            className="hidden items-center xl:flex"
+            className="absolute left-1/2 top-1/2 hidden -translate-x-1/2 -translate-y-1/2 items-center xl:flex"
             aria-label="Primary"
             onMouseLeave={() => setMegaOpen(false)}
           >
-            <ul className="flex items-center gap-[42px]">
+            <ul className="flex items-center gap-8 2xl:gap-[42px]">
               {mainNav.map((item) => {
-                const hasMega = Boolean(item.mega);
-                return (
-                  <li key={item.href} className="relative">
-                    {hasMega ? (
+                const showChevron = Boolean(item.dropdown || item.mega);
+                const opensMega = Boolean(item.mega);
+
+                if (opensMega) {
+                  return (
+                    <li key={item.href}>
                       <button
                         type="button"
                         onMouseEnter={() => setMegaOpen(true)}
                         onFocus={() => setMegaOpen(true)}
                         className={cn(
-                          "nav-link group inline-flex items-center gap-1.5 py-8 text-[14px] font-bold tracking-normal text-white",
-                          "transition-colors",
+                          "nav-link inline-flex items-center gap-1 whitespace-nowrap py-8 text-[13px] font-bold text-white 2xl:text-[14px]",
+                          "transition-colors hover:text-[#D8A73C]",
                           ease,
-                          "hover:text-[#D8A73C]",
                         )}
                         aria-expanded={megaOpen}
                         aria-haspopup="true"
                       >
                         {item.label}
                         <ChevronDown
-                          className={cn(
-                            "size-3.5 transition-transform",
-                            ease,
-                            megaOpen && "rotate-180",
-                          )}
+                          className={cn("size-3.5 transition-transform", ease, megaOpen && "rotate-180")}
                         />
                       </button>
-                    ) : (
-                      <Link
-                        href={item.href}
-                        className={cn(
-                          "nav-link inline-flex items-center py-8 text-[14px] font-bold tracking-normal text-white",
-                          "transition-colors",
-                          ease,
-                          "hover:text-[#D8A73C]",
-                        )}
-                        onMouseEnter={() => setMegaOpen(false)}
-                      >
-                        {item.label}
-                      </Link>
-                    )}
+                    </li>
+                  );
+                }
+
+                return (
+                  <li key={item.href}>
+                    <Link
+                      href={item.href}
+                      onMouseEnter={() => setMegaOpen(false)}
+                      className={cn(
+                        "nav-link inline-flex items-center gap-1 whitespace-nowrap py-8 text-[13px] font-bold text-white 2xl:text-[14px]",
+                        "transition-colors hover:text-[#D8A73C]",
+                        ease,
+                      )}
+                    >
+                      {item.label}
+                      {showChevron ? <ChevronDown className="size-3.5" /> : null}
+                    </Link>
                   </li>
                 );
               })}
@@ -105,14 +106,13 @@ export function Header() {
             <MegaMenu open={megaOpen} onClose={() => setMegaOpen(false)} />
           </nav>
 
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-2.5 lg:gap-3">
             <a
               href={`tel:${SITE.phone}`}
               className={cn(
-                "hidden items-center gap-2 rounded-full border border-white/15 bg-white/5 px-4 py-2.5 text-[13px] font-semibold text-white backdrop-blur-md lg:inline-flex",
-                "transition-all",
+                "hidden items-center gap-2 rounded-full border border-white/20 bg-[#0a1018]/55 px-4 py-2.5 text-[13px] font-semibold text-white backdrop-blur-md lg:inline-flex",
+                "transition-all hover:border-[#D8A73C]/50 hover:text-[#D8A73C]",
                 ease,
-                "hover:border-[#D8A73C]/40 hover:text-[#D8A73C]",
               )}
             >
               <Phone className="size-3.5 text-[#D8A73C]" />
@@ -121,11 +121,10 @@ export function Header() {
             <Link
               href="/plan-your-trip"
               className={cn(
-                "hidden h-[48px] items-center justify-center rounded-[14px] bg-[#D8A73C] px-6 text-[13px] font-semibold tracking-wide text-[#08121E] sm:inline-flex lg:h-[58px] lg:px-7 lg:text-[14px]",
-                "shadow-[0_12px_30px_rgba(216,167,60,0.35)]",
-                "transition-all",
+                "hidden h-[46px] items-center justify-center rounded-[12px] bg-[#D8A73C] px-5 text-[12px] font-semibold tracking-wide text-[#08121E] sm:inline-flex lg:h-[52px] lg:rounded-[14px] lg:px-6 lg:text-[13px]",
+                "shadow-[0_10px_28px_rgba(216,167,60,0.4)]",
+                "transition-all hover:-translate-y-0.5 hover:bg-[#c49630] hover:shadow-[0_14px_36px_rgba(216,167,60,0.5)]",
                 ease,
-                "hover:-translate-y-0.5 hover:bg-[#c49630] hover:shadow-[0_16px_40px_rgba(216,167,60,0.45)]",
               )}
             >
               PLAN YOUR TRIP →
@@ -133,10 +132,9 @@ export function Header() {
             <button
               type="button"
               className={cn(
-                "inline-flex size-11 items-center justify-center rounded-[12px] border border-white/20 text-white xl:hidden",
-                "transition-colors",
+                "inline-flex size-11 items-center justify-center rounded-[12px] border border-white/25 text-white xl:hidden",
+                "transition-colors hover:border-[#D8A73C] hover:text-[#D8A73C]",
                 ease,
-                "hover:border-[#D8A73C] hover:text-[#D8A73C]",
               )}
               aria-label={mobileOpen ? "Close menu" : "Open menu"}
               aria-expanded={mobileOpen}
@@ -154,8 +152,7 @@ export function Header() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            transition={{ duration: 0.35, ease: [0.22, 1, 0.36, 1] }}
-            className="fixed inset-0 top-[95px] z-40 bg-[#08121E]/55 backdrop-blur-sm xl:hidden"
+            className="fixed inset-0 top-[88px] z-40 bg-[#08121E]/60 backdrop-blur-sm xl:hidden"
             onClick={() => setMobileOpen(false)}
           >
             <motion.nav
@@ -163,7 +160,7 @@ export function Header() {
               animate={{ x: 0 }}
               exit={{ x: "100%" }}
               transition={{ duration: 0.35, ease: [0.22, 1, 0.36, 1] }}
-              className="absolute inset-y-0 right-0 flex w-full max-w-md flex-col border-l border-white/10 bg-[#08121E] shadow-2xl"
+              className="absolute inset-y-0 right-0 flex w-full max-w-md flex-col border-l border-white/10 bg-[#08121E]"
               onClick={(e) => e.stopPropagation()}
               aria-label="Mobile"
             >
@@ -201,12 +198,9 @@ export function Header() {
                                     <Link
                                       href={cat.href}
                                       onClick={() => setMobileOpen(false)}
-                                      className="flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-semibold text-[#D5D8DD] hover:bg-white/5 hover:text-[#D8A73C]"
+                                      className="flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-semibold text-[#D5D8DD] hover:text-[#D8A73C]"
                                     >
-                                      <CategoryIcon
-                                        name={cat.icon}
-                                        className="size-4 text-[#D8A73C]"
-                                      />
+                                      <CategoryIcon name={cat.icon} className="size-4 text-[#D8A73C]" />
                                       {cat.label}
                                     </Link>
                                   </li>
@@ -219,7 +213,7 @@ export function Header() {
                         <Link
                           href={item.href}
                           onClick={() => setMobileOpen(false)}
-                          className="block rounded-xl px-3 py-3.5 text-base font-bold text-white hover:bg-white/5 hover:text-[#D8A73C]"
+                          className="block rounded-xl px-3 py-3.5 text-base font-bold text-white hover:text-[#D8A73C]"
                         >
                           {item.label}
                         </Link>
@@ -227,19 +221,12 @@ export function Header() {
                     </li>
                   ))}
                 </ul>
-
                 <div className="mt-8 space-y-3 border-t border-white/10 pt-6 text-sm text-[#D5D8DD]">
-                  <a
-                    href={`mailto:${SITE.email}`}
-                    className="flex items-center gap-2 hover:text-[#D8A73C]"
-                  >
+                  <a href={`mailto:${SITE.email}`} className="flex items-center gap-2 hover:text-[#D8A73C]">
                     <Mail className="size-4 text-[#D8A73C]" />
                     {SITE.email}
                   </a>
-                  <a
-                    href={`tel:${SITE.phone}`}
-                    className="flex items-center gap-2 hover:text-[#D8A73C]"
-                  >
+                  <a href={`tel:${SITE.phone}`} className="flex items-center gap-2 hover:text-[#D8A73C]">
                     <Phone className="size-4 text-[#D8A73C]" />
                     {SITE.phoneDisplay}
                   </a>
@@ -256,7 +243,7 @@ export function Header() {
                 <Link
                   href="/plan-your-trip"
                   onClick={() => setMobileOpen(false)}
-                  className="flex h-[58px] w-full items-center justify-center rounded-[14px] bg-[#D8A73C] text-sm font-semibold text-[#08121E]"
+                  className="flex h-[52px] w-full items-center justify-center rounded-[14px] bg-[#D8A73C] text-sm font-semibold text-[#08121E]"
                 >
                   PLAN YOUR TRIP →
                 </Link>
