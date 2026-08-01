@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { AnimatePresence, motion } from "framer-motion";
-import { Menu, X, ChevronDown, Phone, Mail, MessageCircle } from "lucide-react";
+import { Menu, X, ChevronDown, Mail, Phone, MessageCircle } from "lucide-react";
 import { Logo } from "@/components/layout/Logo";
 import { TopBar } from "@/components/layout/TopBar";
 import { MegaMenu } from "@/components/layout/MegaMenu";
@@ -48,28 +48,29 @@ export function Header() {
       <TopBar />
 
       <Container className="relative">
-        <div className="flex h-[100px] items-center justify-between gap-3 lg:h-[110px]">
+        {/* 3-column flex — prevents nav from sliding under phone CTA */}
+        <div className="grid h-[110px] grid-cols-[auto_1fr_auto] items-center gap-4 lg:h-[120px] lg:gap-6">
           <Logo priority />
 
           <nav
-            className="absolute left-1/2 top-1/2 hidden -translate-x-1/2 -translate-y-1/2 items-center xl:flex"
+            className="relative hidden min-w-0 justify-center xl:flex"
             aria-label="Primary"
             onMouseLeave={() => setMegaOpen(false)}
           >
-            <ul className="flex items-center gap-8 2xl:gap-[42px]">
+            <ul className="flex flex-nowrap items-center justify-center gap-x-3.5 2xl:gap-x-6">
               {mainNav.map((item) => {
                 const showChevron = Boolean(item.dropdown || item.mega);
                 const opensMega = Boolean(item.mega);
 
                 if (opensMega) {
                   return (
-                    <li key={item.href}>
+                    <li key={item.href} className="shrink-0">
                       <button
                         type="button"
                         onMouseEnter={() => setMegaOpen(true)}
                         onFocus={() => setMegaOpen(true)}
                         className={cn(
-                          "nav-link inline-flex items-center gap-1 whitespace-nowrap py-8 text-[13px] font-bold text-white 2xl:text-[14px]",
+                          "nav-link inline-flex items-center gap-1 whitespace-nowrap py-3 text-[11px] font-bold text-white xl:text-[12px] 2xl:text-[13px]",
                           "transition-colors hover:text-[#D8A73C]",
                           ease,
                         )}
@@ -78,7 +79,7 @@ export function Header() {
                       >
                         {item.label}
                         <ChevronDown
-                          className={cn("size-3.5 transition-transform", ease, megaOpen && "rotate-180")}
+                          className={cn("size-3 transition-transform 2xl:size-3.5", ease, megaOpen && "rotate-180")}
                         />
                       </button>
                     </li>
@@ -86,18 +87,18 @@ export function Header() {
                 }
 
                 return (
-                  <li key={item.href}>
+                  <li key={item.href} className="shrink-0">
                     <Link
                       href={item.href}
                       onMouseEnter={() => setMegaOpen(false)}
                       className={cn(
-                        "nav-link inline-flex items-center gap-1 whitespace-nowrap py-8 text-[13px] font-bold text-white 2xl:text-[14px]",
+                        "nav-link inline-flex items-center gap-1 whitespace-nowrap py-3 text-[11px] font-bold text-white xl:text-[12px] 2xl:text-[13px]",
                         "transition-colors hover:text-[#D8A73C]",
                         ease,
                       )}
                     >
                       {item.label}
-                      {showChevron ? <ChevronDown className="size-3.5" /> : null}
+                      {showChevron ? <ChevronDown className="size-3 2xl:size-3.5" /> : null}
                     </Link>
                   </li>
                 );
@@ -106,24 +107,26 @@ export function Header() {
             <MegaMenu open={megaOpen} onClose={() => setMegaOpen(false)} />
           </nav>
 
-          <div className="flex items-center gap-2.5 lg:gap-3">
+          <div className="flex shrink-0 items-center justify-end gap-2.5 lg:gap-3">
             <a
-              href={`tel:${SITE.phone}`}
+              href={`https://wa.me/${SITE.whatsapp.replace(/\D/g, "")}`}
+              target="_blank"
+              rel="noopener noreferrer"
               className={cn(
-                "hidden items-center gap-2 rounded-full border border-white/20 bg-[#0a1018]/55 px-4 py-2.5 text-[13px] font-semibold text-white backdrop-blur-md lg:inline-flex",
-                "transition-all hover:border-[#D8A73C]/50 hover:text-[#D8A73C]",
+                "hidden items-center gap-2 rounded-full border border-white/20 bg-[#0a1018]/60 px-3.5 py-2.5 text-[12px] font-semibold text-white backdrop-blur-md xl:inline-flex",
+                "transition-all hover:border-[#D8A73C]/50",
                 ease,
               )}
             >
-              <Phone className="size-3.5 text-[#D8A73C]" />
+              <MessageCircle className="size-3.5 text-[#25D366]" />
               {SITE.phoneDisplay}
             </a>
             <Link
               href="/plan-your-trip"
               className={cn(
-                "hidden h-[46px] items-center justify-center rounded-[12px] bg-[#D8A73C] px-5 text-[12px] font-semibold tracking-wide text-[#08121E] sm:inline-flex lg:h-[52px] lg:rounded-[14px] lg:px-6 lg:text-[13px]",
+                "hidden h-[46px] items-center justify-center rounded-[12px] bg-[#D8A73C] px-5 text-[12px] font-semibold tracking-wide text-[#08121E] sm:inline-flex lg:h-[50px] lg:rounded-[14px] lg:px-6",
                 "shadow-[0_10px_28px_rgba(216,167,60,0.4)]",
-                "transition-all hover:-translate-y-0.5 hover:bg-[#c49630] hover:shadow-[0_14px_36px_rgba(216,167,60,0.5)]",
+                "transition-all hover:-translate-y-0.5 hover:bg-[#c49630]",
                 ease,
               )}
             >
@@ -152,7 +155,7 @@ export function Header() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 top-[88px] z-40 bg-[#08121E]/60 backdrop-blur-sm xl:hidden"
+            className="fixed inset-0 top-[110px] z-40 bg-[#08121E]/60 backdrop-blur-sm xl:hidden"
             onClick={() => setMobileOpen(false)}
           >
             <motion.nav
@@ -229,13 +232,6 @@ export function Header() {
                   <a href={`tel:${SITE.phone}`} className="flex items-center gap-2 hover:text-[#D8A73C]">
                     <Phone className="size-4 text-[#D8A73C]" />
                     {SITE.phoneDisplay}
-                  </a>
-                  <a
-                    href={`https://wa.me/${SITE.whatsapp.replace(/\D/g, "")}`}
-                    className="flex items-center gap-2 hover:text-[#D8A73C]"
-                  >
-                    <MessageCircle className="size-4 text-[#D8A73C]" />
-                    WhatsApp
                   </a>
                 </div>
               </div>
