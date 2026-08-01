@@ -34,37 +34,6 @@ const socials = [
   { href: SOCIAL.tripadvisor, label: "Tripadvisor", Icon: TripadvisorIcon },
 ];
 
-function Trekker({ x, y, scale = 1 }: { x: number; y: number; scale?: number }) {
-  return (
-    <g transform={`translate(${x} ${y}) scale(${scale})`} fill={NAVY}>
-      {/* Head */}
-      <circle cx="0" cy="-22" r="3.4" />
-      {/* Backpack */}
-      <ellipse cx="-4.2" cy="-12" rx="3.6" ry="5.2" />
-      {/* Torso */}
-      <path d="M-2.5 -18.5 C-3.5 -10 -3 -4  -1 0 L2.5 0 C4 -5 3.5 -12 2.2 -18.5 Z" />
-      {/* Legs mid-stride uphill */}
-      <path d="M-1 0 C-2.5 6 -6 12 -8.5 16 C-6.5 16.5 -5 15.5 -4 14 C-2 9 0 5 1.2 0 Z" />
-      <path d="M1 0 C3 5 5 11 9 15.5 C7.5 16.5 5.5 16 4.5 14.5 C2.5 9 1.5 4.5 0.5 0 Z" />
-      {/* Arms + poles */}
-      <path
-        d="M-2 -14 L-9 -4 M2 -14 L8 -3"
-        fill="none"
-        stroke={NAVY}
-        strokeWidth="1.7"
-        strokeLinecap="round"
-      />
-      <path
-        d="M-9.5 -6 L-12 18 M8.5 -5 L12 17"
-        fill="none"
-        stroke={NAVY}
-        strokeWidth="1.35"
-        strokeLinecap="round"
-      />
-    </g>
-  );
-}
-
 function HimalayanLandscape() {
   return (
     <div className="relative -mt-4 w-full overflow-hidden leading-none sm:-mt-6" aria-hidden>
@@ -196,10 +165,15 @@ function HimalayanLandscape() {
         />
         <rect x="0" y="348" width="1440" height="12" fill={NAVY} />
 
-        {/* Three trekkers walking uphill on left navy ridge */}
-        <Trekker x={168} y={324} scale={1.08} />
-        <Trekker x={202} y={320} scale={1} />
-        <Trekker x={234} y={325} scale={0.9} />
+        {/* Human trekkers — realistic silhouettes walking RIGHT */}
+        <image
+          href="/footer-trekkers.png"
+          x="40"
+          y="175"
+          width="480"
+          height="175"
+          preserveAspectRatio="xMidYMax meet"
+        />
 
         {/* Prayer flags on right hilltop */}
         <g>

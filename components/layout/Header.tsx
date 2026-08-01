@@ -19,7 +19,7 @@ import {
 import { SITE } from "@/lib/constants";
 import { cn } from "@/lib/utils";
 
-const ease = "duration-[350ms] ease-[cubic-bezier(0.22,1,0.36,1)]";
+const ease = "duration-300 ease-[cubic-bezier(0.22,1,0.36,1)]";
 
 function megaKindForLabel(label: string): MegaKind | null {
   if (label === "Destinations") return "destinations";
@@ -51,23 +51,23 @@ export function Header() {
     ? "text-[#08121E] hover:text-[#D8A73C]"
     : "text-white hover:text-[#D8A73C]";
 
-  const headerH = scrolled ? "h-[62px]" : "h-[72px]";
+  /** Main nav bar heights — logo is constrained inside these bounds */
+  const headerH = scrolled ? "h-[72px]" : "h-[96px]";
+  const mobileOverlayTop = scrolled ? "top-[72px]" : "top-[96px]";
 
   return (
     <header
       className={cn(
-        "fixed inset-x-0 top-0 z-50 transition-all",
-        ease,
+        "fixed inset-x-0 top-0 z-50 overflow-visible transition-[background-color,box-shadow,border-color] duration-300 ease-[cubic-bezier(0.22,1,0.36,1)]",
         scrolled
           ? "border-b border-black/[0.06] bg-white shadow-[0_6px_24px_rgba(8,18,30,0.08)]"
-          : "bg-transparent",
+          : "border-b border-transparent bg-transparent shadow-none",
       )}
     >
       {/* TopBar collapses after scroll for compact sticky header */}
       <div
         className={cn(
-          "overflow-hidden transition-all",
-          ease,
+          "overflow-hidden transition-all duration-300 ease-[cubic-bezier(0.22,1,0.36,1)]",
           scrolled ? "max-h-0 opacity-0" : "max-h-12 opacity-100",
         )}
       >
@@ -77,9 +77,10 @@ export function Header() {
       <Container className="relative">
         <div
           className={cn(
-            "grid grid-cols-[auto_1fr_auto] items-center gap-3 transition-all lg:gap-5",
-            ease,
+            "grid grid-cols-[auto_1fr_auto] items-center gap-3 overflow-hidden py-2 lg:gap-5",
+            "transition-[height,padding] duration-300 ease-[cubic-bezier(0.22,1,0.36,1)]",
             headerH,
+            scrolled ? "py-1.5" : "py-2",
           )}
         >
           <Logo priority compact={scrolled} />
@@ -196,7 +197,7 @@ export function Header() {
                 "shadow-[0_8px_22px_rgba(216,167,60,0.35)]",
                 "transition-all hover:-translate-y-0.5 hover:bg-[#c49630]",
                 ease,
-                scrolled ? "h-9 lg:h-10" : "h-10 lg:h-11",
+                scrolled ? "h-9 lg:h-9" : "h-10 lg:h-11",
               )}
             >
               PLAN YOUR TRIP →
@@ -230,7 +231,7 @@ export function Header() {
             exit={{ opacity: 0 }}
             className={cn(
               "fixed inset-0 z-40 bg-[#08121E]/60 backdrop-blur-sm xl:hidden",
-              scrolled ? "top-[62px]" : "top-[72px]",
+              mobileOverlayTop,
             )}
             onClick={() => setMobileOpen(false)}
           >
