@@ -23,6 +23,7 @@ export const SOCIAL = {
   facebook: "https://facebook.com/summitseek",
   instagram: "https://instagram.com/summitseek",
   youtube: "https://youtube.com/@summitseek",
+  linkedin: "https://linkedin.com/company/summitseek",
   tripadvisor: "https://tripadvisor.com",
   google: "https://g.page/summitseek",
 } as const;

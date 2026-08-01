@@ -37,3 +37,19 @@ export function YoutubeIcon({ className, ...props }: IconProps) {
     </svg>
   );
 }
+
+export function LinkedInIcon({ className, ...props }: IconProps) {
+  return (
+    <svg viewBox="0 0 24 24" fill="currentColor" className={className} aria-hidden {...props}>
+      <path d="M6.5 9.5H3.7V20h2.8V9.5zM5.1 4C4.1 4 3.3 4.8 3.3 5.8S4.1 7.6 5.1 7.6 6.9 6.8 6.9 5.8 6.1 4 5.1 4zM20.3 20h-2.8v-5.6c0-1.5-.5-2.5-1.8-2.5-1 0-1.5.7-1.8 1.3-.1.2-.1.6-.1.9V20h-2.8s.1-8.6 0-9.5h2.8v1.5c.4-.6 1.1-1.5 2.8-1.5 2 0 3.5 1.3 3.5 4.2V20z" />
+    </svg>
+  );
+}
+
+export function TripadvisorIcon({ className, ...props }: IconProps) {
+  return (
+    <svg viewBox="0 0 24 24" fill="currentColor" className={className} aria-hidden {...props}>
+      <path d="M12.1 3.2c-.5 0-1 .1-1.5.2L8.4 1.5l-.6 2.3C4.8 4.8 2.5 7.4 2 10.5h2.2c.5-1.8 1.7-3.3 3.3-4.2l-.9 3.4c-.8.7-1.3 1.8-1.3 3 0 2.2 1.8 4 4 4s4-1.8 4-4c0-.2 0-.4-.1-.6.3.1.6.1.9.1.3 0 .6 0 .9-.1 0 .2-.1.4-.1.6 0 2.2 1.8 4 4 4s4-1.8 4-4c0-1.2-.5-2.3-1.3-3l-.9-3.4c1.6.9 2.8 2.4 3.3 4.2H22c-.5-3.1-2.8-5.7-5.8-6.7l-.6-2.3-2.2 1.9c-.5-.1-1-.2-1.5-.2zm-2.8 8.5c0 1.2-1 2.2-2.2 2.2S4.9 12.9 4.9 11.7s1-2.2 2.2-2.2 2.2 1 2.2 2.2zm9.5 0c0 1.2-1 2.2-2.2 2.2s-2.2-1-2.2-2.2 1-2.2 2.2-2.2 2.2 1 2.2 2.2z" />
+    </svg>
+  );
+}
