@@ -34,80 +34,185 @@ const socials = [
   { href: SOCIAL.tripadvisor, label: "Tripadvisor", Icon: TripadvisorIcon },
 ];
 
+function Trekker({ x, y, scale = 1 }: { x: number; y: number; scale?: number }) {
+  return (
+    <g transform={`translate(${x} ${y}) scale(${scale})`} fill={NAVY}>
+      {/* Head */}
+      <circle cx="0" cy="-22" r="3.4" />
+      {/* Backpack */}
+      <ellipse cx="-4.2" cy="-12" rx="3.6" ry="5.2" />
+      {/* Torso */}
+      <path d="M-2.5 -18.5 C-3.5 -10 -3 -4  -1 0 L2.5 0 C4 -5 3.5 -12 2.2 -18.5 Z" />
+      {/* Legs mid-stride uphill */}
+      <path d="M-1 0 C-2.5 6 -6 12 -8.5 16 C-6.5 16.5 -5 15.5 -4 14 C-2 9 0 5 1.2 0 Z" />
+      <path d="M1 0 C3 5 5 11 9 15.5 C7.5 16.5 5.5 16 4.5 14.5 C2.5 9 1.5 4.5 0.5 0 Z" />
+      {/* Arms + poles */}
+      <path
+        d="M-2 -14 L-9 -4 M2 -14 L8 -3"
+        fill="none"
+        stroke={NAVY}
+        strokeWidth="1.7"
+        strokeLinecap="round"
+      />
+      <path
+        d="M-9.5 -6 L-12 18 M8.5 -5 L12 17"
+        fill="none"
+        stroke={NAVY}
+        strokeWidth="1.35"
+        strokeLinecap="round"
+      />
+    </g>
+  );
+}
+
 function HimalayanLandscape() {
   return (
-    <div className="relative w-full overflow-hidden leading-none" aria-hidden>
+    <div className="relative -mt-4 w-full overflow-hidden leading-none sm:-mt-6" aria-hidden>
       <svg
-        viewBox="0 0 1440 280"
+        viewBox="0 0 1440 360"
         preserveAspectRatio="xMidYMax slice"
-        className="block h-[160px] w-full sm:h-[200px] lg:h-[240px]"
+        className="block h-[220px] w-full sm:h-[280px] lg:h-[340px]"
       >
-        {/* Sky wash */}
-        <rect width="1440" height="280" fill="#FFFFFF" />
+        <defs>
+          <linearGradient id="skyFade" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stopColor="#FFFFFF" stopOpacity="1" />
+            <stop offset="40%" stopColor="#F7FAFD" stopOpacity="1" />
+            <stop offset="100%" stopColor="#EAF1F8" stopOpacity="1" />
+          </linearGradient>
+          <linearGradient id="farPeak" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stopColor="#E4EEF6" />
+            <stop offset="55%" stopColor="#C5D8EA" />
+            <stop offset="100%" stopColor="#A9C2D8" />
+          </linearGradient>
+          <linearGradient id="midPeak" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stopColor="#B7D0E4" />
+            <stop offset="35%" stopColor="#8FB4D0" />
+            <stop offset="100%" stopColor="#6A98B8" />
+          </linearGradient>
+          <linearGradient id="greenHill" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stopColor="#8BBB82" />
+            <stop offset="45%" stopColor="#5F9A62" />
+            <stop offset="100%" stopColor="#42784C" />
+          </linearGradient>
+          <linearGradient id="greenHillFront" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stopColor="#74A870" />
+            <stop offset="50%" stopColor="#508955" />
+            <stop offset="100%" stopColor="#356848" />
+          </linearGradient>
+          <linearGradient id="navyRidge" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stopColor="#0D243C" />
+            <stop offset="100%" stopColor={NAVY} />
+          </linearGradient>
+        </defs>
 
-        {/* Far snow peaks — very light blue */}
-        <path
-          d="M0 180 C80 150 140 120 200 140 C260 90 320 70 380 110 C450 50 520 40 590 95 C660 45 740 55 800 100 C870 60 940 50 1010 95 C1080 55 1160 70 1220 110 C1300 80 1380 100 1440 120 L1440 280 L0 280 Z"
-          fill="#C5D8EA"
-          opacity="0.55"
-        />
+        <rect width="1440" height="360" fill="url(#skyFade)" />
 
-        {/* Middle mountains — light blue */}
-        <path
-          d="M0 200 C100 175 180 145 260 165 C340 130 420 120 500 155 C580 115 670 125 750 160 C840 125 930 130 1020 165 C1110 135 1210 145 1300 170 C1370 155 1410 160 1440 175 L1440 280 L0 280 Z"
-          fill="#8FB4D4"
-          opacity="0.7"
-        />
-
-        {/* Front green hills */}
-        <path
-          d="M0 220 C120 205 220 195 340 210 C460 190 580 200 700 215 C820 198 940 205 1060 218 C1180 205 1300 210 1440 222 L1440 280 L0 280 Z"
-          fill="#5A8F6E"
-          opacity="0.65"
-        />
-
-        {/* Foreground dark navy ridge — blends into footer */}
-        <path
-          d="M0 245 C90 235 180 228 280 238 C400 225 520 232 640 242 C780 230 920 238 1060 248 C1180 238 1300 242 1440 250 L1440 280 L0 280 Z"
-          fill={NAVY}
-        />
-
-        {/* Snow caps accents */}
-        <path d="M360 95 L380 115 L400 100 L420 120 L445 105 L415 135 L385 125 Z" fill="#FFFFFF" opacity="0.45" />
-        <path d="M720 100 L740 118 L765 105 L785 125 L810 108 L780 140 L745 130 Z" fill="#FFFFFF" opacity="0.4" />
-
-        {/* 3 trekker silhouettes — left hill */}
-        <g fill={NAVY}>
-          {/* Trekker 1 */}
-          <circle cx="210" cy="228" r="3.2" />
-          <path d="M210 231 L206 245 L214 245 Z" />
-          <path d="M207 238 L201 242 M213 238 L218 235" stroke={NAVY} strokeWidth="1.4" fill="none" />
-          {/* Trekker 2 */}
-          <circle cx="232" cy="226" r="3" />
-          <path d="M232 229 L228.5 244 L235.5 244 Z" />
-          <path d="M229 236 L224 241 M235 236 L240 233" stroke={NAVY} strokeWidth="1.3" fill="none" />
-          {/* Trekker 3 */}
-          <circle cx="252" cy="229" r="2.8" />
-          <path d="M252 232 L249 245 L255 245 Z" />
-          <path d="M249.5 239 L245 243 M254.5 239 L259 236" stroke={NAVY} strokeWidth="1.2" fill="none" />
+        {/* Birds — right sky */}
+        <g fill="none" stroke="#8A9EB4" strokeWidth="1.35" strokeLinecap="round" opacity="0.6">
+          <path d="M1040 58 Q1045 52 1050 58 Q1055 52 1060 58" />
+          <path d="M1078 72 Q1082 67 1086 72 Q1090 67 1094 72" />
+          <path d="M1105 48 Q1109 43 1113 48 Q1117 43 1121 48" />
+          <path d="M1135 66 Q1138 62 1141 66 Q1144 62 1147 66" />
+          <path d="M1160 54 Q1164 49 1168 54 Q1172 49 1176 54" />
         </g>
 
-        {/* Tiny birds */}
-        <g fill="none" stroke="#7A90A8" strokeWidth="1.2" strokeLinecap="round" opacity="0.55">
-          <path d="M1180 95 Q1185 90 1190 95 Q1195 90 1200 95" />
-          <path d="M1220 110 Q1224 106 1228 110 Q1232 106 1236 110" />
-          <path d="M1260 88 Q1264 84 1268 88 Q1272 84 1276 88" />
-        </g>
+        {/* Back layer — tall distant pale peaks */}
+        <path
+          fill="url(#farPeak)"
+          d="M0 195
+             C55 175 100 120 155 145
+             C210 85 270 40 340 95
+             C400 35 470 15 545 80
+             C610 25 690 20 765 85
+             C835 35 915 25 990 90
+             C1060 45 1135 55 1205 110
+             C1280 70 1355 85 1440 125
+             L1440 360 L0 360 Z"
+        />
 
-        {/* Prayer flags + tiny stupa — right */}
+        {/* Soft snow on far peaks */}
+        <path fill="#FFFFFF" opacity="0.55" d="M320 98 C340 55 365 62 385 100 C360 90 338 92 320 98 Z" />
+        <path fill="#FFFFFF" opacity="0.5" d="M520 82 C545 30 575 38 600 88 C570 76 542 78 520 82 Z" />
+        <path fill="#FFFFFF" opacity="0.48" d="M740 88 C765 35 800 42 825 92 C795 80 762 82 740 88 Z" />
+        <path fill="#FFFFFF" opacity="0.42" d="M960 92 C980 52 1005 58 1025 95 C1000 88 978 88 960 92 Z" />
+
+        {/* Middle layer — defined snow mountains */}
+        <path
+          fill="url(#midPeak)"
+          d="M0 230
+             C90 210 155 155 240 185
+             C310 130 395 110 485 165
+             C560 115 650 105 740 160
+             C825 115 920 120 1010 170
+             C1100 130 1200 140 1300 185
+             C1365 165 1410 175 1440 190
+             L1440 360 L0 360 Z"
+        />
+
+        {/* Snow caps mid */}
+        <path fill="#F8FCFF" opacity="0.72" d="M460 168 C480 125 505 132 525 170 C500 160 475 162 460 168 Z" />
+        <path fill="#F8FCFF" opacity="0.68" d="M715 162 C738 115 768 122 790 168 C760 156 732 158 715 162 Z" />
+        <path fill="#F8FCFF" opacity="0.62" d="M980 172 C998 135 1020 140 1040 174 C1015 166 995 166 980 172 Z" />
+
+        {/* Soft green hills — atmospheric mid-ground */}
+        <path
+          fill="url(#greenHill)"
+          opacity="0.92"
+          d="M0 275
+             C140 255 250 248 380 265
+             C520 245 660 252 820 268
+             C980 252 1140 258 1280 272
+             C1360 265 1410 268 1440 275
+             L1440 360 L0 360 Z"
+        />
+
+        {/* Front green hills — richer organic curves */}
+        <path
+          fill="url(#greenHillFront)"
+          d="M0 300
+             C110 285 200 278 310 292
+             C440 272 580 280 720 295
+             C860 278 1010 285 1160 298
+             C1280 288 1380 292 1440 300
+             L1440 360 L0 360 Z"
+        />
+
+        {/* Soft shade on green for depth */}
+        <path
+          fill="#2A5538"
+          opacity="0.16"
+          d="M0 320 C160 308 320 312 480 322 C700 308 920 315 1140 328 C1300 318 1400 320 1440 322 L1440 360 L0 360 Z"
+        />
+
+        {/* Foreground dark navy hills */}
+        <path
+          fill="url(#navyRidge)"
+          d="M0 328
+             C85 316 165 310 255 322
+             C370 308 490 314 610 326
+             C760 310 920 318 1070 330
+             C1200 318 1330 322 1440 334
+             L1440 360 L0 360 Z"
+        />
+        <rect x="0" y="348" width="1440" height="12" fill={NAVY} />
+
+        {/* Three trekkers walking uphill on left navy ridge */}
+        <Trekker x={168} y={324} scale={1.08} />
+        <Trekker x={202} y={320} scale={1} />
+        <Trekker x={234} y={325} scale={0.9} />
+
+        {/* Prayer flags on right hilltop */}
         <g>
-          <rect x="1325" y="200" width="3" height="42" fill={NAVY} rx="1" />
-          <path d="M1318 200 L1335 200 L1326.5 192 Z" fill={NAVY} />
-          <path d="M1328 205 L1395 218" stroke="#E85D4C" strokeWidth="2" />
-          <path d="M1328 210 L1390 225" stroke="#F4A623" strokeWidth="2" />
-          <path d="M1328 215 L1385 232" stroke="#4A90D9" strokeWidth="2" />
-          <path d="M1328 220 L1380 238" stroke="#FFFFFF" strokeWidth="1.8" />
-          <path d="M1328 225 L1375 242" stroke="#3D9B6E" strokeWidth="2" />
+          <rect x="1275" y={278} width="3.5" height="54" rx="1" fill={NAVY} />
+          <path d="M1267 278 L1286 278 L1276.5 267 Z" fill={NAVY} />
+          <path d="M1279 285 C1310 290 1350 300 1395 308" fill="none" stroke="#E85D4C" strokeWidth="2.5" strokeLinecap="round" />
+          <path d="M1279 292 C1308 298 1345 309 1388 318" fill="none" stroke="#F4A623" strokeWidth="2.4" strokeLinecap="round" />
+          <path d="M1279 299 C1305 306 1340 317 1380 327" fill="none" stroke="#4A90D9" strokeWidth="2.3" strokeLinecap="round" />
+          <path d="M1279 306 C1302 313 1334 324 1372 335" fill="none" stroke="#FFFFFF" strokeWidth="2.2" strokeLinecap="round" />
+          <path d="M1279 313 C1298 320 1328 331 1362 342" fill="none" stroke="#3D9B6E" strokeWidth="2.3" strokeLinecap="round" />
+          <ellipse cx="1408" cy="338" rx="11" ry="4.5" fill={NAVY} opacity="0.9" />
+          <rect x="1400" y="324" width="16" height="12" rx="2" fill={NAVY} />
+          <rect x="1404" y="314" width="9" height="10" rx="1.5" fill={NAVY} />
         </g>
       </svg>
     </div>
@@ -165,7 +270,7 @@ export function Footer() {
   return (
     <footer className="relative w-full overflow-hidden bg-white">
       {/* ===== TOP WHITE: logo + partners ===== */}
-      <div className="bg-white px-5 pb-6 pt-14 sm:px-8 sm:pt-16 lg:px-10 lg:pt-20">
+      <div className="bg-white px-5 pb-0 pt-8 sm:px-8 sm:pt-10 lg:px-10 lg:pt-12">
         <div className="mx-auto flex max-w-[1320px] flex-col items-center">
           <Link href="/" aria-label="Summit Seek — Home" className="bg-transparent">
             <Image
@@ -174,12 +279,12 @@ export function Footer() {
               width={1024}
               height={576}
               unoptimized
-              className="h-auto w-[300px] bg-transparent object-contain sm:w-[340px] lg:w-[370px]"
-              sizes="370px"
+              className="h-auto w-[320px] bg-transparent object-contain sm:w-[400px] lg:w-[440px]"
+              sizes="(max-width: 640px) 320px, (max-width: 1024px) 400px, 440px"
             />
           </Link>
 
-          <div className="mt-8 flex flex-wrap items-center justify-center gap-3 sm:mt-10 sm:gap-4">
+          <div className="mt-5 flex flex-wrap items-center justify-center gap-3 sm:mt-6 sm:gap-4">
             {footerPartners.map((partner, i) => (
               <motion.a
                 key={partner.id}
@@ -189,11 +294,11 @@ export function Footer() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ duration: 0.4, delay: i * 0.06, ease }}
-                className="flex size-[78px] flex-col items-center justify-center rounded-2xl border border-[#e8ebf0] bg-white shadow-[0_8px_24px_rgba(8,18,30,0.06)] transition-all duration-300 hover:-translate-y-1.5 hover:shadow-[0_14px_32px_rgba(8,18,30,0.1)] sm:size-[90px]"
+                className="box-border flex h-[90px] w-[90px] flex-col items-center justify-center rounded-[14px] border border-[#e8ebf0] bg-white shadow-[0_10px_28px_rgba(8,18,30,0.08)] transition-all duration-300 hover:-translate-y-1.5 hover:shadow-[0_14px_32px_rgba(8,18,30,0.12)]"
               >
                 {/* Editable placeholder — replace with partner logo images later */}
                 <span
-                  className="text-[11px] font-bold tracking-wide sm:text-[12px]"
+                  className="text-[12px] font-bold tracking-wide"
                   style={{ color: NAVY }}
                 >
                   {partner.abbr}
@@ -208,7 +313,7 @@ export function Footer() {
       <HimalayanLandscape />
 
       {/* ===== LOWER NAVY: 6 columns ===== */}
-      <div style={{ background: NAVY }} className="relative -mt-px px-5 pb-16 pt-10 sm:px-8 sm:pb-20 sm:pt-12 lg:px-10">
+      <div style={{ background: NAVY }} className="relative -mt-px px-5 pb-16 pt-12 sm:px-8 sm:pb-20 sm:pt-14 lg:px-10 lg:pt-16">
         <div className="mx-auto grid max-w-[1320px] gap-10 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 xl:gap-7">
           {/* Col 1 — Brand */}
           <motion.div
