@@ -4,15 +4,7 @@ import { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { motion } from "framer-motion";
-import {
-  Search,
-  ShieldCheck,
-  Mountain,
-  Users,
-  Star,
-  Play,
-  Phone,
-} from "lucide-react";
+import { Search, Play, Phone } from "lucide-react";
 
 const ease = [0.22, 1, 0.36, 1] as const;
 
@@ -34,7 +26,6 @@ export function Hero() {
 
   return (
     <section className="relative h-[100svh] min-h-[640px] w-full overflow-hidden bg-[#08121E]">
-      {/* Full-bleed 16:9 photo — edge to edge, no side bars, no CSS zoom scale */}
       <div className="absolute inset-0">
         <Image
           src="/hero-summit.png"
@@ -53,12 +44,12 @@ export function Hero() {
       </div>
 
       <div className="relative z-10 flex h-full flex-col">
-        {/* Main content — compact so everything fits without scrolling */}
-        <div className="mx-auto flex w-full max-w-[1440px] flex-1 flex-col justify-center px-5 pt-[120px] pb-3 sm:px-8 lg:px-12 lg:pt-[128px]">
-          <div className="max-w-[620px]">
+        {/* Content lower — clear gap under header/logo */}
+        <div className="mx-auto flex w-full max-w-[1440px] flex-1 flex-col justify-center px-5 pt-[168px] pb-4 sm:px-8 lg:px-12 lg:pt-[180px]">
+          <div className="max-w-[560px]">
             <motion.h1
               {...fadeUp(0.06)}
-              className="font-[family-name:var(--font-display)] text-[2.4rem] font-bold leading-[1.05] tracking-[-0.02em] text-white sm:text-5xl md:text-[3.4rem] lg:text-[3.9rem]"
+              className="font-[family-name:var(--font-display)] text-[1.9rem] font-bold leading-[1.08] tracking-[-0.02em] text-white sm:text-[2.45rem] md:text-[2.7rem] lg:text-[3.1rem]"
             >
               Explore Nepal{" "}
               <span className="italic text-[#D8A73C]">Beyond</span>
@@ -68,78 +59,43 @@ export function Hero() {
 
             <motion.p
               {...fadeUp(0.12)}
-              className="mt-3 max-w-[500px] text-[14px] leading-[1.6] text-white/90 sm:mt-4 sm:text-[16px]"
+              className="mt-3 max-w-[460px] text-[13px] leading-[1.65] text-white/90 sm:mt-3.5 sm:text-[14px] md:text-[15px]"
             >
               Bespoke treks, peak climbs, and luxury journeys crafted for
               travelers who expect excellence — from the first step to the final
               summit.
             </motion.p>
 
-            {/* Glass wall: search + stats together */}
-            <motion.div
+            {/* Search only — stats removed; positioned lower */}
+            <motion.form
               {...fadeUp(0.2)}
-              className="mt-5 rounded-[22px] border border-white/15 bg-[rgba(8,18,30,0.42)] p-3 shadow-[0_20px_50px_rgba(0,0,0,0.28)] backdrop-blur-xl sm:mt-6 sm:p-4"
+              className="mt-10 flex h-[52px] w-full max-w-[640px] items-center rounded-full bg-white p-[5px] shadow-[0_18px_50px_rgba(0,0,0,0.28)] sm:mt-12 sm:h-[60px] sm:p-1.5"
+              onSubmit={(e) => e.preventDefault()}
             >
-              <form
-                className="flex h-[52px] w-full items-center rounded-full bg-white p-[5px] sm:h-[60px] sm:p-1.5"
-                onSubmit={(e) => e.preventDefault()}
+              <div className="flex min-w-0 flex-1 items-center gap-2.5 pl-3.5 sm:gap-3 sm:pl-5">
+                <Search className="size-[18px] shrink-0 text-[#D8A73C] sm:size-5" />
+                <label className="sr-only" htmlFor="hero-search">
+                  Search destinations
+                </label>
+                <input
+                  id="hero-search"
+                  type="search"
+                  value={query}
+                  onChange={(e) => setQuery(e.target.value)}
+                  placeholder="Where do you want to go? (e.g. Everest Base Camp, Annapurna Circuit)"
+                  className="w-full min-w-0 bg-transparent text-[12px] font-medium text-[#08121E] outline-none placeholder:text-[#9aa3b2] sm:text-[14px]"
+                />
+              </div>
+              <button
+                type="submit"
+                className="h-full shrink-0 rounded-full bg-[#D8A73C] px-4 text-[10px] font-semibold tracking-wide text-[#08121E] transition-all duration-[350ms] ease-[cubic-bezier(0.22,1,0.36,1)] hover:-translate-y-px hover:bg-[#c49630] sm:px-6 sm:text-[13px]"
               >
-                <div className="flex min-w-0 flex-1 items-center gap-2.5 pl-3.5 sm:gap-3 sm:pl-5">
-                  <Search className="size-[18px] shrink-0 text-[#D8A73C] sm:size-5" />
-                  <label className="sr-only" htmlFor="hero-search">
-                    Search destinations
-                  </label>
-                  <input
-                    id="hero-search"
-                    type="search"
-                    value={query}
-                    onChange={(e) => setQuery(e.target.value)}
-                    placeholder="Where do you want to go? (e.g. Everest Base Camp, Annapurna Circuit)"
-                    className="w-full min-w-0 bg-transparent text-[12px] font-medium text-[#08121E] outline-none placeholder:text-[#9aa3b2] sm:text-[14px]"
-                  />
-                </div>
-                <button
-                  type="submit"
-                  className="h-full shrink-0 rounded-full bg-[#D8A73C] px-4 text-[10px] font-semibold tracking-wide text-[#08121E] transition-all duration-[350ms] ease-[cubic-bezier(0.22,1,0.36,1)] hover:-translate-y-px hover:bg-[#c49630] sm:px-6 sm:text-[13px]"
-                >
-                  SEARCH JOURNEYS
-                </button>
-              </form>
-
-              <ul className="mt-3 flex flex-wrap items-center gap-x-1 gap-y-2 sm:mt-4 sm:gap-x-0">
-                {[
-                  { icon: Mountain, value: "20+", label: "Years of Experience" },
-                  { icon: Users, value: "3,000+", label: "Happy Travelers" },
-                  { icon: Star, value: "4.9/5", label: "Google Reviews" },
-                  { icon: ShieldCheck, value: "Licensed", label: "Govt. of Nepal" },
-                ].map((stat, i) => (
-                  <li
-                    key={stat.label}
-                    className="flex items-center gap-2 px-2 sm:gap-2.5 sm:px-3 lg:px-4"
-                  >
-                    {i > 0 ? (
-                      <span
-                        className="mr-2 hidden h-8 w-px bg-white/20 sm:mr-3 sm:block"
-                        aria-hidden
-                      />
-                    ) : null}
-                    <stat.icon className="size-4 shrink-0 text-[#D8A73C] sm:size-5" strokeWidth={1.75} />
-                    <div>
-                      <p className="text-[12px] font-bold leading-none text-white sm:text-[14px]">
-                        {stat.value}
-                      </p>
-                      <p className="mt-1 text-[9px] font-medium text-white/80 sm:text-[11px]">
-                        {stat.label}
-                      </p>
-                    </div>
-                  </li>
-                ))}
-              </ul>
-            </motion.div>
+                SEARCH JOURNEYS
+              </button>
+            </motion.form>
           </div>
         </div>
 
-        {/* Bottom glass panels — first viewport */}
         <div className="mx-auto w-full max-w-[1440px] px-5 pb-4 sm:px-8 lg:px-12 lg:pb-5">
           <motion.div
             {...fadeUp(0.28)}

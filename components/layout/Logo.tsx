@@ -5,10 +5,12 @@ import { cn } from "@/lib/utils";
 interface LogoProps {
   className?: string;
   priority?: boolean;
+  /** Light glass header — softer dark edge so logo stays crisp */
+  onLight?: boolean;
 }
 
 /** Official Summit Seek logo — +20% size, transparent, no box */
-export function Logo({ className, priority = false }: LogoProps) {
+export function Logo({ className, priority = false, onLight = false }: LogoProps) {
   return (
     <Link
       href="/"
@@ -22,7 +24,10 @@ export function Logo({ className, priority = false }: LogoProps) {
         height={572}
         priority={priority}
         unoptimized
-        className="logo-clear h-auto w-[180px] max-h-[86px] object-contain object-left md:w-[204px] md:max-h-[94px] lg:w-[240px] lg:max-h-[104px] xl:w-[264px] xl:max-h-[110px]"
+        className={cn(
+          "h-auto w-[180px] max-h-[86px] object-contain object-left md:w-[204px] md:max-h-[94px] lg:w-[240px] lg:max-h-[104px] xl:w-[264px] xl:max-h-[110px]",
+          onLight ? "logo-clear-light" : "logo-clear",
+        )}
         sizes="(max-width: 768px) 180px, (max-width: 1024px) 204px, 264px"
       />
     </Link>

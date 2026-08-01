@@ -35,22 +35,25 @@ export function Header() {
     };
   }, [mobileOpen]);
 
+  const navText = scrolled
+    ? "text-[#08121E] hover:text-[#D8A73C]"
+    : "text-white hover:text-[#D8A73C]";
+
   return (
     <header
       className={cn(
         "fixed inset-x-0 top-0 z-50 transition-all",
         ease,
         scrolled
-          ? "border-b border-white/[0.08] bg-[rgba(5,12,20,0.92)] backdrop-blur-[18px]"
+          ? "border-b border-black/[0.06] bg-[rgba(255,255,255,0.78)] shadow-[0_8px_32px_rgba(8,18,30,0.08)] backdrop-blur-[20px]"
           : "bg-transparent",
       )}
     >
-      <TopBar />
+      <TopBar scrolled={scrolled} />
 
       <Container className="relative">
-        {/* 3-column flex — prevents nav from sliding under phone CTA */}
         <div className="grid h-[110px] grid-cols-[auto_1fr_auto] items-center gap-4 lg:h-[120px] lg:gap-6">
-          <Logo priority />
+          <Logo priority onLight={scrolled} />
 
           <nav
             className="relative hidden min-w-0 justify-center xl:flex"
@@ -70,9 +73,10 @@ export function Header() {
                         onMouseEnter={() => setMegaOpen(true)}
                         onFocus={() => setMegaOpen(true)}
                         className={cn(
-                          "nav-link inline-flex items-center gap-1 whitespace-nowrap py-3 text-[11px] font-bold text-white xl:text-[12px] 2xl:text-[13px]",
-                          "transition-colors hover:text-[#D8A73C]",
+                          "nav-link inline-flex items-center gap-1 whitespace-nowrap py-3 text-[11px] font-bold xl:text-[12px] 2xl:text-[13px]",
+                          "transition-colors",
                           ease,
+                          navText,
                         )}
                         aria-expanded={megaOpen}
                         aria-haspopup="true"
@@ -92,9 +96,10 @@ export function Header() {
                       href={item.href}
                       onMouseEnter={() => setMegaOpen(false)}
                       className={cn(
-                        "nav-link inline-flex items-center gap-1 whitespace-nowrap py-3 text-[11px] font-bold text-white xl:text-[12px] 2xl:text-[13px]",
-                        "transition-colors hover:text-[#D8A73C]",
+                        "nav-link inline-flex items-center gap-1 whitespace-nowrap py-3 text-[11px] font-bold xl:text-[12px] 2xl:text-[13px]",
+                        "transition-colors",
                         ease,
+                        navText,
                       )}
                     >
                       {item.label}
@@ -113,9 +118,12 @@ export function Header() {
               target="_blank"
               rel="noopener noreferrer"
               className={cn(
-                "hidden items-center gap-2 rounded-full border border-white/20 bg-[#0a1018]/60 px-3.5 py-2.5 text-[12px] font-semibold text-white backdrop-blur-md xl:inline-flex",
+                "hidden items-center gap-2 rounded-full px-3.5 py-2.5 text-[12px] font-semibold backdrop-blur-md xl:inline-flex",
                 "transition-all hover:border-[#D8A73C]/50",
                 ease,
+                scrolled
+                  ? "border border-black/10 bg-white/70 text-[#08121E]"
+                  : "border border-white/20 bg-[#0a1018]/60 text-white",
               )}
             >
               <MessageCircle className="size-3.5 text-[#25D366]" />
@@ -135,9 +143,12 @@ export function Header() {
             <button
               type="button"
               className={cn(
-                "inline-flex size-11 items-center justify-center rounded-[12px] border border-white/25 text-white xl:hidden",
+                "inline-flex size-11 items-center justify-center rounded-[12px] xl:hidden",
                 "transition-colors hover:border-[#D8A73C] hover:text-[#D8A73C]",
                 ease,
+                scrolled
+                  ? "border border-black/15 text-[#08121E]"
+                  : "border border-white/25 text-white",
               )}
               aria-label={mobileOpen ? "Close menu" : "Open menu"}
               aria-expanded={mobileOpen}
