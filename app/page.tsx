@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Hero } from "@/components/home/Hero";
 import { AboutIntro } from "@/components/home/AboutIntro";
 import { PopularTrekkingPackages } from "@/components/home/PopularTrekkingPackages";
+import { WhatWeOffer } from "@/components/home/WhatWeOffer";
 import { TrustedBy } from "@/components/home/TrustedBy";
 import { FeaturedTreks } from "@/components/home/FeaturedTreks";
 import { LuxuryPackages } from "@/components/home/LuxuryPackages";
@@ -35,6 +36,7 @@ export default function HomePage() {
       <Hero />
       <AboutIntro />
       <PopularTrekkingPackages />
+      <WhatWeOffer />
       <TrustedBy />
       <FeaturedTreks />
       <LuxuryPackages />
