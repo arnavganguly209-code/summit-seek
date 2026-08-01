@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { AnimatePresence, motion } from "framer-motion";
-import { Menu, X, ChevronDown, Mail, Phone, MessageCircle, ArrowRight } from "lucide-react";
+import { Menu, X, ChevronDown, Mail, Phone, ArrowRight } from "lucide-react";
 import { Logo } from "@/components/layout/Logo";
 import { TopBar } from "@/components/layout/TopBar";
 import { DestinationsMegaMenu } from "@/components/layout/DestinationsMegaMenu";
@@ -72,7 +72,7 @@ export function Header() {
             aria-label="Primary"
             onMouseLeave={() => setMegaKind(null)}
           >
-            <ul className="flex flex-nowrap items-center justify-center gap-x-5 2xl:gap-x-7">
+            <ul className="flex flex-nowrap items-center justify-center gap-x-6 2xl:gap-x-8">
               {mainNav.map((item) => {
                 const showChevron = Boolean(item.dropdown || item.mega);
                 const kind = megaKindForLabel(item.label);
@@ -139,22 +139,6 @@ export function Header() {
           </nav>
 
           <div className="flex shrink-0 items-center justify-end gap-2.5 lg:gap-3">
-            <a
-              href={`https://wa.me/${SITE.whatsapp.replace(/\D/g, "")}`}
-              target="_blank"
-              rel="noopener noreferrer"
-              className={cn(
-                "hidden items-center gap-2 rounded-full px-3.5 py-2.5 text-[12px] font-semibold backdrop-blur-md xl:inline-flex",
-                "transition-all hover:border-[#D8A73C]/50",
-                ease,
-                scrolled
-                  ? "border border-black/10 bg-white/70 text-[#08121E]"
-                  : "border border-white/20 bg-[#0a1018]/60 text-white",
-              )}
-            >
-              <MessageCircle className="size-3.5 text-[#25D366]" />
-              {SITE.phoneDisplay}
-            </a>
             <Link
               href="/plan-your-trip"
               className={cn(

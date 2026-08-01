@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { motion } from "framer-motion";
@@ -8,16 +8,29 @@ import { Search, Play, Phone } from "lucide-react";
 
 const ease = [0.22, 1, 0.36, 1] as const;
 
-const fadeUp = (delay = 0) => ({
-  initial: { opacity: 0, y: 16 },
-  animate: { opacity: 1, y: 0 },
-  transition: { duration: 0.65, delay, ease },
-});
+const titleWords = [
+  { text: "Explore", gold: false },
+  { text: "Nepal", gold: false },
+  { text: "Beyond", gold: true },
+  { text: "The", gold: false, breakBefore: true },
+  { text: "Ordinary", gold: false },
+] as const;
 
-const LINE_1 = "Explore Nepal Beyond";
-const LINE_2 = "The Ordinary";
-const BEYOND_START = LINE_1.indexOf("Beyond");
-const CHAR_MS = 38;
+const titleContainer = {
+  initial: {},
+  animate: {
+    transition: { staggerChildren: 0.25, delayChildren: 0.05 },
+  },
+};
+
+const titleWord = {
+  initial: { opacity: 0, y: 16 },
+  animate: {
+    opacity: 1,
+    y: 0,
+    transition: { duration: 0.25, ease },
+  },
+};
 
 const avatars = [
   "https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&w=80&q=80",
@@ -26,90 +39,31 @@ const avatars = [
   "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?auto=format&fit=crop&w=80&q=80",
 ];
 
-function TypewriterTitle() {
-  const [count, setCount] = useState(0);
-  const total = LINE_1.length + LINE_2.length;
-  const done = count >= total;
-
-  useEffect(() => {
-    let i = 0;
-    let timer: ReturnType<typeof setTimeout>;
-
-    const tick = () => {
-      i += 1;
-      setCount(i);
-      if (i < total) {
-        timer = setTimeout(tick, CHAR_MS);
-      }
-    };
-
-    timer = setTimeout(tick, 280);
-    return () => clearTimeout(timer);
-  }, [total]);
-
-  const line1Visible = Math.min(count, LINE_1.length);
-  const line2Visible = Math.max(0, count - LINE_1.length);
-  const beforeBeyond = LINE_1.slice(0, BEYOND_START);
-  const beyond = LINE_1.slice(BEYOND_START);
-
+function HeroHeading() {
   return (
-    <h1
+    <motion.h1
+      variants={titleContainer}
+      initial="initial"
+      animate="animate"
       className="font-[family-name:var(--font-display)] text-[1.95rem] font-bold leading-[1.12] tracking-[-0.02em] text-white sm:text-[2.55rem] md:text-[2.85rem] lg:text-[3.35rem]"
       aria-label="Explore Nepal Beyond The Ordinary"
     >
-      <span className="block">
-        {beforeBeyond.split("").map((char, index) => (
-          <span
-            key={`pre-${index}`}
-            style={{
-              opacity: index < line1Visible ? 1 : 0,
-              transition: "opacity 0.2s ease",
-            }}
+      {titleWords.map((word) => (
+        <span key={word.text}>
+          {"breakBefore" in word && word.breakBefore ? <br /> : null}
+          <motion.span
+            variants={titleWord}
+            className={
+              word.gold
+                ? "mr-[0.28em] inline-block bg-gradient-to-r from-[#F0D078] via-[#D8A73C] to-[#B8892A] bg-clip-text italic text-transparent"
+                : "mr-[0.28em] inline-block"
+            }
           >
-            {char === " " ? "\u00A0" : char}
-          </span>
-        ))}
-        <span className="bg-gradient-to-r from-[#F0D078] via-[#D8A73C] to-[#B8892A] bg-clip-text italic text-transparent">
-          {beyond.split("").map((char, index) => {
-            const globalIndex = BEYOND_START + index;
-            return (
-              <span
-                key={`beyond-${index}`}
-                style={{
-                  opacity: globalIndex < line1Visible ? 1 : 0,
-                  transition: "opacity 0.2s ease",
-                }}
-              >
-                {char}
-              </span>
-            );
-          })}
+            {word.text}
+          </motion.span>
         </span>
-      </span>
-      <span className="block">
-        {LINE_2.split("").map((char, index) => (
-          <span
-            key={`l2-${index}`}
-            style={{
-              opacity: index < line2Visible ? 1 : 0,
-              transition: "opacity 0.2s ease",
-            }}
-          >
-            {char === " " ? "\u00A0" : char}
-          </span>
-        ))}
-        <span
-          className="ml-0.5 inline-block w-[2px] translate-y-[0.08em] bg-[#D8A73C]"
-          style={{
-            height: "0.85em",
-            opacity: done ? 0 : 1,
-            transition: "opacity 0.4s ease",
-            animation: done ? undefined : "hero-caret 1s steps(1) infinite",
-          }}
-          aria-hidden
-        />
-      </span>
-    </h1>
+      ))}
+    </motion.h1>
   );
 }
 
@@ -138,19 +92,15 @@ export function Hero() {
       <div className="relative z-10 flex h-full flex-col">
         <div className="mx-auto flex w-full max-w-[1440px] flex-1 flex-col justify-center px-5 pt-[160px] pb-3 sm:px-8 lg:px-12 lg:pt-[172px]">
           <div className="max-w-[620px]">
-            <TypewriterTitle />
+            <HeroHeading />
 
-            <motion.p
-              {...fadeUp(1.35)}
-              className="mt-4 max-w-[480px] text-[13px] leading-[1.65] text-white/90 sm:mt-5 sm:text-[14px] md:text-[15px]"
-            >
+            <p className="mt-4 max-w-[480px] text-[13px] leading-[1.65] text-white/90 sm:mt-5 sm:text-[14px] md:text-[15px]">
               Bespoke treks, peak climbs, and luxury journeys crafted for
               travelers who expect excellence — from the first step to the final
               summit.
-            </motion.p>
+            </p>
 
-            <motion.form
-              {...fadeUp(1.55)}
+            <form
               className="mt-8 flex h-[52px] w-full max-w-[640px] items-center rounded-full border border-white/50 bg-white/92 p-[5px] shadow-[0_18px_50px_rgba(0,0,0,0.28)] backdrop-blur-xl sm:mt-10 sm:h-[60px] sm:p-1.5"
               onSubmit={(e) => e.preventDefault()}
             >
@@ -174,15 +124,12 @@ export function Hero() {
               >
                 SEARCH JOURNEYS
               </button>
-            </motion.form>
+            </form>
           </div>
         </div>
 
         <div className="mx-auto w-full max-w-[1440px] px-5 pb-4 sm:px-8 lg:px-12 lg:pb-5">
-          <motion.div
-            {...fadeUp(1.7)}
-            className="flex flex-col gap-2.5 lg:flex-row lg:items-stretch lg:justify-between"
-          >
+          <div className="flex flex-col gap-2.5 lg:flex-row lg:items-stretch lg:justify-between">
             <Link
               href="/about#story"
               className="group flex flex-1 flex-col gap-3 rounded-[18px] border border-white/12 bg-[rgba(8,18,30,0.55)] p-3 backdrop-blur-xl transition-all duration-[350ms] hover:border-[#D8A73C]/35 sm:flex-row sm:items-center sm:gap-4 sm:p-3.5 lg:max-w-[720px]"
@@ -234,7 +181,7 @@ export function Hero() {
                 <Phone className="size-4" />
               </a>
             </div>
-          </motion.div>
+          </div>
         </div>
       </div>
     </section>
