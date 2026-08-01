@@ -37,7 +37,7 @@ const socials = [
 
 function HimalayanLandscape() {
   return (
-    <div className="relative -mt-4 w-full overflow-hidden leading-none sm:-mt-6" aria-hidden>
+    <div className="relative mt-0 w-full overflow-hidden leading-none" aria-hidden>
       <svg
         viewBox="0 0 1440 360"
         preserveAspectRatio="xMidYMax slice"
@@ -245,7 +245,7 @@ export function Footer() {
   return (
     <footer className="relative w-full overflow-hidden bg-white">
       {/* ===== TOP WHITE: logo + partners ===== */}
-      <div className="bg-white px-5 pb-0 pt-8 sm:px-8 sm:pt-10 lg:px-10 lg:pt-12">
+      <div className="relative z-10 bg-white px-5 pb-8 pt-8 sm:px-8 sm:pb-10 sm:pt-10 lg:px-10 lg:pb-12 lg:pt-12">
         <div className="mx-auto flex max-w-[1320px] flex-col items-center">
           <Link href="/" aria-label="Summit Seek — Home" className="bg-transparent">
             <Image
@@ -259,7 +259,7 @@ export function Footer() {
             />
           </Link>
 
-          <div className="mt-5 flex flex-wrap items-center justify-center gap-3 sm:mt-6 sm:gap-4 lg:gap-5">
+          <div className="mt-3 flex flex-wrap items-center justify-center gap-3 sm:mt-4 sm:gap-4 lg:gap-5">
             {footerPartners.map((partner, i) => (
               <motion.a
                 key={partner.id}
