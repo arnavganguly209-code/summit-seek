@@ -4,7 +4,7 @@ import { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { motion } from "framer-motion";
-import { Mail, Phone, MapPin, MessageCircle, Star, ChevronRight } from "lucide-react";
+import { Mail, Phone, MapPin, MessageCircle, ChevronRight } from "lucide-react";
 import {
   FacebookIcon,
   InstagramIcon,
@@ -12,6 +12,7 @@ import {
   LinkedInIcon,
   TripadvisorIcon,
 } from "@/components/ui/SocialIcons";
+import { TravelersChoiceBadges } from "@/components/layout/TravelersChoiceBadges";
 import { SITE, SOCIAL } from "@/lib/constants";
 import {
   footerPartners,
@@ -258,25 +259,28 @@ export function Footer() {
             />
           </Link>
 
-          <div className="mt-5 flex flex-wrap items-center justify-center gap-3 sm:mt-6 sm:gap-4">
+          <div className="mt-5 flex flex-wrap items-center justify-center gap-3 sm:mt-6 sm:gap-4 lg:gap-5">
             {footerPartners.map((partner, i) => (
               <motion.a
                 key={partner.id}
                 href={partner.href}
+                target="_blank"
+                rel="noopener noreferrer"
                 aria-label={partner.label}
                 initial={{ opacity: 0, y: 12 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ duration: 0.4, delay: i * 0.06, ease }}
-                className="box-border flex h-[90px] w-[90px] flex-col items-center justify-center rounded-[14px] border border-[#e8ebf0] bg-white shadow-[0_10px_28px_rgba(8,18,30,0.08)] transition-all duration-300 hover:-translate-y-1.5 hover:shadow-[0_14px_32px_rgba(8,18,30,0.12)]"
+                className="box-border flex h-[100px] w-[100px] items-center justify-center rounded-[14px] border border-[#e8ebf0] bg-white p-2.5 shadow-[0_10px_28px_rgba(8,18,30,0.08)] transition-all duration-300 hover:-translate-y-1.5 hover:shadow-[0_14px_32px_rgba(8,18,30,0.12)] sm:h-[112px] sm:w-[112px] sm:p-3"
               >
-                {/* Editable placeholder — replace with partner logo images later */}
-                <span
-                  className="text-[12px] font-bold tracking-wide"
-                  style={{ color: NAVY }}
-                >
-                  {partner.abbr}
-                </span>
+                <Image
+                  src={partner.logo}
+                  alt={partner.label}
+                  width={160}
+                  height={160}
+                  unoptimized
+                  className="h-full w-full object-contain"
+                />
               </motion.a>
             ))}
           </div>
@@ -414,40 +418,7 @@ export function Footer() {
               </button>
             </form>
 
-            <div className="mt-5 space-y-3">
-              <a
-                href={SOCIAL.google}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="flex items-center gap-3 rounded-xl border border-white/10 bg-white/[0.04] px-3 py-2.5 transition-colors hover:border-[#F4A623]/40"
-              >
-                <span className="text-[18px] font-bold text-[#4285F4]">G</span>
-                <div>
-                  <div className="flex" style={{ color: ORANGE }}>
-                    {Array.from({ length: 5 }).map((_, i) => (
-                      <Star key={i} className="size-3 fill-current" />
-                    ))}
-                  </div>
-                  <p className="mt-0.5 text-[12px] font-semibold text-white">
-                    {SITE.googleRating}/5
-                  </p>
-                </div>
-              </a>
-              <a
-                href={SOCIAL.tripadvisor}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="flex items-center gap-3 rounded-xl border border-white/10 bg-white/[0.04] px-3 py-2.5 transition-colors hover:border-[#F4A623]/40"
-              >
-                <TripadvisorIcon className="size-5 text-[#00aa6c]" />
-                <div>
-                  <p className="text-[12px] font-bold text-white">Tripadvisor</p>
-                  <p className="text-[11px]" style={{ color: TEXT }}>
-                    Travelers Choice
-                  </p>
-                </div>
-              </a>
-            </div>
+            <TravelersChoiceBadges />
           </motion.div>
         </div>
       </div>

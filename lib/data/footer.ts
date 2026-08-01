@@ -1,33 +1,38 @@
 export const footerPartners = [
   {
     id: "gov",
-    label: "Govt. of Nepal Tourism",
+    label: "Government of Nepal",
     abbr: "GON",
-    href: "#",
+    href: "https://www.nepal.gov.np/",
+    logo: "/partners/gon.png",
   },
   {
     id: "ntb",
     label: "Nepal Tourism Board",
     abbr: "NTB",
-    href: "#",
+    href: "https://www.ntb.gov.np/",
+    logo: "/partners/ntb.png",
   },
   {
     id: "taan",
-    label: "TAAN",
+    label: "Trekking Agencies' Association of Nepal",
     abbr: "TAAN",
-    href: "#",
+    href: "https://www.taan.org.np/",
+    logo: "/partners/taan.png",
   },
   {
     id: "nma",
     label: "Nepal Mountaineering Association",
     abbr: "NMA",
-    href: "#",
+    href: "https://www.nepalmountaineering.org/",
+    logo: "/partners/nma.png",
   },
   {
     id: "keep",
-    label: "KEEP",
+    label: "Kathmandu Environmental Education Project",
     abbr: "KEEP",
-    href: "#",
+    href: "https://keepnepal.org/",
+    logo: "/partners/keep.png",
   },
 ] as const;
 
