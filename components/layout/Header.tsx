@@ -73,7 +73,7 @@ export function Header() {
                         onMouseEnter={() => setMegaOpen(true)}
                         onFocus={() => setMegaOpen(true)}
                         className={cn(
-                          "nav-link inline-flex items-center gap-1 whitespace-nowrap py-3 text-[11px] font-bold xl:text-[12px] 2xl:text-[13px]",
+                          "nav-link inline-flex items-center gap-1 whitespace-nowrap py-3 text-[12px] font-extrabold xl:text-[13px] 2xl:text-[14px]",
                           "transition-colors",
                           ease,
                           navText,
@@ -96,7 +96,7 @@ export function Header() {
                       href={item.href}
                       onMouseEnter={() => setMegaOpen(false)}
                       className={cn(
-                        "nav-link inline-flex items-center gap-1 whitespace-nowrap py-3 text-[11px] font-bold xl:text-[12px] 2xl:text-[13px]",
+                        "nav-link inline-flex items-center gap-1 whitespace-nowrap py-3 text-[12px] font-extrabold xl:text-[13px] 2xl:text-[14px]",
                         "transition-colors",
                         ease,
                         navText,

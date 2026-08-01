@@ -14,6 +14,31 @@ const fadeUp = (delay = 0) => ({
   transition: { duration: 0.6, delay, ease },
 });
 
+const titleContainer = {
+  initial: {},
+  animate: {
+    transition: { staggerChildren: 0.09, delayChildren: 0.15 },
+  },
+};
+
+const titleWord = {
+  initial: { opacity: 0, y: 40, filter: "blur(8px)" },
+  animate: {
+    opacity: 1,
+    y: 0,
+    filter: "blur(0px)",
+    transition: { duration: 0.8, ease },
+  },
+};
+
+const titleWords = [
+  { text: "Explore", gold: false },
+  { text: "Nepal", gold: false },
+  { text: "Beyond", gold: true },
+  { text: "The", gold: false, breakBefore: true },
+  { text: "Ordinary", gold: false },
+] as const;
+
 const avatars = [
   "https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&w=80&q=80",
   "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=80&q=80",
@@ -48,17 +73,30 @@ export function Hero() {
         <div className="mx-auto flex w-full max-w-[1440px] flex-1 flex-col justify-center px-5 pt-[168px] pb-4 sm:px-8 lg:px-12 lg:pt-[180px]">
           <div className="max-w-[560px]">
             <motion.h1
-              {...fadeUp(0.06)}
+              variants={titleContainer}
+              initial="initial"
+              animate="animate"
               className="font-[family-name:var(--font-display)] text-[1.9rem] font-bold leading-[1.08] tracking-[-0.02em] text-white sm:text-[2.45rem] md:text-[2.7rem] lg:text-[3.1rem]"
             >
-              Explore Nepal{" "}
-              <span className="italic text-[#D8A73C]">Beyond</span>
-              <br />
-              The Ordinary
+              {titleWords.map((word) => (
+                <span key={word.text}>
+                  {"breakBefore" in word && word.breakBefore ? <br /> : null}
+                  <motion.span
+                    variants={titleWord}
+                    className={
+                      word.gold
+                        ? "mr-[0.28em] inline-block italic text-[#D8A73C] last:mr-0"
+                        : "mr-[0.28em] inline-block last:mr-0"
+                    }
+                  >
+                    {word.text}
+                  </motion.span>
+                </span>
+              ))}
             </motion.h1>
 
             <motion.p
-              {...fadeUp(0.12)}
+              {...fadeUp(0.72)}
               className="mt-3 max-w-[460px] text-[13px] leading-[1.65] text-white/90 sm:mt-3.5 sm:text-[14px] md:text-[15px]"
             >
               Bespoke treks, peak climbs, and luxury journeys crafted for
@@ -68,7 +106,7 @@ export function Hero() {
 
             {/* Search only — stats removed; positioned lower */}
             <motion.form
-              {...fadeUp(0.2)}
+              {...fadeUp(0.88)}
               className="mt-10 flex h-[52px] w-full max-w-[640px] items-center rounded-full bg-white p-[5px] shadow-[0_18px_50px_rgba(0,0,0,0.28)] sm:mt-12 sm:h-[60px] sm:p-1.5"
               onSubmit={(e) => e.preventDefault()}
             >
