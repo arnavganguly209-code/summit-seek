@@ -1,5 +1,7 @@
-import PlaceholderPage from "@/components/orbit/PlaceholderPage";
+import { getFeaturedPackages } from "@/lib/orbit/store";
+import { FeaturedPackagesEditor } from "@/components/orbit/FeaturedPackagesEditor";
 
-export default function Page() {
-  return <PlaceholderPage title="Packages" />;
+export default async function OrbitPackagesPage() {
+  const content = await getFeaturedPackages();
+  return <FeaturedPackagesEditor initial={content} />;
 }

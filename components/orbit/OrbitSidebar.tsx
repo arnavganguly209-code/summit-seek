@@ -30,7 +30,7 @@ const nav = [
         label: "Hero",
         icon: PanelsTopLeft,
       },
-      { href: "/orbit/dashboard/website/packages", label: "Packages", icon: Package },
+      { href: "/orbit/dashboard/website/packages", label: "Featured Packages", icon: Package },
       { href: "/orbit/dashboard/website/services", label: "Services", icon: BriefcaseBusiness },
       { href: "/orbit/dashboard/website/reviews", label: "Reviews", icon: MessageSquareQuote },
       { href: "/orbit/dashboard/website/about", label: "About", icon: Info },

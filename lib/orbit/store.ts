@@ -1,10 +1,13 @@
 import { promises as fs } from "fs";
 import path from "path";
 import type { HeroContent, MediaItem } from "@/types/hero";
+import type { FeaturedPackagesContent } from "@/types/featured-packages";
 import { DEFAULT_HERO } from "@/lib/orbit/defaults";
+import { DEFAULT_FEATURED_PACKAGES } from "@/lib/orbit/featured-packages-defaults";
 
 const DATA_DIR = path.join(process.cwd(), "data");
 const HERO_FILE = path.join(DATA_DIR, "hero.json");
+const FEATURED_PACKAGES_FILE = path.join(DATA_DIR, "featured-packages.json");
 const MEDIA_FILE = path.join(DATA_DIR, "media-library.json");
 export const MEDIA_LIBRARY_DIR = path.join(process.cwd(), "public", "media", "library");
 export const MEDIA_HERO_DIR = path.join(process.cwd(), "public", "media", "hero");
@@ -30,6 +33,58 @@ export async function getHeroContent(): Promise<HeroContent> {
 export async function saveHeroContent(content: HeroContent): Promise<void> {
   await ensureDataDir();
   await fs.writeFile(HERO_FILE, JSON.stringify(content, null, 2), "utf8");
+}
+
+function mergeFeaturedPackages(
+  stored: FeaturedPackagesContent | null,
+): FeaturedPackagesContent {
+  if (!stored?.categories?.length) return DEFAULT_FEATURED_PACKAGES;
+
+  return {
+    categories: DEFAULT_FEATURED_PACKAGES.categories.map((defCat) => {
+      const match = stored.categories.find((c) => c.id === defCat.id);
+      if (!match) return defCat;
+      const packages = defCat.packages.map((defPkg, index) => {
+        const saved = match.packages?.[index];
+        return saved ? { ...defPkg, ...saved, id: saved.id || defPkg.id } : defPkg;
+      });
+      while (packages.length < 4) {
+        const i = packages.length;
+        packages.push({
+          ...defCat.packages[i],
+          id: `${defCat.id}-${i + 1}`,
+        });
+      }
+      return {
+        ...defCat,
+        ...match,
+        id: defCat.id,
+        label: match.label?.trim() || defCat.label,
+        icon: match.icon || defCat.icon,
+        packages: packages.slice(0, 4),
+      };
+    }),
+  };
+}
+
+export async function getFeaturedPackages(): Promise<FeaturedPackagesContent> {
+  try {
+    const raw = await fs.readFile(FEATURED_PACKAGES_FILE, "utf8");
+    return mergeFeaturedPackages(JSON.parse(raw) as FeaturedPackagesContent);
+  } catch {
+    return DEFAULT_FEATURED_PACKAGES;
+  }
+}
+
+export async function saveFeaturedPackages(
+  content: FeaturedPackagesContent,
+): Promise<void> {
+  await ensureDataDir();
+  await fs.writeFile(
+    FEATURED_PACKAGES_FILE,
+    JSON.stringify(content, null, 2),
+    "utf8",
+  );
 }
 
 export async function getMediaLibrary(): Promise<MediaItem[]> {
@@ -110,7 +165,6 @@ export async function permanentlyDeleteMedia(opts: {
 
   await saveMediaLibrary(library);
 
-  // If hero currently points at deleted media, clear to default immediately
   let clearedHero = false;
   const hero = await getHeroContent();
   const heroUrl = cleanMediaUrl(hero.videoUrl);
