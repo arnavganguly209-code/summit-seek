@@ -45,3 +45,9 @@ next-env.d.ts
 /public/media/.uploads/
 /public/media/library/*
 !/public/media/library/.gitkeep
+
+runs.json
+jobs.json
+j1.json
+r1.json
+
