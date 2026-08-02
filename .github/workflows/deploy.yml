@@ -44,7 +44,6 @@ jobs:
           command_timeout: 30m
           max_attempts: 6
           backoff_coefficient: 2
-          fingerprint_path: /dev/null
           envs: PROJECT_PATH,PM2_APP
           script: |
             set -euo pipefail
