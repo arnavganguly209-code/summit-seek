@@ -5,7 +5,7 @@ export const mainNav: NavItem[] = [
   { label: "Trekking In Nepal", href: "/trekking", mega: true, dropdown: true },
   { label: "Travel Info", href: "/travel-guide", mega: true, dropdown: true },
   { label: "Company", href: "/about", mega: true, dropdown: true },
-  { label: "Travel Blogs", href: "/blog" },
+  { label: "Travel Articles", href: "/blog" },
   { label: "Contact Us", href: "/contact" },
 ];
 
