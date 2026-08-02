@@ -34,7 +34,6 @@ jobs:
         env:
           PROJECT_PATH: ${{ secrets.PROJECT_PATH }}
           PM2_APP: ${{ secrets.PM2_APP }}
-          ORBIT_PASSKEY: ${{ secrets.ORBIT_PASSKEY }}
         with:
           host: ${{ secrets.VPS_HOST }}
           username: ${{ secrets.VPS_USER }}
@@ -42,7 +41,7 @@ jobs:
           port: 22
           script_stop: true
           command_timeout: 20m
-          envs: PROJECT_PATH,PM2_APP,ORBIT_PASSKEY
+          envs: PROJECT_PATH,PM2_APP
           script: |
             set -euo pipefail
             echo "Deploying in: $PROJECT_PATH"
@@ -50,42 +49,14 @@ jobs:
             git fetch origin
             git reset --hard origin/main
 
-            # Ensure Orbit CMS passkey exists for next start (survives git reset)
-            ORBIT_KEY="${ORBIT_PASSKEY:-713304977}"
-            if [ -f .env.local ] && grep -q '^ORBIT_PASSKEY=' .env.local; then
-              sed -i.bak "s/^ORBIT_PASSKEY=.*/ORBIT_PASSKEY=${ORBIT_KEY}/" .env.local
-              rm -f .env.local.bak
-            elif [ -f .env.local ]; then
-              printf '\nORBIT_PASSKEY=%s\n' "$ORBIT_KEY" >> .env.local
-            else
-              printf 'ORBIT_PASSKEY=%s\n' "$ORBIT_KEY" > .env.local
+            # Ensure Orbit passkey file exists (never fail the deploy)
+            if [ ! -f .env.local ] || ! grep -q '^ORBIT_PASSKEY=' .env.local 2>/dev/null; then
+              echo 'ORBIT_PASSKEY=713304977' >> .env.local || true
+              echo "Orbit .env.local ensured."
             fi
-            echo "Orbit passkey env ensured."
 
             npm install
             npm run build
             pm2 restart "$PM2_APP" --update-env
             pm2 save
-
-            # Raise nginx body size so Orbit hero videos (<=100MB) are not rejected with HTTP 413
-            if [ -f "$PROJECT_PATH/deploy/nginx-client-max-body.conf" ]; then
-              if command -v nginx >/dev/null 2>&1 && command -v sudo >/dev/null 2>&1; then
-                if sudo -n true 2>/dev/null; then
-                  sudo cp "$PROJECT_PATH/deploy/nginx-client-max-body.conf" /etc/nginx/conf.d/zz-summit-seek-upload.conf
-                  if sudo nginx -t; then
-                    sudo systemctl reload nginx || sudo service nginx reload || true
-                    echo "Nginx client_max_body_size set to 100m."
-                  else
-                    echo "WARN: nginx -t failed; left previous nginx config in place."
-                    sudo rm -f /etc/nginx/conf.d/zz-summit-seek-upload.conf || true
-                  fi
-                else
-                  echo "WARN: passwordless sudo unavailable — could not set nginx client_max_body_size 100m."
-                  echo "Manually add: client_max_body_size 100m;  then reload nginx."
-                fi
-              else
-                echo "Nginx not found or sudo missing — skipping upload-limit nginx snippet."
-              fi
-            fi
-
             echo "Deploy finished."
