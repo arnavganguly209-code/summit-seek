@@ -60,7 +60,19 @@ export function HeroEditor({ initial }: Props) {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(content),
       });
-      const data = (await res.json()) as { ok?: boolean; error?: string };
+      const raw = await res.text();
+      let data: { ok?: boolean; error?: string } = {};
+      try {
+        data = JSON.parse(raw) as { ok?: boolean; error?: string };
+      } catch {
+        setError(
+          res.status === 413
+            ? "File/request too large for the server. Compress the video and retry."
+            : `Save failed (HTTP ${res.status}).`,
+        );
+        setSaving(false);
+        return;
+      }
       if (!res.ok || !data.ok) {
         setError(data.error || "Failed to save hero content.");
         setSaving(false);
@@ -75,46 +87,132 @@ export function HeroEditor({ initial }: Props) {
     }
   };
 
-  const uploadVideo = async (file: File) => {
+  const uploadVideo = (file: File) => {
+    const maxBytes = 500 * 1024 * 1024;
+    if (file.size <= 0) {
+      setError("Empty file. Choose a valid video and retry.");
+      return;
+    }
+    if (file.size > maxBytes) {
+      setError(`File too large (${(file.size / 1024 / 1024).toFixed(1)}MB). Maximum is 500MB.`);
+      return;
+    }
+
+    const ext = file.name.split(".").pop()?.toLowerCase() || "";
+    const okExt = ["mp4", "mov", "webm"].includes(ext);
+    const okMime = ["video/mp4", "video/quicktime", "video/webm", ""].includes(file.type);
+    if (!okExt && !okMime) {
+      setError("Unsupported format. Use mp4, mov, or webm.");
+      return;
+    }
+
     setUploading(true);
-    setProgress(8);
+    setProgress(2);
     setError("");
     setUploadMeta(null);
+    setToast("");
 
     const form = new FormData();
     form.append("file", file);
+    form.append("setAsHero", "1");
+    // Permanently remove previous uploaded hero video when replacing
+    if (content.videoUrl && !content.videoUrl.includes("/media/hero/hero.mp4")) {
+      form.append("replaceUrl", content.videoUrl.split("?")[0]);
+    }
 
-    try {
-      setProgress(35);
-      const res = await fetch("/api/orbit/media", { method: "POST", body: form });
-      setProgress(85);
-      const data = (await res.json()) as {
-        ok?: boolean;
-        error?: string;
-        item?: MediaItem;
-      };
-      if (!res.ok || !data.ok || !data.item) {
-        setError(data.error || "Upload failed.");
+    const xhr = new XMLHttpRequest();
+    xhr.open("POST", "/api/orbit/media");
+    xhr.timeout = 1000 * 60 * 10; // 10 minutes for large videos
+
+    xhr.upload.onprogress = (evt) => {
+      if (!evt.lengthComputable) return;
+      const pct = Math.max(2, Math.min(95, Math.round((evt.loaded / evt.total) * 95)));
+      setProgress(pct);
+    };
+
+    xhr.onerror = () => {
+      setError("Network error during upload. Check connection and retry.");
+      setUploading(false);
+      setProgress(0);
+    };
+
+    xhr.ontimeout = () => {
+      setError("Upload timed out. Try a smaller/compressed video and retry.");
+      setUploading(false);
+      setProgress(0);
+    };
+
+    xhr.onload = () => {
+      const raw = xhr.responseText || "";
+      let data: { ok?: boolean; error?: string; item?: MediaItem } = {};
+      try {
+        data = JSON.parse(raw) as typeof data;
+      } catch {
+        setError(
+          xhr.status === 413
+            ? "File too large for server limit. Compress video under 100MB and retry."
+            : `Upload failed (HTTP ${xhr.status || "unknown"}). Server returned a non-JSON response.`,
+        );
         setUploading(false);
         setProgress(0);
         return;
       }
+
+      if (xhr.status < 200 || xhr.status >= 300 || !data.ok || !data.item) {
+        setError(data.error || `Upload failed (HTTP ${xhr.status}).`);
+        setUploading(false);
+        setProgress(0);
+        return;
+      }
+
       setProgress(100);
       setUploadMeta(data.item);
-      update("videoUrl", `${data.item.url}?t=${Date.now()}`);
+      const nextUrl = `${data.item.url}?t=${Date.now()}`;
+      update("videoUrl", nextUrl);
       setUploading(false);
-      setToast("Video uploaded. Click Save to publish.");
+      setToast(
+        "Video uploaded. Previous file permanently removed from media. Changes are live on hero.",
+      );
+      router.refresh();
+    };
+
+    xhr.send(form);
+  };
+
+  const permanentlyDeleteCurrentVideo = async () => {
+    const url = content.videoUrl.split("?")[0];
+    if (url === "/media/hero/hero.mp4") {
+      setError("Default hero video cannot be permanently deleted.");
+      return;
+    }
+    setError("");
+    setToast("");
+    try {
+      const res = await fetch(`/api/orbit/media?url=${encodeURIComponent(url)}`, {
+        method: "DELETE",
+      });
+      const data = (await res.json()) as {
+        ok?: boolean;
+        error?: string;
+        clearedHero?: boolean;
+      };
+      if (!res.ok || !data.ok) {
+        setError(data.error || "Delete failed.");
+        return;
+      }
+      update("videoUrl", "/media/hero/hero.mp4");
+      setUploadMeta(null);
+      setToast("Video permanently deleted from media storage and records.");
+      router.refresh();
     } catch {
-      setError("Network error during upload. Check connection and retry.");
-      setUploading(false);
-      setProgress(0);
+      setError("Network error while deleting. Please retry.");
     }
   };
 
   const onDrop = (files: FileList | null) => {
     const file = files?.[0];
     if (!file) return;
-    void uploadVideo(file);
+    uploadVideo(file);
   };
 
   return (
@@ -222,10 +320,14 @@ export function HeroEditor({ initial }: Props) {
             <button
               type="button"
               className="inline-flex items-center gap-1 text-[12px] text-red-300"
-              onClick={() => update("videoUrl", "/media/hero/hero.mp4")}
+              onClick={() => void permanentlyDeleteCurrentVideo()}
             >
-              <Trash2 className="size-3.5" /> Reset to default video
+              <Trash2 className="size-3.5" /> Permanently delete current video
             </button>
+            <p className="text-[11px] text-white/40">
+              Delete removes the file from disk and media records immediately. Default
+              starter video is protected.
+            </p>
           </section>
 
           <Field

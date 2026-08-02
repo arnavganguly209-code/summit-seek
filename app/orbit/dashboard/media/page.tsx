@@ -37,12 +37,21 @@ export default function OrbitMediaPage() {
   }, [load]);
 
   const remove = async (id: string) => {
-    const res = await fetch(`/api/orbit/media?id=${id}`, { method: "DELETE" });
-    const data = (await res.json()) as { ok?: boolean; error?: string };
+    setError("");
+    const res = await fetch(`/api/orbit/media?id=${encodeURIComponent(id)}`, {
+      method: "DELETE",
+    });
+    const data = (await res.json()) as {
+      ok?: boolean;
+      error?: string;
+      clearedHero?: boolean;
+    };
     if (!res.ok || !data.ok) {
       setError(data.error || "Delete failed.");
       return;
     }
+    // Optimistically drop from UI so it never flashes back
+    setItems((prev) => prev.filter((i) => i.id !== id));
     void load();
   };
 
@@ -156,9 +165,18 @@ export default function OrbitMediaPage() {
                   <button
                     type="button"
                     className="inline-flex items-center gap-1 rounded-lg border border-red-400/30 px-2 py-1 text-[11px] text-red-200"
-                    onClick={() => void remove(item.id)}
+                    onClick={() => {
+                      if (
+                        !window.confirm(
+                          "Permanently delete this file from disk and media records? This cannot be undone.",
+                        )
+                      ) {
+                        return;
+                      }
+                      void remove(item.id);
+                    }}
                   >
-                    <Trash2 className="size-3" /> Delete
+                    <Trash2 className="size-3" /> Delete forever
                   </button>
                 </div>
               </div>

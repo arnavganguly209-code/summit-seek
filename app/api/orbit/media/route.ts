@@ -3,7 +3,16 @@ import { promises as fs } from "fs";
 import path from "path";
 import { randomUUID } from "crypto";
 import { isOrbitAuthenticated } from "@/lib/orbit/auth";
-import { getMediaLibrary, saveMediaLibrary } from "@/lib/orbit/store";
+import {
+  cleanMediaUrl,
+  ensureMediaDirs,
+  getHeroContent,
+  getMediaLibrary,
+  MEDIA_LIBRARY_DIR,
+  permanentlyDeleteMedia,
+  saveHeroContent,
+  saveMediaLibrary,
+} from "@/lib/orbit/store";
 import type { MediaItem } from "@/types/hero";
 
 export const runtime = "nodejs";
@@ -11,26 +20,63 @@ export const dynamic = "force-dynamic";
 export const maxDuration = 300;
 
 const MAX_BYTES = 500 * 1024 * 1024;
-const ALLOWED = new Set([
-  "video/mp4",
-  "video/quicktime",
-  "video/webm",
-  "image/png",
-  "image/jpeg",
-  "image/webp",
-  "image/gif",
-]);
+
+const EXT_MIME: Record<string, string> = {
+  ".mp4": "video/mp4",
+  ".webm": "video/webm",
+  ".mov": "video/quicktime",
+  ".png": "image/png",
+  ".jpg": "image/jpeg",
+  ".jpeg": "image/jpeg",
+  ".webp": "image/webp",
+  ".gif": "image/gif",
+};
+
+function resolveMime(file: File): string {
+  if (file.type && file.type !== "application/octet-stream") return file.type;
+  const ext = path.extname(file.name).toLowerCase();
+  return EXT_MIME[ext] || "";
+}
 
 function extFor(mime: string, name: string) {
   const fromName = path.extname(name).toLowerCase();
-  if (fromName) return fromName;
+  if (fromName && EXT_MIME[fromName]) return fromName;
   if (mime === "video/mp4") return ".mp4";
   if (mime === "video/webm") return ".webm";
   if (mime === "video/quicktime") return ".mov";
   if (mime === "image/png") return ".png";
   if (mime === "image/jpeg") return ".jpg";
   if (mime === "image/webp") return ".webp";
+  if (mime === "image/gif") return ".gif";
   return "";
+}
+
+function mapUploadError(err: unknown): { status: number; error: string } {
+  const message = err instanceof Error ? err.message : String(err);
+  const code = (err as NodeJS.ErrnoException)?.code;
+
+  if (code === "ENOSPC") {
+    return { status: 507, error: "Storage full. Free disk space and try again." };
+  }
+  if (code === "EACCES" || code === "EPERM") {
+    return { status: 500, error: "Permission denied writing media files on the server." };
+  }
+  if (/Body exceeded|request entity too large|413|max.*body|body.*limit/i.test(message)) {
+    return {
+      status: 413,
+      error: "File too large for server limit. Use a video under 500MB (preferably under 100MB).",
+    };
+  }
+  if (/Unexpected end of form|Failed to parse body|multipart/i.test(message)) {
+    return {
+      status: 400,
+      error: "Upload was interrupted or incomplete. Please retry the upload.",
+    };
+  }
+  return {
+    status: 500,
+    error: `Upload failed: ${message || "Unknown server error"}. Please retry.`,
+  };
 }
 
 export async function GET(req: Request) {
@@ -64,7 +110,16 @@ export async function POST(req: Request) {
   }
 
   try {
-    const form = await req.formData();
+    await ensureMediaDirs();
+
+    let form: FormData;
+    try {
+      form = await req.formData();
+    } catch (err) {
+      const mapped = mapUploadError(err);
+      return NextResponse.json({ ok: false, error: mapped.error }, { status: mapped.status });
+    }
+
     const file = form.get("file");
     if (!(file instanceof File)) {
       return NextResponse.json(
@@ -73,12 +128,21 @@ export async function POST(req: Request) {
       );
     }
 
-    if (!ALLOWED.has(file.type)) {
+    const mime = resolveMime(file);
+    const allowed = new Set(Object.values(EXT_MIME));
+    if (!mime || !allowed.has(mime)) {
       return NextResponse.json(
         {
           ok: false,
-          error: `Unsupported format (${file.type || "unknown"}). Use mp4, mov, webm, png, jpg, or webp.`,
+          error: `Unsupported format (${file.type || path.extname(file.name) || "unknown"}). Use mp4, mov, webm, png, jpg, or webp.`,
         },
+        { status: 400 },
+      );
+    }
+
+    if (file.size <= 0) {
+      return NextResponse.json(
+        { ok: false, error: "Empty file. Choose a valid video and retry." },
         { status: 400 },
       );
     }
@@ -93,27 +157,23 @@ export async function POST(req: Request) {
       );
     }
 
+    // Optional: permanently remove previous hero video when replacing
+    const replaceUrl = String(form.get("replaceUrl") || "").trim();
+    if (replaceUrl) {
+      await permanentlyDeleteMedia({ url: replaceUrl });
+    }
+
     const buf = Buffer.from(await file.arrayBuffer());
     const id = randomUUID();
-    const ext = extFor(file.type, file.name);
+    const ext = extFor(mime, file.name) || ".mp4";
     const filename = `${id}${ext}`;
-    const dir = path.join(process.cwd(), "public", "media", "library");
-    await fs.mkdir(dir, { recursive: true });
+    const abs = path.join(MEDIA_LIBRARY_DIR, filename);
 
     try {
-      await fs.writeFile(path.join(dir, filename), buf);
+      await fs.writeFile(abs, buf);
     } catch (err) {
-      const code = (err as NodeJS.ErrnoException).code;
-      if (code === "ENOSPC") {
-        return NextResponse.json(
-          { ok: false, error: "Storage full. Free disk space and try again." },
-          { status: 507 },
-        );
-      }
-      return NextResponse.json(
-        { ok: false, error: "Network error while writing file. Please retry." },
-        { status: 500 },
-      );
+      const mapped = mapUploadError(err);
+      return NextResponse.json({ ok: false, error: mapped.error }, { status: mapped.status });
     }
 
     const item: MediaItem = {
@@ -121,7 +181,7 @@ export async function POST(req: Request) {
       name: file.name.replace(/\.[^.]+$/, "") || "Untitled",
       filename,
       url: `/media/library/${filename}`,
-      mimeType: file.type,
+      mimeType: mime,
       size: file.size,
       uploadedAt: new Date().toISOString(),
       status: "ready",
@@ -131,12 +191,20 @@ export async function POST(req: Request) {
     library.unshift(item);
     await saveMediaLibrary(library);
 
+    // If this upload is marked as hero replacement, point hero at it immediately
+    const setAsHero = String(form.get("setAsHero") || "") === "1";
+    if (setAsHero) {
+      const hero = await getHeroContent();
+      await saveHeroContent({
+        ...hero,
+        videoUrl: `${item.url}?t=${Date.now()}`,
+      });
+    }
+
     return NextResponse.json({ ok: true, item });
-  } catch {
-    return NextResponse.json(
-      { ok: false, error: "Network error during upload. Check connection and retry." },
-      { status: 500 },
-    );
+  } catch (err) {
+    const mapped = mapUploadError(err);
+    return NextResponse.json({ ok: false, error: mapped.error }, { status: mapped.status });
   }
 }
 
@@ -163,20 +231,26 @@ export async function DELETE(req: Request) {
     return NextResponse.json({ ok: false, error: "Unauthorized" }, { status: 401 });
   }
   const { searchParams } = new URL(req.url);
-  const id = searchParams.get("id");
-  if (!id) {
-    return NextResponse.json({ ok: false, error: "Missing media id." }, { status: 400 });
+  const id = searchParams.get("id") || undefined;
+  const url = searchParams.get("url") || undefined;
+  if (!id && !url) {
+    return NextResponse.json(
+      { ok: false, error: "Missing media id or url." },
+      { status: 400 },
+    );
   }
-  const library = await getMediaLibrary();
-  const item = library.find((i) => i.id === id);
-  if (!item) {
-    return NextResponse.json({ ok: false, error: "Media item not found." }, { status: 404 });
+
+  if (url && cleanMediaUrl(url) === "/media/hero/hero.mp4") {
+    return NextResponse.json(
+      { ok: false, error: "Default hero video cannot be permanently deleted." },
+      { status: 400 },
+    );
   }
-  try {
-    await fs.unlink(path.join(process.cwd(), "public", "media", "library", item.filename));
-  } catch {
-    // file may already be gone
-  }
-  await saveMediaLibrary(library.filter((i) => i.id !== id));
-  return NextResponse.json({ ok: true });
+
+  const result = await permanentlyDeleteMedia({ id, url: url || undefined });
+  return NextResponse.json({
+    ok: true,
+    removed: result.removed,
+    clearedHero: result.clearedHero,
+  });
 }

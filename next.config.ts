@@ -9,10 +9,12 @@ const nextConfig: NextConfig = {
       },
     ],
   },
+  // Allow large Orbit media uploads through Next proxy / route handlers
   experimental: {
     serverActions: {
       bodySizeLimit: "500mb",
     },
+    proxyClientMaxBodySize: "500mb",
   },
 };
 
