@@ -11,6 +11,7 @@ import {
   getHeroContent,
   getMediaLibrary,
   MEDIA_LIBRARY_DIR,
+  MEDIA_UPLOADS_DIR,
   permanentlyDeleteMedia,
   saveHeroContent,
   saveMediaLibrary,
@@ -27,7 +28,7 @@ export const dynamic = "force-dynamic";
 export const maxDuration = 300;
 
 const MAX_BYTES = ORBIT_MAX_UPLOAD_BYTES;
-const UPLOADS_DIR = path.join(process.cwd(), "public", "media", ".uploads");
+const UPLOADS_DIR = MEDIA_UPLOADS_DIR;
 
 const EXT_MIME: Record<string, string> = {
   ".mp4": "video/mp4",

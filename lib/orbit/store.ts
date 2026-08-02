@@ -12,8 +12,14 @@ const HERO_FILE = path.join(DATA_DIR, "hero.json");
 const FEATURED_PACKAGES_FILE = path.join(DATA_DIR, "featured-packages.json");
 const ABOUT_INTRO_FILE = path.join(DATA_DIR, "about-intro.json");
 const MEDIA_FILE = path.join(DATA_DIR, "media-library.json");
-export const MEDIA_LIBRARY_DIR = path.join(process.cwd(), "public", "media", "library");
+
+/** Durable upload root — survives `git reset --hard` (unlike public/). */
+export const STORAGE_MEDIA_DIR = path.join(process.cwd(), "storage", "media");
+export const MEDIA_LIBRARY_DIR = path.join(STORAGE_MEDIA_DIR, "library");
+export const MEDIA_UPLOADS_DIR = path.join(STORAGE_MEDIA_DIR, ".uploads");
+/** Default hero starter video stays in public (tracked in git). */
 export const MEDIA_HERO_DIR = path.join(process.cwd(), "public", "media", "hero");
+const LEGACY_PUBLIC_LIBRARY = path.join(process.cwd(), "public", "media", "library");
 
 async function ensureDataDir() {
   await fs.mkdir(DATA_DIR, { recursive: true });
@@ -21,7 +27,25 @@ async function ensureDataDir() {
 
 export async function ensureMediaDirs() {
   await fs.mkdir(MEDIA_LIBRARY_DIR, { recursive: true });
+  await fs.mkdir(MEDIA_UPLOADS_DIR, { recursive: true });
   await fs.mkdir(MEDIA_HERO_DIR, { recursive: true });
+
+  // One-time migrate any leftover public/media/library uploads into durable storage
+  try {
+    const legacy = await fs.readdir(LEGACY_PUBLIC_LIBRARY);
+    for (const name of legacy) {
+      if (name === ".gitkeep") continue;
+      const from = path.join(LEGACY_PUBLIC_LIBRARY, name);
+      const to = path.join(MEDIA_LIBRARY_DIR, name);
+      try {
+        await fs.access(to);
+      } catch {
+        await fs.copyFile(from, to).catch(() => undefined);
+      }
+    }
+  } catch {
+    // legacy dir missing — fine
+  }
 }
 
 export async function getHeroContent(): Promise<HeroContent> {
@@ -137,6 +161,14 @@ export function isProtectedDefaultVideo(url: string): boolean {
 function absolutePathFromPublicUrl(url: string): string | null {
   const clean = cleanMediaUrl(url);
   if (!clean.startsWith("/media/")) return null;
+
+  // Uploaded library assets live in durable storage/
+  if (clean.startsWith("/media/library/")) {
+    const filename = path.basename(clean);
+    if (!filename || filename === "." || filename === "..") return null;
+    return path.join(MEDIA_LIBRARY_DIR, filename);
+  }
+
   const rel = clean.replace(/^\//, "");
   const abs = path.join(process.cwd(), "public", rel);
   const publicRoot = path.join(process.cwd(), "public");

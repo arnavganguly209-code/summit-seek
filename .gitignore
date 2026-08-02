@@ -46,6 +46,10 @@ next-env.d.ts
 /public/media/library/*
 !/public/media/library/.gitkeep
 
+# durable Orbit media + CMS data (must survive git reset on VPS)
+/storage/
+/data/
+
 runs.json
 jobs.json
 j1.json

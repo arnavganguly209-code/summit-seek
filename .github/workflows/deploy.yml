@@ -98,13 +98,18 @@ jobs:
           cd "${PROJECT_PATH}"
           git fetch origin
           git reset --hard origin/main
+          echo "Checked out: \$(git rev-parse --short HEAD)"
 
           if [ ! -f .env.local ] || ! grep -q '^ORBIT_PASSKEY=' .env.local 2>/dev/null; then
             echo 'ORBIT_PASSKEY=713304977' >> .env.local || true
             echo "Orbit .env.local ensured."
           fi
 
-          # Nginx upload limit (best-effort, never fail deploy)
+          # Durable media storage (NOT wiped by git reset)
+          mkdir -p storage/media/library storage/media/.uploads data
+          mkdir -p public/media/hero public/media/library public/media/.uploads
+
+          # Nginx upload limit (best-effort)
           if [ -f deploy/nginx-client-max-body.conf ]; then
             if command -v sudo >/dev/null 2>&1 && sudo -n true 2>/dev/null; then
               sudo cp deploy/nginx-client-max-body.conf /etc/nginx/conf.d/summit-seek-uploads.conf || true
@@ -118,12 +123,12 @@ jobs:
             fi
           fi
 
-          mkdir -p public/media/library public/media/hero public/media/.uploads
           npm install --no-audit --no-fund
+          rm -rf .next
           npm run build
           pm2 restart "${PM2_APP}" --update-env
           pm2 save
-          echo "Deploy finished."
+          echo "Deploy finished: \$(git rev-parse --short HEAD)"
           EOF
 
           echo "Remote deploy completed."
