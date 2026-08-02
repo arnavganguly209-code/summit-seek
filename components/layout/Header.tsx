@@ -33,7 +33,7 @@ type Props = {
 };
 
 export function Header({
-  logoUrl = "/logo-summit-seek-transparent.png",
+  logoUrl = "/logo-summit-seek-header.png",
   logoUrlLight = "/logo-summit-seek-white.png",
 }: Props) {
   const [scrolled, setScrolled] = useState(false);
@@ -56,8 +56,8 @@ export function Header({
   }, [mobileOpen]);
 
   const navText = scrolled
-    ? "text-[#0b1524] hover:text-[#F58220]"
-    : "text-white hover:text-[#F58220]";
+    ? "text-[#0b1524] hover:text-[#1d4ed8]"
+    : "text-white hover:text-[#93c5fd]";
 
   const activeLogo = scrolled ? logoUrl : logoUrlLight;
 
@@ -66,26 +66,32 @@ export function Header({
       className={cn(
         "fixed inset-x-0 top-0 z-50 transition-[background-color,box-shadow,backdrop-filter,border-color] duration-300",
         scrolled
-          ? "border-b border-black/[0.06] bg-white/85 shadow-[0_8px_28px_rgba(8,18,30,0.08)] backdrop-blur-xl"
+          ? "border-b border-black/[0.06] bg-white/90 shadow-[0_8px_28px_rgba(8,18,30,0.08)] backdrop-blur-xl"
           : "border-b border-transparent bg-transparent shadow-none",
       )}
       style={{ height: HEADER_H }}
     >
-      <div className="relative mx-auto flex h-full max-w-[1400px] items-center justify-between gap-4 px-4 sm:px-6 lg:px-8">
-        <Link href="/" aria-label="Summit Seek — Home" className="shrink-0">
+      <div className="relative mx-auto flex h-full max-w-[1440px] items-center gap-6 px-4 sm:px-6 lg:gap-8 lg:px-8">
+        {/* Logo — left, transparent, fixed visual height */}
+        <Link
+          href="/"
+          aria-label="Summit Seek — Home"
+          className="relative z-10 flex h-full shrink-0 items-center bg-transparent"
+        >
           <Image
             src={activeLogo}
             alt="Summit Seek Travels & Tours"
-            width={220}
-            height={66}
+            width={888}
+            height={269}
             unoptimized
             priority
-            className="h-[42px] w-auto object-contain sm:h-[55px]"
+            className="h-[44px] w-auto max-w-[168px] bg-transparent object-contain object-left sm:h-[52px] sm:max-w-[200px] lg:h-[56px] lg:max-w-[220px]"
           />
         </Link>
 
+        {/* Nav — single-line, centered, professional spacing */}
         <nav
-          className="absolute left-1/2 hidden -translate-x-1/2 items-center gap-0.5 xl:flex"
+          className="absolute left-1/2 hidden -translate-x-1/2 items-center gap-1 xl:flex"
           aria-label="Primary"
           onMouseLeave={() => setMegaKind(null)}
         >
@@ -102,13 +108,13 @@ export function Header({
                   <button
                     type="button"
                     className={cn(
-                      "inline-flex items-center gap-1 rounded-md px-3 py-2 text-[14px] font-semibold transition-colors",
+                      "inline-flex items-center gap-1 whitespace-nowrap rounded-md px-3.5 py-2 text-[13px] font-semibold tracking-wide transition-colors lg:text-[14px]",
                       navText,
                     )}
                     aria-expanded={open}
                   >
                     {item.label}
-                    <ChevronDown className="size-3.5 opacity-80" />
+                    <ChevronDown className="size-3.5 shrink-0 opacity-75" />
                   </button>
                   {kind === "destinations" ? (
                     <DestinationsDropdown
@@ -129,7 +135,7 @@ export function Header({
                 key={item.href}
                 href={item.href}
                 className={cn(
-                  "rounded-md px-3 py-2 text-[14px] font-semibold transition-colors",
+                  "whitespace-nowrap rounded-md px-3.5 py-2 text-[13px] font-semibold tracking-wide transition-colors lg:text-[14px]",
                   navText,
                 )}
               >
@@ -139,37 +145,38 @@ export function Header({
           })}
         </nav>
 
-        <div className="hidden items-center gap-1.5 lg:flex">
+        {/* Actions — right */}
+        <div className="ml-auto hidden items-center gap-1 lg:flex">
           <button
             type="button"
             className={cn(
-              "inline-flex size-10 items-center justify-center rounded-full border transition",
+              "inline-flex size-9 items-center justify-center rounded-full border transition",
               scrolled
-                ? "border-[#2f9e44]/40 text-[#2f9e44] hover:bg-[#2f9e44]/10"
-                : "border-[#2f9e44]/70 text-[#7ddea0] hover:bg-white/10",
+                ? "border-[#2563eb]/35 text-[#2563eb] hover:bg-[#2563eb]/8"
+                : "border-white/35 text-white hover:bg-white/10",
             )}
             aria-label="Search"
           >
-            <Search className="size-[18px]" />
+            <Search className="size-4" />
           </button>
           <button
             type="button"
             className={cn(
-              "inline-flex size-10 items-center justify-center rounded-full transition",
+              "inline-flex size-9 items-center justify-center rounded-full transition",
               scrolled ? "text-[#0b1524] hover:bg-black/5" : "text-white hover:bg-white/10",
             )}
             aria-label="Wishlist"
           >
-            <Heart className="size-[18px]" />
+            <Heart className="size-4" />
           </button>
           <span
-            className={cn("mx-1 h-5 w-px", scrolled ? "bg-black/15" : "bg-white/30")}
+            className={cn("mx-1.5 h-4 w-px", scrolled ? "bg-black/15" : "bg-white/30")}
             aria-hidden
           />
           <Link
-            href="/orbit"
+            href="/sign-in"
             className={cn(
-              "inline-flex items-center gap-1.5 rounded-md px-2.5 py-2 text-[13px] font-semibold transition",
+              "inline-flex items-center gap-1.5 whitespace-nowrap rounded-md px-2.5 py-2 text-[13px] font-semibold transition",
               navText,
             )}
           >
@@ -177,13 +184,13 @@ export function Header({
             Sign In
           </Link>
           <span
-            className={cn("mx-0.5 h-5 w-px", scrolled ? "bg-black/15" : "bg-white/30")}
+            className={cn("mx-0.5 h-4 w-px", scrolled ? "bg-black/15" : "bg-white/30")}
             aria-hidden
           />
           <Link
-            href="/orbit"
+            href="/sign-up"
             className={cn(
-              "inline-flex items-center gap-1.5 rounded-md px-2.5 py-2 text-[13px] font-semibold transition",
+              "inline-flex items-center gap-1.5 whitespace-nowrap rounded-md px-2.5 py-2 text-[13px] font-semibold transition",
               navText,
             )}
           >
@@ -198,7 +205,7 @@ export function Header({
         <button
           type="button"
           className={cn(
-            "inline-flex size-10 items-center justify-center rounded-md xl:hidden",
+            "ml-auto inline-flex size-10 items-center justify-center rounded-md xl:hidden",
             scrolled ? "text-[#0b1524]" : "text-white",
           )}
           aria-label={mobileOpen ? "Close menu" : "Open menu"}
@@ -290,14 +297,14 @@ export function Header({
               })}
               <div className="mt-3 grid grid-cols-2 gap-2 border-t border-black/10 pt-3">
                 <Link
-                  href="/orbit"
+                  href="/sign-in"
                   className="rounded-lg bg-[#0b1524] px-3 py-3 text-center text-[13px] font-semibold text-white"
                   onClick={() => setMobileOpen(false)}
                 >
                   Sign In
                 </Link>
                 <Link
-                  href="/orbit"
+                  href="/sign-up"
                   className="rounded-lg border border-[#0b1524]/20 px-3 py-3 text-center text-[13px] font-semibold text-[#0b1524]"
                   onClick={() => setMobileOpen(false)}
                 >
