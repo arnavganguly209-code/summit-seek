@@ -38,7 +38,7 @@ type Props = {
 };
 
 export function Header({
-  logoUrl = "/logo-summit-seek-white.png",
+  logoUrl = "/logo-summit-seek-blue.png",
   logoUrlLight = "/logo-summit-seek-white.png",
 }: Props) {
   const [scrolled, setScrolled] = useState(false);
@@ -64,6 +64,7 @@ export function Header({
     ? "text-[#0b1524] hover:text-[#1d4ed8]"
     : "text-white hover:text-[#93c5fd]";
 
+  // Transparent header → white logo; scrolled glass header → blue logo
   const activeLogo = scrolled ? logoUrl : logoUrlLight;
 
   return (
@@ -90,10 +91,7 @@ export function Header({
             height={322}
             unoptimized
             priority
-            className={cn(
-              "h-[44px] w-auto max-w-[168px] bg-transparent object-contain object-left sm:h-[52px] sm:max-w-[200px] lg:h-[56px] lg:max-w-[220px]",
-              scrolled && "brightness-0",
-            )}
+            className="h-[44px] w-auto max-w-[168px] bg-transparent object-contain object-left sm:h-[52px] sm:max-w-[200px] lg:h-[56px] lg:max-w-[220px]"
           />
         </Link>
 
