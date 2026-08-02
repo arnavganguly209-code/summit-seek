@@ -65,13 +65,13 @@ function RegionColumn({
       <Link
         href={href}
         onClick={onClose}
-        className="group inline-flex items-center gap-1.5 px-2 pb-1.5"
+        className="group inline-flex items-center gap-1.5 px-2 pb-1"
       >
-        <span className="text-[13.5px] font-bold tracking-[0.01em] text-white transition-colors duration-[180ms] group-hover:text-[#D8A34A]">
+        <span className="text-[13.5px] font-bold tracking-[0.01em] text-[#D8A34A] transition-colors duration-[180ms] group-hover:text-[#E8C06A]">
           {heading}
         </span>
       </Link>
-      <div className="mb-1.5 ml-2 h-px w-7 bg-[#D8A34A]/80" />
+      <div className="mb-1 ml-2 h-px w-7 bg-[#D8A34A]/80" />
       <ul className="space-y-0.5">
         {links.map((link) => (
           <li key={link.href}>
@@ -97,11 +97,11 @@ export function TrekkingMegaMenu({ open, onClose }: TrekkingMegaMenuProps) {
           animate={{ opacity: 1, y: 0 }}
           exit={{ opacity: 0, y: -6 }}
           transition={{ duration: 0.18, ease: "easeOut" }}
-          className="pointer-events-auto fixed left-1/2 top-[68px] z-[60] hidden w-[min(980px,calc(100vw-2rem))] -translate-x-1/2 xl:block"
+          className="pointer-events-auto fixed left-1/2 top-[60px] z-[60] hidden w-[min(980px,calc(100vw-2rem))] -translate-x-1/2 xl:block"
           onMouseLeave={onClose}
         >
-          <div className={cn(panelDark, "px-4 py-4")}>
-            <div className="grid grid-cols-4 gap-x-5 gap-y-5">
+          <div className={cn(panelDark, "px-4 py-2")}>
+            <div className="grid grid-cols-4 gap-x-5 gap-y-2.5">
               {trekkingColumns.map((col) => (
                 <RegionColumn
                   key={col.id}
@@ -140,7 +140,9 @@ export function TrekkingMobileAccordion({ onClose }: { onClose: () => void }) {
               onClick={() => setOpenId((v) => (v === col.id ? null : col.id))}
               aria-expanded={open}
             >
-              <span className="text-[13.5px] font-bold text-white">{col.heading}</span>
+              <span className="text-[13.5px] font-bold text-[#D8A34A]">
+                {col.heading}
+              </span>
               <ChevronDown
                 className={cn(
                   "size-4 text-white/40 transition-transform duration-[180ms]",
