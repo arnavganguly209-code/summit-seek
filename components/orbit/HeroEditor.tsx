@@ -13,7 +13,8 @@ import {
 } from "lucide-react";
 import { Hero } from "@/components/home/Hero";
 import type { HeroContent, HeroFeature, MediaItem } from "@/types/hero";
-import { ORBIT_MAX_UPLOAD_BYTES, ORBIT_MAX_UPLOAD_MB } from "@/lib/orbit/upload-limits";
+import { ORBIT_MAX_UPLOAD_MB } from "@/lib/orbit/upload-limits";
+import { orbitUploadFile } from "@/lib/orbit/client-upload";
 import { cn } from "@/lib/utils";
 
 type Props = {
@@ -88,19 +89,7 @@ export function HeroEditor({ initial }: Props) {
     }
   };
 
-  const uploadVideo = (file: File) => {
-    const maxBytes = ORBIT_MAX_UPLOAD_BYTES;
-    if (file.size <= 0) {
-      setError("Empty file. Choose a valid video and retry.");
-      return;
-    }
-    if (file.size > maxBytes) {
-      setError(
-        `File too large (${(file.size / 1024 / 1024).toFixed(1)}MB). Maximum is ${ORBIT_MAX_UPLOAD_MB}MB.`,
-      );
-      return;
-    }
-
+  const uploadVideo = async (file: File) => {
     const ext = file.name.split(".").pop()?.toLowerCase() || "";
     const okExt = ["mp4", "mov", "webm"].includes(ext);
     const okMime = ["video/mp4", "video/quicktime", "video/webm", ""].includes(file.type);
@@ -115,76 +104,37 @@ export function HeroEditor({ initial }: Props) {
     setUploadMeta(null);
     setToast("");
 
-    const form = new FormData();
-    form.append("file", file);
-    form.append("setAsHero", "1");
-    // Permanently remove previous uploaded hero video when replacing
-    if (content.videoUrl && !content.videoUrl.includes("/media/hero/hero.mp4")) {
-      form.append("replaceUrl", content.videoUrl.split("?")[0]);
-    }
+    try {
+      const replaceUrl =
+        content.videoUrl && !content.videoUrl.includes("/media/hero/hero.mp4")
+          ? content.videoUrl.split("?")[0]
+          : undefined;
 
-    const xhr = new XMLHttpRequest();
-    xhr.open("POST", "/api/orbit/media");
-    xhr.timeout = 1000 * 60 * 10; // 10 minutes for large videos
+      const item = await orbitUploadFile({
+        file,
+        setAsHero: true,
+        replaceUrl,
+        onProgress: setProgress,
+      });
 
-    xhr.upload.onprogress = (evt) => {
-      if (!evt.lengthComputable) return;
-      const pct = Math.max(2, Math.min(95, Math.round((evt.loaded / evt.total) * 95)));
-      setProgress(pct);
-    };
-
-    xhr.onerror = () => {
-      setError("Network error during upload. Check connection and retry.");
-      setUploading(false);
-      setProgress(0);
-    };
-
-    xhr.ontimeout = () => {
-      setError("Upload timed out. Try a smaller/compressed video and retry.");
-      setUploading(false);
-      setProgress(0);
-    };
-
-    xhr.onload = () => {
-      const raw = xhr.responseText || "";
-      let data: { ok?: boolean; error?: string; item?: MediaItem } = {};
-      try {
-        data = JSON.parse(raw) as typeof data;
-      } catch {
-        setError(
-          xhr.status === 413
-            ? `Server rejected the upload (size limit). Videos up to ${ORBIT_MAX_UPLOAD_MB}MB are allowed — retry in a minute after deploy finishes.`
-            : `Upload failed (HTTP ${xhr.status || "unknown"}). Server returned a non-JSON response.`,
-        );
-        setUploading(false);
-        setProgress(0);
-        return;
-      }
-
-      if (xhr.status < 200 || xhr.status >= 300 || !data.ok || !data.item) {
-        setError(
-          data.error ||
-            (xhr.status === 413
-              ? `File too large for server limit. Maximum is ${ORBIT_MAX_UPLOAD_MB}MB.`
-              : `Upload failed (HTTP ${xhr.status}).`),
-        );
-        setUploading(false);
-        setProgress(0);
-        return;
-      }
-
-      setProgress(100);
-      setUploadMeta(data.item);
-      const nextUrl = `${data.item.url}?t=${Date.now()}`;
-      update("videoUrl", nextUrl);
-      setUploading(false);
-      setToast(
-        "Video uploaded. Previous file permanently removed from media. Changes are live on hero.",
-      );
+      setUploadMeta(item);
+      update("videoUrl", `${item.url}?t=${Date.now()}`);
+      setToast("Video uploaded and saved to hero. You can still tweak copy and click Save Changes.");
       router.refresh();
-    };
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Upload failed. Please retry.");
+      setProgress(0);
+    } finally {
+      setUploading(false);
+    }
+  };
 
-    xhr.send(form);
+  const resetToDefaultVideo = async () => {
+    setError("");
+    setToast("");
+    update("videoUrl", "/media/hero/hero.mp4");
+    setUploadMeta(null);
+    setToast("Switched to default hero video. Click Save Changes to publish.");
   };
 
   const permanentlyDeleteCurrentVideo = async () => {
@@ -210,7 +160,7 @@ export function HeroEditor({ initial }: Props) {
       }
       update("videoUrl", "/media/hero/hero.mp4");
       setUploadMeta(null);
-      setToast("Video permanently deleted from media storage and records.");
+      setToast("Uploaded video deleted. Hero reset to default video.");
       router.refresh();
     } catch {
       setError("Network error while deleting. Please retry.");
@@ -325,16 +275,25 @@ export function HeroEditor({ initial }: Props) {
                 </p>
               </div>
             ) : null}
-            <button
-              type="button"
-              className="inline-flex items-center gap-1 text-[12px] text-red-300"
-              onClick={() => void permanentlyDeleteCurrentVideo()}
-            >
-              <Trash2 className="size-3.5" /> Permanently delete current video
-            </button>
+            <div className="flex flex-wrap gap-3">
+              <button
+                type="button"
+                className="inline-flex items-center gap-1.5 rounded-lg border border-white/15 px-3 py-2 text-[12px] font-semibold text-white/80 transition hover:bg-white/5"
+                onClick={() => void resetToDefaultVideo()}
+              >
+                Use default video
+              </button>
+              <button
+                type="button"
+                className="inline-flex items-center gap-1.5 rounded-lg border border-red-400/30 px-3 py-2 text-[12px] font-semibold text-red-300 transition hover:bg-red-500/10"
+                onClick={() => void permanentlyDeleteCurrentVideo()}
+              >
+                <Trash2 className="size-3.5" /> Delete uploaded video
+              </button>
+            </div>
             <p className="text-[11px] text-white/40">
-              Delete removes the file from disk and media records immediately. Default
-              starter video is protected.
+              Upload is saved to the live hero immediately. Delete removes the file from
+              storage. Default starter video is protected.
             </p>
           </section>
 

@@ -15,7 +15,7 @@ import type {
   FeaturedPackage,
   FeaturedPackagesContent,
 } from "@/types/featured-packages";
-import { ORBIT_MAX_UPLOAD_BYTES, ORBIT_MAX_UPLOAD_MB } from "@/lib/orbit/upload-limits";
+import { orbitUploadFile } from "@/lib/orbit/client-upload";
 import { cn } from "@/lib/utils";
 
 type Props = {
@@ -93,19 +93,8 @@ export function FeaturedPackagesEditor({ initial }: Props) {
     }
   };
 
-  const uploadImage = (pkg: FeaturedPackage, file: File) => {
+  const uploadImage = async (pkg: FeaturedPackage, file: File) => {
     if (!category) return;
-    const maxBytes = ORBIT_MAX_UPLOAD_BYTES;
-    if (file.size <= 0) {
-      setError("Empty file. Choose a valid image.");
-      return;
-    }
-    if (file.size > maxBytes) {
-      setError(
-        `File too large (${(file.size / 1024 / 1024).toFixed(1)}MB). Max ${ORBIT_MAX_UPLOAD_MB}MB.`,
-      );
-      return;
-    }
     const ext = file.name.split(".").pop()?.toLowerCase() || "";
     const ok =
       ["png", "jpg", "jpeg", "webp", "gif"].includes(ext) ||
@@ -119,40 +108,21 @@ export function FeaturedPackagesEditor({ initial }: Props) {
     setError("");
     setToast("");
 
-    const form = new FormData();
-    form.append("file", file);
-    const prev = pkg.imageUrl;
-    if (prev.startsWith("/media/library/")) {
-      form.append("replaceUrl", prev.split("?")[0]);
+    try {
+      const prev = pkg.imageUrl;
+      const replaceUrl = prev.startsWith("/media/library/")
+        ? prev.split("?")[0]
+        : undefined;
+      const item = await orbitUploadFile({ file, replaceUrl });
+      updatePackage(category.id, pkg.id, {
+        imageUrl: `${item.url}?t=${Date.now()}`,
+      });
+      setToast(`Image updated for “${pkg.title}”. Click Save & Publish.`);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Upload failed.");
+    } finally {
+      setUploadingId(null);
     }
-
-    const xhr = new XMLHttpRequest();
-    xhr.open("POST", "/api/orbit/media");
-    xhr.onload = () => {
-      setUploadingId(null);
-      try {
-        const data = JSON.parse(xhr.responseText) as {
-          ok?: boolean;
-          error?: string;
-          item?: { url: string };
-        };
-        if (xhr.status >= 400 || !data.ok || !data.item?.url) {
-          setError(data.error || `Upload failed (HTTP ${xhr.status}).`);
-          return;
-        }
-        updatePackage(category.id, pkg.id, {
-          imageUrl: `${data.item.url}?t=${Date.now()}`,
-        });
-        setToast(`Image updated for “${pkg.title}”. Click Save to publish.`);
-      } catch {
-        setError("Upload response was invalid.");
-      }
-    };
-    xhr.onerror = () => {
-      setUploadingId(null);
-      setError("Network error during upload.");
-    };
-    xhr.send(form);
   };
 
   const removeImage = async (pkg: FeaturedPackage) => {

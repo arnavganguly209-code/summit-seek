@@ -46,10 +46,10 @@ export function OrbitSidebar() {
   const pathname = usePathname();
 
   return (
-    <aside className="hidden w-[260px] shrink-0 border-r border-white/10 bg-[#070c14] lg:flex lg:flex-col">
-      <div className="border-b border-white/10 px-5 py-5">
-        <p className="text-[12px] font-bold tracking-[0.24em] text-[#F58220]">ORBIT</p>
-        <p className="mt-1 text-[13px] text-white/60">Content Operating System</p>
+    <aside className="relative z-10 hidden w-[270px] shrink-0 border-r border-white/[0.08] bg-[#050910]/90 backdrop-blur-xl lg:flex lg:flex-col">
+      <div className="border-b border-white/[0.08] px-5 py-6">
+        <p className="text-[12px] font-bold tracking-[0.28em] text-[#F58220]">ORBIT</p>
+        <p className="mt-1.5 text-[13px] font-medium text-white/55">Content Operating System</p>
       </div>
       <nav className="flex-1 space-y-1 overflow-y-auto px-3 py-4">
         {nav.map((item) => {

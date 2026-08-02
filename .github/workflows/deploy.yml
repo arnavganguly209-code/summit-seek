@@ -56,6 +56,27 @@ jobs:
               echo "Orbit .env.local ensured."
             fi
 
+            # Raise nginx upload limit for Orbit hero/media (idempotent)
+            if [ -f deploy/nginx-client-max-body.conf ]; then
+              if command -v sudo >/dev/null 2>&1 && sudo -n true 2>/dev/null; then
+                sudo cp deploy/nginx-client-max-body.conf /etc/nginx/conf.d/summit-seek-uploads.conf
+                if sudo nginx -t; then
+                  sudo systemctl reload nginx || sudo service nginx reload || true
+                  echo "Nginx client_max_body_size applied."
+                else
+                  echo "Nginx config test failed — skipped reload."
+                fi
+              elif [ "$(id -u)" = "0" ]; then
+                cp deploy/nginx-client-max-body.conf /etc/nginx/conf.d/summit-seek-uploads.conf
+                nginx -t && (systemctl reload nginx || service nginx reload || true)
+                echo "Nginx client_max_body_size applied as root."
+              else
+                echo "Skipping nginx upload limit (no passwordless sudo)."
+              fi
+            fi
+
+            mkdir -p public/media/library public/media/hero public/media/.uploads
+
             npm install --no-audit --no-fund
             npm run build
             pm2 restart "$PM2_APP" --update-env

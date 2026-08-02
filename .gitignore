@@ -40,3 +40,8 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# orbit upload scratch
+/public/media/.uploads/
+/public/media/library/*
+!/public/media/library/.gitkeep

@@ -16,13 +16,18 @@ import {
   saveMediaLibrary,
 } from "@/lib/orbit/store";
 import type { MediaItem } from "@/types/hero";
-import { ORBIT_MAX_UPLOAD_BYTES, ORBIT_MAX_UPLOAD_MB } from "@/lib/orbit/upload-limits";
+import {
+  ORBIT_MAX_UPLOAD_BYTES,
+  ORBIT_MAX_UPLOAD_MB,
+  ORBIT_UPLOAD_CHUNK_BYTES,
+} from "@/lib/orbit/upload-limits";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 export const maxDuration = 300;
 
 const MAX_BYTES = ORBIT_MAX_UPLOAD_BYTES;
+const UPLOADS_DIR = path.join(process.cwd(), "public", "media", ".uploads");
 
 const EXT_MIME: Record<string, string> = {
   ".mp4": "video/mp4",
@@ -82,6 +87,54 @@ function mapUploadError(err: unknown): { status: number; error: string } {
   };
 }
 
+async function finalizeUploadedFile(opts: {
+  absSource: string;
+  originalName: string;
+  mime: string;
+  size: number;
+  setAsHero: boolean;
+  replaceUrl: string;
+}): Promise<MediaItem> {
+  const id = randomUUID();
+  const ext = extFor(opts.mime, opts.originalName) || ".bin";
+  const filename = `${id}${ext}`;
+  const abs = path.join(MEDIA_LIBRARY_DIR, filename);
+
+  await fs.rename(opts.absSource, abs).catch(async () => {
+    await fs.copyFile(opts.absSource, abs);
+    await fs.unlink(opts.absSource).catch(() => undefined);
+  });
+
+  if (opts.replaceUrl) {
+    await permanentlyDeleteMedia({ url: opts.replaceUrl });
+  }
+
+  const item: MediaItem = {
+    id,
+    name: opts.originalName.replace(/\.[^.]+$/, "") || "Untitled",
+    filename,
+    url: `/media/library/${filename}`,
+    mimeType: opts.mime,
+    size: opts.size,
+    uploadedAt: new Date().toISOString(),
+    status: "ready",
+  };
+
+  const library = await getMediaLibrary();
+  library.unshift(item);
+  await saveMediaLibrary(library);
+
+  if (opts.setAsHero) {
+    const hero = await getHeroContent();
+    await saveHeroContent({
+      ...hero,
+      videoUrl: `${item.url}?t=${Date.now()}`,
+    });
+  }
+
+  return item;
+}
+
 export async function GET(req: Request) {
   if (!(await isOrbitAuthenticated())) {
     return NextResponse.json({ ok: false, error: "Unauthorized" }, { status: 401 });
@@ -114,6 +167,7 @@ export async function POST(req: Request) {
 
   try {
     await ensureMediaDirs();
+    await fs.mkdir(UPLOADS_DIR, { recursive: true });
 
     let form: FormData;
     try {
@@ -123,6 +177,141 @@ export async function POST(req: Request) {
       return NextResponse.json({ ok: false, error: mapped.error }, { status: mapped.status });
     }
 
+    const phase = String(form.get("phase") || "direct").trim();
+
+    // ---- Chunked upload: init ----
+    if (phase === "init") {
+      const filename = String(form.get("filename") || "upload.bin");
+      const mime = String(form.get("mimeType") || "");
+      const size = Number(form.get("size") || 0);
+      if (!size || size <= 0) {
+        return NextResponse.json({ ok: false, error: "Invalid file size." }, { status: 400 });
+      }
+      if (size > MAX_BYTES) {
+        return NextResponse.json(
+          {
+            ok: false,
+            error: `File too large (${(size / 1024 / 1024).toFixed(1)}MB). Maximum is ${ORBIT_MAX_UPLOAD_MB}MB.`,
+          },
+          { status: 400 },
+        );
+      }
+      const uploadId = randomUUID();
+      const dir = path.join(UPLOADS_DIR, uploadId);
+      await fs.mkdir(dir, { recursive: true });
+      await fs.writeFile(
+        path.join(dir, "meta.json"),
+        JSON.stringify({
+          filename,
+          mime,
+          size,
+          setAsHero: String(form.get("setAsHero") || "") === "1",
+          replaceUrl: String(form.get("replaceUrl") || "").trim(),
+          createdAt: new Date().toISOString(),
+        }),
+        "utf8",
+      );
+      return NextResponse.json({
+        ok: true,
+        uploadId,
+        chunkSize: ORBIT_UPLOAD_CHUNK_BYTES,
+      });
+    }
+
+    // ---- Chunked upload: chunk ----
+    if (phase === "chunk") {
+      const uploadId = String(form.get("uploadId") || "").trim();
+      const index = Number(form.get("index"));
+      const chunk = form.get("chunk");
+      const chunkOk =
+        typeof chunk === "object" &&
+        chunk !== null &&
+        "arrayBuffer" in chunk &&
+        typeof (chunk as Blob).arrayBuffer === "function";
+      if (!uploadId || Number.isNaN(index) || !chunkOk) {
+        return NextResponse.json({ ok: false, error: "Invalid chunk payload." }, { status: 400 });
+      }
+      const dir = path.join(UPLOADS_DIR, uploadId);
+      try {
+        await fs.access(dir);
+      } catch {
+        return NextResponse.json({ ok: false, error: "Upload session not found." }, { status: 404 });
+      }
+      const buf = Buffer.from(await (chunk as Blob).arrayBuffer());
+      await fs.writeFile(path.join(dir, `part-${String(index).padStart(6, "0")}`), buf);
+      return NextResponse.json({ ok: true, index });
+    }
+
+    // ---- Chunked upload: complete ----
+    if (phase === "complete") {
+      const uploadId = String(form.get("uploadId") || "").trim();
+      if (!uploadId) {
+        return NextResponse.json({ ok: false, error: "Missing uploadId." }, { status: 400 });
+      }
+      const dir = path.join(UPLOADS_DIR, uploadId);
+      const metaRaw = await fs.readFile(path.join(dir, "meta.json"), "utf8").catch(() => null);
+      if (!metaRaw) {
+        return NextResponse.json({ ok: false, error: "Upload session not found." }, { status: 404 });
+      }
+      const meta = JSON.parse(metaRaw) as {
+        filename: string;
+        mime: string;
+        size: number;
+        setAsHero: boolean;
+        replaceUrl: string;
+      };
+
+      const entries = (await fs.readdir(dir))
+        .filter((f) => f.startsWith("part-"))
+        .sort();
+      if (!entries.length) {
+        return NextResponse.json({ ok: false, error: "No chunks received." }, { status: 400 });
+      }
+
+      const assembled = path.join(dir, "assembled.bin");
+      const out = createWriteStream(assembled);
+      for (const part of entries) {
+        const data = await fs.readFile(path.join(dir, part));
+        if (!out.write(data)) {
+          await new Promise<void>((resolve) => out.once("drain", resolve));
+        }
+      }
+      await new Promise<void>((resolve, reject) => {
+        out.end(() => resolve());
+        out.on("error", reject);
+      });
+
+      const stat = await fs.stat(assembled);
+      const mimeFromName = (() => {
+        const ext = path.extname(meta.filename).toLowerCase();
+        return EXT_MIME[ext] || "";
+      })();
+      const mime =
+        (meta.mime && meta.mime !== "application/octet-stream"
+          ? meta.mime
+          : mimeFromName) || "application/octet-stream";
+
+      if (!Object.values(EXT_MIME).includes(mime)) {
+        await fs.rm(dir, { recursive: true, force: true }).catch(() => undefined);
+        return NextResponse.json(
+          { ok: false, error: `Unsupported assembled format (${mime}).` },
+          { status: 400 },
+        );
+      }
+      const item = await finalizeUploadedFile({
+        absSource: assembled,
+        originalName: meta.filename,
+        mime,
+        size: stat.size,
+        setAsHero: meta.setAsHero,
+        replaceUrl: meta.replaceUrl,
+      });
+
+      await fs.rm(dir, { recursive: true, force: true }).catch(() => undefined);
+      return NextResponse.json({ ok: true, item });
+    }
+
+    // ---- Direct (small) upload ----
     const file = form.get("file");
     if (!(file instanceof File)) {
       return NextResponse.json(
@@ -145,7 +334,7 @@ export async function POST(req: Request) {
 
     if (file.size <= 0) {
       return NextResponse.json(
-        { ok: false, error: "Empty file. Choose a valid video and retry." },
+        { ok: false, error: "Empty file. Choose a valid file and retry." },
         { status: 400 },
       );
     }
@@ -160,58 +349,32 @@ export async function POST(req: Request) {
       );
     }
 
-    // Optional: permanently remove previous hero video when replacing
     const replaceUrl = String(form.get("replaceUrl") || "").trim();
-    if (replaceUrl) {
-      await permanentlyDeleteMedia({ url: replaceUrl });
-    }
-
+    const setAsHero = String(form.get("setAsHero") || "") === "1";
     const id = randomUUID();
-    const ext = extFor(mime, file.name) || ".mp4";
-    const filename = `${id}${ext}`;
-    const abs = path.join(MEDIA_LIBRARY_DIR, filename);
+    const tmp = path.join(UPLOADS_DIR, `${id}.tmp`);
+    await fs.mkdir(UPLOADS_DIR, { recursive: true });
 
     try {
-      // Stream to disk — avoids loading the full video into memory twice
       const webStream = file.stream();
       const nodeStream = Readable.fromWeb(
         webStream as import("stream/web").ReadableStream,
       );
-      await pipeline(nodeStream, createWriteStream(abs));
+      await pipeline(nodeStream, createWriteStream(tmp));
     } catch (err) {
-      try {
-        await fs.unlink(abs);
-      } catch {
-        // ignore cleanup errors
-      }
+      await fs.unlink(tmp).catch(() => undefined);
       const mapped = mapUploadError(err);
       return NextResponse.json({ ok: false, error: mapped.error }, { status: mapped.status });
     }
 
-    const item: MediaItem = {
-      id,
-      name: file.name.replace(/\.[^.]+$/, "") || "Untitled",
-      filename,
-      url: `/media/library/${filename}`,
-      mimeType: mime,
+    const item = await finalizeUploadedFile({
+      absSource: tmp,
+      originalName: file.name,
+      mime,
       size: file.size,
-      uploadedAt: new Date().toISOString(),
-      status: "ready",
-    };
-
-    const library = await getMediaLibrary();
-    library.unshift(item);
-    await saveMediaLibrary(library);
-
-    // If this upload is marked as hero replacement, point hero at it immediately
-    const setAsHero = String(form.get("setAsHero") || "") === "1";
-    if (setAsHero) {
-      const hero = await getHeroContent();
-      await saveHeroContent({
-        ...hero,
-        videoUrl: `${item.url}?t=${Date.now()}`,
-      });
-    }
+      setAsHero,
+      replaceUrl,
+    });
 
     return NextResponse.json({ ok: true, item });
   } catch (err) {
