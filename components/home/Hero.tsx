@@ -1,185 +1,176 @@
 "use client";
 
-import { useState } from "react";
-import Image from "next/image";
-import Link from "next/link";
+import { FormEvent, useState } from "react";
 import { motion } from "framer-motion";
-import { Search, Play, Phone } from "lucide-react";
+import {
+  Search,
+  Shield,
+  Mountain,
+  Compass,
+  Headphones,
+  Star,
+} from "lucide-react";
+import type { HeroContent, HeroFeatureIcon } from "@/types/hero";
 
 const ease = [0.22, 1, 0.36, 1] as const;
 
-const titleWords = [
-  { text: "Explore", gold: false },
-  { text: "Nepal", gold: false },
-  { text: "Beyond", gold: true },
-  { text: "The", gold: false, breakBefore: true },
-  { text: "Ordinary", gold: false },
-] as const;
-
-const titleContainer = {
-  initial: {},
-  animate: {
-    transition: { staggerChildren: 0.25, delayChildren: 0.05 },
-  },
+const iconMap: Record<HeroFeatureIcon, typeof Shield> = {
+  shield: Shield,
+  mountain: Mountain,
+  compass: Compass,
+  headset: Headphones,
 };
 
-const titleWord = {
-  initial: { opacity: 0, y: 16 },
-  animate: {
-    opacity: 1,
-    y: 0,
-    transition: { duration: 0.25, ease },
-  },
+type Props = {
+  content: HeroContent;
+  preview?: boolean;
 };
 
-const avatars = [
-  "https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&w=80&q=80",
-  "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=80&q=80",
-  "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?auto=format&fit=crop&w=80&q=80",
-  "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?auto=format&fit=crop&w=80&q=80",
-];
-
-function HeroHeading() {
-  return (
-    <motion.h1
-      variants={titleContainer}
-      initial="initial"
-      animate="animate"
-      className="font-[family-name:var(--font-display)] text-[1.95rem] font-bold leading-[1.12] tracking-[-0.02em] text-white sm:text-[2.55rem] md:text-[2.85rem] lg:text-[3.35rem]"
-      aria-label="Explore Nepal Beyond The Ordinary"
-    >
-      {titleWords.map((word) => (
-        <span key={word.text}>
-          {"breakBefore" in word && word.breakBefore ? <br /> : null}
-          <motion.span
-            variants={titleWord}
-            className={
-              word.gold
-                ? "mr-[0.28em] inline-block bg-gradient-to-r from-[#F0D078] via-[#D8A73C] to-[#B8892A] bg-clip-text italic text-transparent"
-                : "mr-[0.28em] inline-block"
-            }
-          >
-            {word.text}
-          </motion.span>
-        </span>
-      ))}
-    </motion.h1>
-  );
-}
-
-export function Hero() {
+export function Hero({ content, preview = false }: Props) {
   const [query, setQuery] = useState("");
 
+  if (!content.visible) return null;
+
+  const onSearch = (e: FormEvent) => {
+    e.preventDefault();
+  };
+
+  const lineAnim = content.headlineAnimation && !preview;
+
   return (
-    <section className="relative h-[100svh] min-h-[640px] w-full overflow-hidden bg-[#08121E]">
-      <div className="absolute inset-0">
-        <Image
-          src="/hero-summit.png"
-          alt="Summit Seek trekker celebrating on a Himalayan ridge at golden hour"
-          fill
-          priority
-          quality={100}
-          sizes="100vw"
-          className="object-cover object-center"
-        />
-        <div
-          className="absolute inset-0"
-          style={{ background: "rgba(4,13,24,0.40)" }}
-          aria-hidden
-        />
-      </div>
+    <section
+      className="relative isolate h-[100svh] min-h-[640px] w-full overflow-hidden bg-[#050b14]"
+      aria-label="Hero"
+    >
+      <video
+        key={content.videoUrl}
+        className="absolute inset-0 h-full w-full object-cover"
+        autoPlay
+        muted
+        loop
+        playsInline
+        preload="auto"
+        poster=""
+        disablePictureInPicture
+        disableRemotePlayback
+        style={{ transform: "translateZ(0)", willChange: "transform" }}
+      >
+        <source src={`${content.videoUrl}?v=1`} type="video/mp4" />
+      </video>
+
+      <div
+        className="pointer-events-none absolute inset-0"
+        style={{ background: `rgba(0,0,0,${content.overlayOpacity})` }}
+        aria-hidden
+      />
 
       <div className="relative z-10 flex h-full flex-col">
-        <div className="mx-auto flex w-full max-w-[1440px] flex-1 flex-col justify-center px-5 pt-[160px] pb-3 sm:px-8 lg:px-12 lg:pt-[172px]">
-          <div className="max-w-[620px]">
-            <HeroHeading />
+        <div className="mx-auto flex w-full max-w-[1100px] flex-1 flex-col items-center justify-center px-5 pb-36 pt-24 text-center sm:px-8 sm:pb-40">
+          <p className="text-[12px] font-medium tracking-[0.08em] text-white/90 sm:text-[13px]">
+            {content.eyebrow}
+          </p>
 
-            <p className="mt-4 max-w-[480px] text-[13px] leading-[1.65] text-white/90 sm:mt-5 sm:text-[14px] md:text-[15px]">
-              Bespoke treks, peak climbs, and luxury journeys crafted for
-              travelers who expect excellence — from the first step to the final
-              summit.
+          <h1 className="mt-4 font-sans text-[2.35rem] font-bold leading-[1.08] tracking-[-0.03em] text-white sm:text-[3.25rem] md:text-[3.75rem] lg:text-[4.25rem]">
+            {lineAnim ? (
+              <>
+                <motion.span
+                  className="block"
+                  initial={{ opacity: 0, y: 22 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.55, ease }}
+                >
+                  {content.headingLine1}
+                </motion.span>
+                <motion.span
+                  className="mt-1 block"
+                  initial={{ opacity: 0, y: 22 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.55, ease, delay: 0.22 }}
+                >
+                  {content.headingLine2}
+                </motion.span>
+              </>
+            ) : (
+              <>
+                <span className="block">{content.headingLine1}</span>
+                <span className="mt-1 block">{content.headingLine2}</span>
+              </>
+            )}
+          </h1>
+
+          {content.description ? (
+            <p className="mt-4 max-w-[560px] text-[14px] leading-relaxed text-white/85 sm:text-[15px]">
+              {content.description}
             </p>
+          ) : null}
 
-            <form
-              className="mt-8 flex h-[52px] w-full max-w-[640px] items-center rounded-full border border-white/50 bg-white/92 p-[5px] shadow-[0_18px_50px_rgba(0,0,0,0.28)] backdrop-blur-xl sm:mt-10 sm:h-[60px] sm:p-1.5"
-              onSubmit={(e) => e.preventDefault()}
+          <form
+            onSubmit={onSearch}
+            className="mt-8 flex w-full max-w-[640px] items-center gap-2 rounded-full border border-white/25 bg-white/95 p-1.5 shadow-[0_18px_50px_rgba(0,0,0,0.28)] backdrop-blur-md sm:p-2"
+          >
+            <div className="flex min-w-0 flex-1 items-center gap-2 pl-3 sm:pl-4">
+              <Search className="size-4 shrink-0 text-[#6b7280] sm:size-5" aria-hidden />
+              <input
+                type="search"
+                value={query}
+                onChange={(e) => setQuery(e.target.value)}
+                placeholder={content.searchPlaceholder}
+                className="min-w-0 flex-1 bg-transparent py-2.5 text-[14px] text-[#111827] outline-none placeholder:text-[#9ca3af] sm:text-[15px]"
+                aria-label={content.searchPlaceholder}
+              />
+            </div>
+            <button
+              type="submit"
+              className="inline-flex size-11 shrink-0 items-center justify-center rounded-full bg-[#2f9e44] text-white shadow-[0_8px_20px_rgba(47,158,68,0.35)] transition hover:brightness-110 sm:size-12"
+              aria-label={content.searchButtonLabel}
             >
-              <div className="flex min-w-0 flex-1 items-center gap-2.5 pl-3.5 sm:gap-3 sm:pl-5">
-                <Search className="size-[18px] shrink-0 text-[#D8A73C] sm:size-5" />
-                <label className="sr-only" htmlFor="hero-search">
-                  Search destinations
-                </label>
-                <input
-                  id="hero-search"
-                  type="search"
-                  value={query}
-                  onChange={(e) => setQuery(e.target.value)}
-                  placeholder="Where do you want to go? (e.g. Everest Base Camp, Annapurna Circuit)"
-                  className="w-full min-w-0 bg-transparent text-[12px] font-medium text-[#08121E] outline-none placeholder:text-[#9aa3b2] sm:text-[14px]"
-                />
-              </div>
-              <button
-                type="submit"
-                className="h-full shrink-0 rounded-full bg-[#D8A73C] px-4 text-[10px] font-semibold tracking-wide text-[#08121E] transition-all duration-[350ms] ease-[cubic-bezier(0.22,1,0.36,1)] hover:-translate-y-px hover:bg-[#c49630] hover:shadow-[0_8px_24px_rgba(216,167,60,0.45)] sm:px-6 sm:text-[13px]"
-              >
-                SEARCH JOURNEYS
-              </button>
-            </form>
-          </div>
+              <Search className="size-5" />
+            </button>
+          </form>
         </div>
 
-        <div className="mx-auto w-full max-w-[1440px] px-5 pb-4 sm:px-8 lg:px-12 lg:pb-5">
-          <div className="flex flex-col gap-2.5 lg:flex-row lg:items-stretch lg:justify-between">
-            <Link
-              href="/about#story"
-              className="group flex flex-1 flex-col gap-3 rounded-[18px] border border-white/12 bg-[rgba(8,18,30,0.55)] p-3 backdrop-blur-xl transition-all duration-[350ms] hover:border-[#D8A73C]/35 sm:flex-row sm:items-center sm:gap-4 sm:p-3.5 lg:max-w-[720px]"
-            >
-              <div className="flex min-w-0 flex-1 items-center gap-3">
-                <span className="flex size-11 shrink-0 items-center justify-center rounded-full border border-[#D8A73C]/55 bg-[#D8A73C]/15 text-[#D8A73C] transition-transform group-hover:scale-105">
-                  <Play className="size-4 fill-current" />
-                </span>
-                <div className="min-w-0">
-                  <p className="text-[11px] font-bold uppercase tracking-[0.14em] text-white">
-                    Watch Our Story
-                  </p>
-                  <p className="mt-0.5 text-[11px] text-white/75 sm:text-[12px]">
-                    Discover why travelers trust Summit Seek
-                  </p>
-                </div>
-              </div>
-              <div className="flex items-center gap-3 border-t border-white/10 pt-2.5 sm:border-l sm:border-t-0 sm:pl-4 sm:pt-0">
-                <div className="flex -space-x-2">
-                  {avatars.map((src) => (
-                    <span
-                      key={src}
-                      className="relative size-7 overflow-hidden rounded-full border-2 border-[#08121E]"
+        <div className="absolute inset-x-0 bottom-0 z-10">
+          <div className="border-t border-white/15 bg-white/[0.08] backdrop-blur-xl">
+            <div className="mx-auto grid max-w-[1280px] grid-cols-1 divide-y divide-white/15 sm:grid-cols-2 sm:divide-x sm:divide-y-0 lg:grid-cols-4">
+              {content.features.map((feature) => {
+                const Icon = iconMap[feature.icon] || Shield;
+                return (
+                  <div
+                    key={feature.id}
+                    className="flex items-start gap-3 px-5 py-5 sm:px-6 sm:py-6"
+                  >
+                    <motion.div
+                      className="mt-0.5 flex size-10 shrink-0 items-center justify-center rounded-full border border-white/20 bg-white/10"
+                      animate={preview ? undefined : { y: [0, -3, 0] }}
+                      transition={
+                        preview
+                          ? undefined
+                          : { duration: 3.2, repeat: Infinity, ease: "easeInOut" }
+                      }
                     >
-                      <Image src={src} alt="" fill className="object-cover" sizes="28px" />
-                    </span>
-                  ))}
-                </div>
-                <p className="text-[11px] leading-snug text-white/85">
-                  <span className="font-bold text-white">Trusted by 3,000+</span>
-                  <br />
-                  Adventurers Worldwide
-                </p>
-              </div>
-            </Link>
-
-            <div className="flex items-center gap-3 rounded-[18px] border border-white/12 bg-[rgba(8,18,30,0.55)] p-3 backdrop-blur-xl sm:p-3.5">
-              <div className="min-w-0">
-                <p className="text-[13px] font-bold text-white">Need Help Planning?</p>
-                <p className="mt-0.5 text-[11px] text-white/75">
-                  Our travel experts are here for you.
-                </p>
-              </div>
-              <a
-                href="tel:+97714000000"
-                aria-label="Call Summit Seek"
-                className="flex size-11 shrink-0 items-center justify-center rounded-full bg-[#D8A73C] text-[#08121E] shadow-[0_10px_28px_rgba(216,167,60,0.45)] transition-all duration-[350ms] hover:-translate-y-0.5 hover:bg-[#c49630]"
-              >
-                <Phone className="size-4" />
-              </a>
+                      <Icon className="size-5 text-white" strokeWidth={1.75} />
+                    </motion.div>
+                    <div className="min-w-0 text-left">
+                      <p className="text-[14px] font-semibold text-white sm:text-[15px]">
+                        {feature.title}
+                      </p>
+                      <p className="mt-1 text-[12px] leading-snug text-white/75 sm:text-[13px]">
+                        {feature.subtitle}
+                      </p>
+                      {feature.showStars ? (
+                        <div className="mt-2 flex gap-0.5" aria-hidden>
+                          {Array.from({ length: 4 }).map((_, i) => (
+                            <Star
+                              key={i}
+                              className="size-3 fill-[#F4A623] text-[#F4A623]"
+                            />
+                          ))}
+                        </div>
+                      ) : null}
+                    </div>
+                  </div>
+                );
+              })}
             </div>
           </div>
         </div>

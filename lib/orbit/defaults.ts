@@ -1,0 +1,51 @@
+import type { HeroContent } from "@/types/hero";
+
+export const DEFAULT_HERO: HeroContent = {
+  videoUrl: "/media/hero/hero.mp4",
+  logoUrl: "/logo-summit-seek-transparent.png",
+  logoUrlLight: "/logo-summit-seek-white.png",
+  eyebrow: "Discover and book tours and activities",
+  headingLine1: "Start Planning",
+  headingLine2: "Your Journey",
+  description:
+    "Bespoke Himalayan treks, peak climbs, and luxury journeys — crafted for travelers who expect excellence.",
+  searchPlaceholder: "Find an Adventure",
+  searchButtonLabel: "Search",
+  overlayOpacity: 0.35,
+  headlineAnimation: true,
+  visible: true,
+  features: [
+    {
+      id: "trusted",
+      title: "Trusted by Explorers",
+      subtitle: "Proven by thousands of happy adventurers worldwide.",
+      icon: "shield",
+      showStars: true,
+    },
+    {
+      id: "local",
+      title: "Local Roots. Real Impact.",
+      subtitle: "We work hand in hand with local communities.",
+      icon: "mountain",
+      showStars: false,
+    },
+    {
+      id: "ethical",
+      title: "Ethical Travel Promise",
+      subtitle: "Sustainable journeys that protect nature and culture.",
+      icon: "compass",
+      showStars: false,
+    },
+    {
+      id: "support",
+      title: "Guided with Care",
+      subtitle: "Expert guidance and support, every step of the way.",
+      icon: "headset",
+      showStars: false,
+    },
+  ],
+};
+
+export const ORBIT_PASSKEY = "713304977";
+export const ORBIT_SESSION_COOKIE = "orbit_session";
+export const ORBIT_SESSION_VALUE = "orbit_authenticated_v1";

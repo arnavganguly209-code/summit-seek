@@ -1,0 +1,106 @@
+"use client";
+
+import Link from "next/link";
+import { usePathname } from "next/navigation";
+import {
+  LayoutDashboard,
+  Globe2,
+  Home,
+  PanelsTopLeft,
+  Package,
+  BriefcaseBusiness,
+  MessageSquareQuote,
+  Info,
+  PanelBottom,
+  Images,
+  Users,
+  Settings,
+} from "lucide-react";
+import { cn } from "@/lib/utils";
+
+const nav = [
+  { href: "/orbit/dashboard", label: "Dashboard", icon: LayoutDashboard },
+  {
+    label: "Website",
+    icon: Globe2,
+    children: [
+      { href: "/orbit/dashboard/website/home", label: "Home Page", icon: Home },
+      {
+        href: "/orbit/dashboard/website/home/hero",
+        label: "Hero",
+        icon: PanelsTopLeft,
+      },
+      { href: "/orbit/dashboard/website/packages", label: "Packages", icon: Package },
+      { href: "/orbit/dashboard/website/services", label: "Services", icon: BriefcaseBusiness },
+      { href: "/orbit/dashboard/website/reviews", label: "Reviews", icon: MessageSquareQuote },
+      { href: "/orbit/dashboard/website/about", label: "About", icon: Info },
+      { href: "/orbit/dashboard/website/footer", label: "Footer", icon: PanelBottom },
+    ],
+  },
+  { href: "/orbit/dashboard/media", label: "Media Library", icon: Images },
+  { href: "/orbit/dashboard/users", label: "Users", icon: Users },
+  { href: "/orbit/dashboard/settings", label: "Settings", icon: Settings },
+];
+
+export function OrbitSidebar() {
+  const pathname = usePathname();
+
+  return (
+    <aside className="hidden w-[260px] shrink-0 border-r border-white/10 bg-[#070c14] lg:flex lg:flex-col">
+      <div className="border-b border-white/10 px-5 py-5">
+        <p className="text-[12px] font-bold tracking-[0.24em] text-[#F58220]">ORBIT</p>
+        <p className="mt-1 text-[13px] text-white/60">Content Operating System</p>
+      </div>
+      <nav className="flex-1 space-y-1 overflow-y-auto px-3 py-4">
+        {nav.map((item) => {
+          if ("children" in item && item.children) {
+            return (
+              <div key={item.label} className="pt-2">
+                <div className="mb-1 flex items-center gap-2 px-3 py-2 text-[11px] font-semibold uppercase tracking-[0.16em] text-white/40">
+                  <item.icon className="size-3.5" />
+                  {item.label}
+                </div>
+                <div className="space-y-0.5">
+                  {item.children.map((child) => {
+                    const active = pathname === child.href;
+                    return (
+                      <Link
+                        key={child.href}
+                        href={child.href}
+                        className={cn(
+                          "flex items-center gap-2 rounded-lg px-3 py-2 text-[13px] font-medium transition",
+                          active
+                            ? "bg-[#F58220]/15 text-[#F58220]"
+                            : "text-white/70 hover:bg-white/5 hover:text-white",
+                        )}
+                      >
+                        <child.icon className="size-4 opacity-80" />
+                        {child.label}
+                      </Link>
+                    );
+                  })}
+                </div>
+              </div>
+            );
+          }
+          const active = pathname === item.href;
+          return (
+            <Link
+              key={item.href}
+              href={item.href!}
+              className={cn(
+                "flex items-center gap-2 rounded-lg px-3 py-2.5 text-[13px] font-medium transition",
+                active
+                  ? "bg-[#F58220]/15 text-[#F58220]"
+                  : "text-white/70 hover:bg-white/5 hover:text-white",
+              )}
+            >
+              <item.icon className="size-4 opacity-80" />
+              {item.label}
+            </Link>
+          );
+        })}
+      </nav>
+    </aside>
+  );
+}

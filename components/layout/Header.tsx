@@ -1,25 +1,25 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import Image from "next/image";
 import Link from "next/link";
 import { AnimatePresence, motion } from "framer-motion";
-import { Menu, X, ChevronDown, Mail, Phone, ArrowRight } from "lucide-react";
-import { Logo } from "@/components/layout/Logo";
-import { TopBar } from "@/components/layout/TopBar";
+import {
+  Menu,
+  X,
+  ChevronDown,
+  Search,
+  Heart,
+  UserRound,
+  Sparkles,
+} from "lucide-react";
 import { DestinationsDropdown } from "@/components/layout/DestinationsDropdown";
 import { TrekkingMegaMenu } from "@/components/layout/TrekkingMegaMenu";
-import { CategoryIcon } from "@/components/layout/CategoryIcon";
-import { Container } from "@/components/ui/Container";
-import {
-  mainNav,
-  destinationRegions,
-  trekkingColumns,
-  type MegaKind,
-} from "@/lib/data/navigation";
-import { SITE } from "@/lib/constants";
+import { destinationNavItems } from "@/lib/data/destinations-nav";
+import { mainNav, trekkingColumns, type MegaKind } from "@/lib/data/navigation";
 import { cn } from "@/lib/utils";
 
-const ease = "duration-300 ease-[cubic-bezier(0.22,1,0.36,1)]";
+const HEADER_H = 72;
 
 function megaKindForLabel(label: string): MegaKind | null {
   if (label === "Destinations") return "destinations";
@@ -27,14 +27,22 @@ function megaKindForLabel(label: string): MegaKind | null {
   return null;
 }
 
-export function Header() {
+type Props = {
+  logoUrl?: string;
+  logoUrlLight?: string;
+};
+
+export function Header({
+  logoUrl = "/logo-summit-seek-transparent.png",
+  logoUrlLight = "/logo-summit-seek-white.png",
+}: Props) {
   const [scrolled, setScrolled] = useState(false);
   const [megaKind, setMegaKind] = useState<MegaKind | null>(null);
   const [mobileOpen, setMobileOpen] = useState(false);
   const [mobileMega, setMobileMega] = useState<string | null>(null);
 
   useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 20);
+    const onScroll = () => setScrolled(window.scrollY > 16);
     onScroll();
     window.addEventListener("scroll", onScroll, { passive: true });
     return () => window.removeEventListener("scroll", onScroll);
@@ -48,321 +56,255 @@ export function Header() {
   }, [mobileOpen]);
 
   const navText = scrolled
-    ? "text-[#08121E] hover:text-[#D8A73C]"
-    : "text-white hover:text-[#D8A73C]";
+    ? "text-[#0b1524] hover:text-[#F58220]"
+    : "text-white hover:text-[#F58220]";
 
-  /**
-   * Sticky white bar must fully wrap the logo (no half-cut look).
-   * Before scroll: 96px · After scroll: 108px solid white
-   */
-  const barHeight = scrolled ? 108 : 96;
-  const mobileOverlayTop = scrolled ? "top-[108px]" : "top-[96px]";
+  const activeLogo = scrolled ? logoUrl : logoUrlLight;
 
   return (
     <header
       className={cn(
-        "fixed inset-x-0 top-0 z-50 transition-[background-color,box-shadow,border-color] duration-300 ease-[cubic-bezier(0.22,1,0.36,1)]",
+        "fixed inset-x-0 top-0 z-50 transition-[background-color,box-shadow,backdrop-filter,border-color] duration-300",
         scrolled
-          ? "overflow-hidden border-b border-black/[0.06] bg-white shadow-[0_6px_24px_rgba(8,18,30,0.08)]"
-          : "overflow-visible border-b border-transparent bg-transparent shadow-none",
+          ? "border-b border-black/[0.06] bg-white/85 shadow-[0_8px_28px_rgba(8,18,30,0.08)] backdrop-blur-xl"
+          : "border-b border-transparent bg-transparent shadow-none",
       )}
+      style={{ height: HEADER_H }}
     >
-      {/* TopBar collapses after scroll for compact sticky header */}
-      <div
-        className={cn(
-          "overflow-hidden transition-all duration-300 ease-[cubic-bezier(0.22,1,0.36,1)]",
-          scrolled ? "pointer-events-none max-h-0 opacity-0" : "max-h-12 opacity-100",
-        )}
-      >
-        <TopBar scrolled={scrolled} />
-      </div>
+      <div className="relative mx-auto flex h-full max-w-[1400px] items-center justify-between gap-4 px-4 sm:px-6 lg:px-8">
+        <Link href="/" aria-label="Summit Seek — Home" className="shrink-0">
+          <Image
+            src={activeLogo}
+            alt="Summit Seek Travels & Tours"
+            width={220}
+            height={66}
+            unoptimized
+            priority
+            className="h-[42px] w-auto object-contain sm:h-[55px]"
+          />
+        </Link>
 
-      <Container className="relative">
-        <div
-          className={cn(
-            "grid grid-cols-[auto_1fr_auto] items-center gap-3 overflow-hidden lg:gap-5",
-            "transition-[height,padding] duration-300 ease-[cubic-bezier(0.22,1,0.36,1)]",
-            scrolled ? "py-3" : "py-2",
-          )}
-          style={{ height: barHeight }}
+        <nav
+          className="absolute left-1/2 hidden -translate-x-1/2 items-center gap-0.5 xl:flex"
+          aria-label="Primary"
+          onMouseLeave={() => setMegaKind(null)}
         >
-          <Logo priority compact={scrolled} />
+          {mainNav.map((item) => {
+            const kind = megaKindForLabel(item.label);
+            const open = kind !== null && megaKind === kind;
+            if (kind) {
+              return (
+                <div
+                  key={item.label}
+                  className="relative"
+                  onMouseEnter={() => setMegaKind(kind)}
+                >
+                  <button
+                    type="button"
+                    className={cn(
+                      "inline-flex items-center gap-1 rounded-md px-3 py-2 text-[14px] font-semibold transition-colors",
+                      navText,
+                    )}
+                    aria-expanded={open}
+                  >
+                    {item.label}
+                    <ChevronDown className="size-3.5 opacity-80" />
+                  </button>
+                  {kind === "destinations" ? (
+                    <DestinationsDropdown
+                      open={open}
+                      onClose={() => setMegaKind(null)}
+                    />
+                  ) : (
+                    <TrekkingMegaMenu
+                      open={open}
+                      onClose={() => setMegaKind(null)}
+                    />
+                  )}
+                </div>
+              );
+            }
+            return (
+              <Link
+                key={item.href}
+                href={item.href}
+                className={cn(
+                  "rounded-md px-3 py-2 text-[14px] font-semibold transition-colors",
+                  navText,
+                )}
+              >
+                {item.label}
+              </Link>
+            );
+          })}
+        </nav>
 
-          <nav
-            className="relative hidden min-w-0 justify-center xl:flex"
-            aria-label="Primary"
-            onMouseLeave={() => setMegaKind(null)}
+        <div className="hidden items-center gap-1.5 lg:flex">
+          <button
+            type="button"
+            className={cn(
+              "inline-flex size-10 items-center justify-center rounded-full border transition",
+              scrolled
+                ? "border-[#2f9e44]/40 text-[#2f9e44] hover:bg-[#2f9e44]/10"
+                : "border-[#2f9e44]/70 text-[#7ddea0] hover:bg-white/10",
+            )}
+            aria-label="Search"
           >
-            <ul className="flex flex-nowrap items-center justify-center gap-x-5 2xl:gap-x-7">
-              {mainNav.map((item) => {
-                const showChevron = Boolean(item.dropdown || item.mega);
-                const kind = megaKindForLabel(item.label);
-                const opensMega = Boolean(kind);
-
-                if (opensMega && kind === "destinations") {
-                  return (
-                    <li
-                      key={item.href}
-                      className="relative shrink-0"
-                      onMouseEnter={() => setMegaKind("destinations")}
-                      onFocus={() => setMegaKind("destinations")}
-                    >
-                      <button
-                        type="button"
-                        className={cn(
-                          "nav-link inline-flex items-center gap-1 whitespace-nowrap py-2 text-[16px] font-bold tracking-[-0.01em] xl:text-[17px]",
-                          "transition-colors",
-                          ease,
-                          navText,
-                          megaKind === "destinations" && "text-[#D8A73C]",
-                        )}
-                        aria-expanded={megaKind === "destinations"}
-                        aria-haspopup="true"
-                      >
-                        {item.label}
-                        <ChevronDown
-                          className={cn(
-                            "size-3.5 transition-transform",
-                            ease,
-                            megaKind === "destinations" && "rotate-180",
-                          )}
-                        />
-                      </button>
-                      <DestinationsDropdown
-                        open={megaKind === "destinations"}
-                        onClose={() => setMegaKind(null)}
-                      />
-                    </li>
-                  );
-                }
-
-                if (opensMega && kind === "trekking") {
-                  return (
-                    <li key={item.href} className="shrink-0">
-                      <button
-                        type="button"
-                        onMouseEnter={() => setMegaKind("trekking")}
-                        onFocus={() => setMegaKind("trekking")}
-                        className={cn(
-                          "nav-link inline-flex items-center gap-1 whitespace-nowrap py-2 text-[16px] font-bold tracking-[-0.01em] xl:text-[17px]",
-                          "transition-colors",
-                          ease,
-                          navText,
-                          megaKind === "trekking" && "text-[#D8A73C]",
-                        )}
-                        aria-expanded={megaKind === "trekking"}
-                        aria-haspopup="true"
-                      >
-                        {item.label}
-                        <ChevronDown
-                          className={cn(
-                            "size-3.5 transition-transform",
-                            ease,
-                            megaKind === "trekking" && "rotate-180",
-                          )}
-                        />
-                      </button>
-                    </li>
-                  );
-                }
-
-                return (
-                  <li key={item.href} className="shrink-0">
-                    <Link
-                      href={item.href}
-                      onMouseEnter={() => setMegaKind(null)}
-                      className={cn(
-                        "nav-link inline-flex items-center gap-1 whitespace-nowrap py-2 text-[16px] font-bold tracking-[-0.01em] xl:text-[17px]",
-                        "transition-colors",
-                        ease,
-                        navText,
-                      )}
-                    >
-                      {item.label}
-                      {showChevron ? <ChevronDown className="size-3.5" /> : null}
-                    </Link>
-                  </li>
-                );
-              })}
-            </ul>
-
-            <TrekkingMegaMenu
-              open={megaKind === "trekking"}
-              onClose={() => setMegaKind(null)}
-            />
-          </nav>
-
-          <div className="flex shrink-0 items-center justify-end gap-2 lg:gap-3">
-            <Link
-              href="/plan-your-trip"
-              className={cn(
-                "hidden items-center justify-center rounded-[10px] bg-[#D8A73C] px-4 text-[11px] font-semibold tracking-wide text-[#08121E] sm:inline-flex lg:rounded-[12px] lg:px-5 lg:text-[12px]",
-                "shadow-[0_8px_22px_rgba(216,167,60,0.35)]",
-                "transition-all hover:-translate-y-0.5 hover:bg-[#c49630]",
-                ease,
-                scrolled ? "h-9 lg:h-9" : "h-10 lg:h-11",
-              )}
-            >
-              PLAN YOUR TRIP →
-            </Link>
-            <button
-              type="button"
-              className={cn(
-                "inline-flex items-center justify-center rounded-[10px] xl:hidden",
-                "transition-colors hover:border-[#D8A73C] hover:text-[#D8A73C]",
-                ease,
-                scrolled ? "size-9" : "size-10",
-                scrolled
-                  ? "border border-black/15 text-[#08121E]"
-                  : "border border-white/25 text-white",
-              )}
-              aria-label={mobileOpen ? "Close menu" : "Open menu"}
-              aria-expanded={mobileOpen}
-              onClick={() => setMobileOpen((v) => !v)}
-            >
-              {mobileOpen ? <X className="size-5" /> : <Menu className="size-5" />}
-            </button>
-          </div>
+            <Search className="size-[18px]" />
+          </button>
+          <button
+            type="button"
+            className={cn(
+              "inline-flex size-10 items-center justify-center rounded-full transition",
+              scrolled ? "text-[#0b1524] hover:bg-black/5" : "text-white hover:bg-white/10",
+            )}
+            aria-label="Wishlist"
+          >
+            <Heart className="size-[18px]" />
+          </button>
+          <span
+            className={cn("mx-1 h-5 w-px", scrolled ? "bg-black/15" : "bg-white/30")}
+            aria-hidden
+          />
+          <Link
+            href="/orbit"
+            className={cn(
+              "inline-flex items-center gap-1.5 rounded-md px-2.5 py-2 text-[13px] font-semibold transition",
+              navText,
+            )}
+          >
+            <UserRound className="size-4" />
+            Sign In
+          </Link>
+          <span
+            className={cn("mx-0.5 h-5 w-px", scrolled ? "bg-black/15" : "bg-white/30")}
+            aria-hidden
+          />
+          <Link
+            href="/orbit"
+            className={cn(
+              "inline-flex items-center gap-1.5 rounded-md px-2.5 py-2 text-[13px] font-semibold transition",
+              navText,
+            )}
+          >
+            <span className="relative">
+              <UserRound className="size-4" />
+              <Sparkles className="absolute -right-1.5 -top-1 size-2.5 text-[#F58220]" />
+            </span>
+            Sign Up
+          </Link>
         </div>
-      </Container>
+
+        <button
+          type="button"
+          className={cn(
+            "inline-flex size-10 items-center justify-center rounded-md xl:hidden",
+            scrolled ? "text-[#0b1524]" : "text-white",
+          )}
+          aria-label={mobileOpen ? "Close menu" : "Open menu"}
+          onClick={() => setMobileOpen((v) => !v)}
+        >
+          {mobileOpen ? <X className="size-5" /> : <Menu className="size-5" />}
+        </button>
+      </div>
 
       <AnimatePresence>
         {mobileOpen ? (
           <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            className={cn(
-              "fixed inset-0 z-40 bg-[#08121E]/60 backdrop-blur-sm xl:hidden",
-              mobileOverlayTop,
-            )}
-            onClick={() => setMobileOpen(false)}
+            initial={{ opacity: 0, y: -8 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -8 }}
+            className="absolute inset-x-0 top-[72px] max-h-[calc(100svh-72px)] overflow-y-auto border-b border-black/10 bg-white shadow-xl xl:hidden"
           >
-            <motion.nav
-              initial={{ x: "100%" }}
-              animate={{ x: 0 }}
-              exit={{ x: "100%" }}
-              transition={{ duration: 0.35, ease: [0.22, 1, 0.36, 1] }}
-              className="absolute inset-y-0 right-0 flex w-full max-w-md flex-col border-l border-white/10 bg-[#08121E]"
-              onClick={(e) => e.stopPropagation()}
-              aria-label="Mobile"
-            >
-              <div className="luxury-scroll flex-1 overflow-y-auto px-5 py-6">
-                <ul className="space-y-1">
-                  {mainNav.map((item) => {
-                    const kind = megaKindForLabel(item.label);
-                    return (
-                      <li key={item.href}>
-                        {kind ? (
-                          <div>
-                            <button
-                              type="button"
-                              className="flex w-full items-center justify-between rounded-xl px-3 py-3.5 text-left text-base font-bold text-white"
-                              onClick={() =>
-                                setMobileMega((v) => (v === item.label ? null : item.label))
-                              }
-                            >
-                              {item.label}
-                              <ChevronDown
-                                className={cn(
-                                  "size-4 transition-transform",
-                                  mobileMega === item.label && "rotate-180",
-                                )}
-                              />
-                            </button>
-                            <AnimatePresence>
-                              {mobileMega === item.label ? (
-                                <motion.div
-                                  initial={{ height: 0, opacity: 0 }}
-                                  animate={{ height: "auto", opacity: 1 }}
-                                  exit={{ height: 0, opacity: 0 }}
-                                  className="overflow-hidden pl-1"
-                                >
-                                  {kind === "destinations" ? (
-                                    <ul className="space-y-0.5 pb-3">
-                                      {destinationRegions.map((cat) => (
-                                        <li key={cat.id}>
-                                          <Link
-                                            href={cat.href}
-                                            onClick={() => setMobileOpen(false)}
-                                            className="flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-semibold text-[#D5D8DD] transition-colors hover:bg-white/5 hover:text-[#D8A73C]"
-                                          >
-                                            <CategoryIcon
-                                              name={cat.icon}
-                                              className="size-4 text-[#D8A73C]"
-                                            />
-                                            {cat.label}
-                                            <ArrowRight className="ml-auto size-3.5 opacity-40" />
-                                          </Link>
-                                        </li>
-                                      ))}
-                                    </ul>
-                                  ) : (
-                                    <div className="space-y-4 pb-4 pl-2">
-                                      {trekkingColumns.map((col) => (
-                                        <div key={col.id}>
-                                          <Link
-                                            href={col.href}
-                                            onClick={() => setMobileOpen(false)}
-                                            className="text-[12px] font-bold uppercase tracking-[0.14em] text-[#D8A73C]"
-                                          >
-                                            {col.heading}
-                                          </Link>
-                                          <ul className="mt-2 space-y-1">
-                                            {col.links.map((link) => (
-                                              <li key={link.href}>
-                                                <Link
-                                                  href={link.href}
-                                                  onClick={() => setMobileOpen(false)}
-                                                  className="block rounded-lg px-2 py-1.5 text-sm text-[#D5D8DD] hover:text-[#D8A73C]"
-                                                >
-                                                  {link.title}
-                                                </Link>
-                                              </li>
-                                            ))}
-                                          </ul>
-                                        </div>
-                                      ))}
-                                    </div>
-                                  )}
-                                </motion.div>
-                              ) : null}
-                            </AnimatePresence>
-                          </div>
-                        ) : (
-                          <Link
-                            href={item.href}
-                            onClick={() => setMobileOpen(false)}
-                            className="block rounded-xl px-3 py-3.5 text-base font-bold text-white hover:text-[#D8A73C]"
-                          >
-                            {item.label}
-                          </Link>
-                        )}
-                      </li>
-                    );
-                  })}
-                </ul>
-                <div className="mt-8 space-y-3 border-t border-white/10 pt-6 text-sm text-[#D5D8DD]">
-                  <a href={`mailto:${SITE.email}`} className="flex items-center gap-2 hover:text-[#D8A73C]">
-                    <Mail className="size-4 text-[#D8A73C]" />
-                    {SITE.email}
-                  </a>
-                  <a href={`tel:${SITE.phone}`} className="flex items-center gap-2 hover:text-[#D8A73C]">
-                    <Phone className="size-4 text-[#D8A73C]" />
-                    {SITE.phoneDisplay}
-                  </a>
-                </div>
-              </div>
-              <div className="border-t border-white/10 p-5">
+            <div className="space-y-1 px-4 py-4">
+              {mainNav.map((item) => {
+                const kind = megaKindForLabel(item.label);
+                if (kind) {
+                  const open = mobileMega === item.label;
+                  return (
+                    <div key={item.label}>
+                      <button
+                        type="button"
+                        className="flex w-full items-center justify-between rounded-lg px-3 py-3 text-left text-[15px] font-semibold text-[#0b1524]"
+                        onClick={() =>
+                          setMobileMega((v) => (v === item.label ? null : item.label))
+                        }
+                      >
+                        {item.label}
+                        <ChevronDown
+                          className={cn("size-4 transition", open ? "rotate-180" : "")}
+                        />
+                      </button>
+                      {open && kind === "destinations" ? (
+                        <ul className="space-y-1 pb-2 pl-3">
+                          {destinationNavItems.map((d) => (
+                            <li key={d.href}>
+                              <Link
+                                href={d.href}
+                                className="block rounded-md px-3 py-2 text-[14px] text-[#334155]"
+                                onClick={() => setMobileOpen(false)}
+                              >
+                                {d.label}
+                              </Link>
+                            </li>
+                          ))}
+                        </ul>
+                      ) : null}
+                      {open && kind === "trekking" ? (
+                        <div className="space-y-3 pb-2 pl-3">
+                          {trekkingColumns.map((col) => (
+                            <div key={col.id}>
+                              <p className="px-3 text-[12px] font-bold uppercase tracking-wide text-[#64748b]">
+                                {col.heading}
+                              </p>
+                              <ul>
+                                {col.links.map((link) => (
+                                  <li key={link.href}>
+                                    <Link
+                                      href={link.href}
+                                      className="block rounded-md px-3 py-2 text-[14px] text-[#334155]"
+                                      onClick={() => setMobileOpen(false)}
+                                    >
+                                      {link.title}
+                                    </Link>
+                                  </li>
+                                ))}
+                              </ul>
+                            </div>
+                          ))}
+                        </div>
+                      ) : null}
+                    </div>
+                  );
+                }
+                return (
+                  <Link
+                    key={item.href}
+                    href={item.href}
+                    className="block rounded-lg px-3 py-3 text-[15px] font-semibold text-[#0b1524]"
+                    onClick={() => setMobileOpen(false)}
+                  >
+                    {item.label}
+                  </Link>
+                );
+              })}
+              <div className="mt-3 grid grid-cols-2 gap-2 border-t border-black/10 pt-3">
                 <Link
-                  href="/plan-your-trip"
+                  href="/orbit"
+                  className="rounded-lg bg-[#0b1524] px-3 py-3 text-center text-[13px] font-semibold text-white"
                   onClick={() => setMobileOpen(false)}
-                  className="flex h-[52px] w-full items-center justify-center rounded-[14px] bg-[#D8A73C] text-sm font-semibold text-[#08121E]"
                 >
-                  PLAN YOUR TRIP →
+                  Sign In
+                </Link>
+                <Link
+                  href="/orbit"
+                  className="rounded-lg border border-[#0b1524]/20 px-3 py-3 text-center text-[13px] font-semibold text-[#0b1524]"
+                  onClick={() => setMobileOpen(false)}
+                >
+                  Sign Up
                 </Link>
               </div>
-            </motion.nav>
+            </div>
           </motion.div>
         ) : null}
       </AnimatePresence>
