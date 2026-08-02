@@ -206,7 +206,7 @@ export const destinationRegions: DestinationRegion[] = [
   },
 ];
 
-/** Trekking In Nepal mega — sidebar regions + package panels */
+/** Trekking In Nepal mega — clean 4×2 region grid */
 export const trekkingColumns: TrekkingColumn[] = [
   {
     id: "everest",
@@ -215,11 +215,9 @@ export const trekkingColumns: TrekkingColumn[] = [
     subtitle: "World's highest mountain adventures.",
     links: [
       { title: "Everest Base Camp Trek", href: "/treks/everest-base-camp", duration: "14 Days", difficulty: "Challenging" },
-      { title: "Everest Three Passes Trek", href: "/treks/three-passes", duration: "18 Days", difficulty: "Strenuous" },
+      { title: "Everest Three Passes", href: "/treks/three-passes", duration: "18 Days", difficulty: "Strenuous" },
       { title: "Gokyo Lakes Trek", href: "/treks/gokyo-lakes", duration: "12 Days", difficulty: "Challenging" },
-      { title: "Everest Luxury Trek", href: "/treks/everest-luxury", duration: "12 Days", difficulty: "Moderate" },
       { title: "Everest View Trek", href: "/treks/everest-view", duration: "7 Days", difficulty: "Easy" },
-      { title: "Island Peak Climbing", href: "/peaks/island-peak", duration: "18 Days", difficulty: "Strenuous" },
     ],
   },
   {
@@ -228,12 +226,10 @@ export const trekkingColumns: TrekkingColumn[] = [
     href: "/destinations/annapurna",
     subtitle: "Classic trails beneath sacred Himalayan peaks.",
     links: [
-      { title: "Annapurna Base Camp Trek", href: "/treks/annapurna-base-camp", duration: "11 Days", difficulty: "Moderate" },
-      { title: "Annapurna Circuit Trek", href: "/treks/annapurna-circuit", duration: "16 Days", difficulty: "Challenging" },
-      { title: "Mardi Himal Trek", href: "/treks/mardi-himal", duration: "10 Days", difficulty: "Moderate" },
-      { title: "Poon Hill Trek", href: "/treks/poon-hill", duration: "5 Days", difficulty: "Easy" },
-      { title: "Khopra Ridge Trek", href: "/treks/khopra-ridge", duration: "9 Days", difficulty: "Moderate" },
-      { title: "Tilicho Lake Trek", href: "/treks/tilicho-lake", duration: "14 Days", difficulty: "Challenging" },
+      { title: "Annapurna Base Camp", href: "/treks/annapurna-base-camp", duration: "11 Days", difficulty: "Moderate" },
+      { title: "Annapurna Circuit", href: "/treks/annapurna-circuit", duration: "16 Days", difficulty: "Challenging" },
+      { title: "Mardi Himal", href: "/treks/mardi-himal", duration: "5 Days", difficulty: "Moderate" },
+      { title: "Poon Hill Trek", href: "/treks/poon-hill", duration: "4 Days", difficulty: "Easy" },
     ],
   },
   {
@@ -242,11 +238,10 @@ export const trekkingColumns: TrekkingColumn[] = [
     href: "/destinations/langtang",
     subtitle: "Alpine valleys close to Kathmandu.",
     links: [
-      { title: "Langtang Valley Trek", href: "/treks/langtang-valley", duration: "10 Days", difficulty: "Moderate" },
-      { title: "Gosaikunda Trek", href: "/treks/gosaikunda", duration: "8 Days", difficulty: "Moderate" },
-      { title: "Helambu Trek", href: "/treks/helambu", duration: "7 Days", difficulty: "Easy" },
-      { title: "Tamang Heritage Trek", href: "/treks/tamang-heritage", duration: "11 Days", difficulty: "Moderate" },
-      { title: "Langtang Ganja La Trek", href: "/treks/ganja-la", duration: "15 Days", difficulty: "Challenging" },
+      { title: "Langtang Valley", href: "/treks/langtang-valley", duration: "10 Days", difficulty: "Moderate" },
+      { title: "Gosainkunda", href: "/treks/gosaikunda", duration: "8 Days", difficulty: "Moderate" },
+      { title: "Helambu", href: "/treks/helambu", duration: "7 Days", difficulty: "Easy" },
+      { title: "Tamang Heritage", href: "/treks/tamang-heritage", duration: "11 Days", difficulty: "Moderate" },
     ],
   },
   {
@@ -255,10 +250,10 @@ export const trekkingColumns: TrekkingColumn[] = [
     href: "/destinations/manaslu",
     subtitle: "Remote circuits around the eighth-highest peak.",
     links: [
-      { title: "Manaslu Circuit Trek", href: "/treks/manaslu-circuit", duration: "14 Days", difficulty: "Challenging" },
-      { title: "Tsum Valley Trek", href: "/treks/tsum-valley", duration: "16 Days", difficulty: "Moderate" },
-      { title: "Manaslu Tsum Valley Trek", href: "/treks/manaslu-tsum", duration: "20 Days", difficulty: "Challenging" },
-      { title: "Rupina La Trek", href: "/treks/rupina-la", duration: "17 Days", difficulty: "Strenuous" },
+      { title: "Manaslu Circuit", href: "/treks/manaslu-circuit", duration: "14 Days", difficulty: "Challenging" },
+      { title: "Manaslu Tsum Valley", href: "/treks/manaslu-tsum", duration: "21 Days", difficulty: "Challenging" },
+      { title: "Tsum Valley", href: "/treks/tsum-valley", duration: "17 Days", difficulty: "Moderate" },
+      { title: "Rupina La", href: "/treks/rupina-la", duration: "18 Days", difficulty: "Strenuous" },
     ],
   },
   {
@@ -290,9 +285,9 @@ export const trekkingColumns: TrekkingColumn[] = [
     href: "/destinations/kanchenjunga",
     subtitle: "Expedition trails to the world's third-highest peak.",
     links: [
-      { title: "Kanchenjunga Circuit Trek", href: "/treks/kanchenjunga-circuit", duration: "22 Days", difficulty: "Strenuous" },
-      { title: "North Base Camp Trek", href: "/treks/kanchenjunga-north", duration: "18 Days", difficulty: "Challenging" },
-      { title: "South Base Camp Trek", href: "/treks/kanchenjunga-south", duration: "17 Days", difficulty: "Challenging" },
+      { title: "Kanchenjunga Circuit", href: "/treks/kanchenjunga-circuit", duration: "22 Days", difficulty: "Strenuous" },
+      { title: "North Base Camp", href: "/treks/kanchenjunga-north", duration: "18 Days", difficulty: "Challenging" },
+      { title: "South Base Camp", href: "/treks/kanchenjunga-south", duration: "17 Days", difficulty: "Challenging" },
     ],
   },
   {
@@ -301,34 +296,9 @@ export const trekkingColumns: TrekkingColumn[] = [
     href: "/destinations/makalu",
     subtitle: "Wild approaches to the fifth-highest mountain.",
     links: [
-      { title: "Makalu Base Camp Trek", href: "/treks/makalu-bc", duration: "20 Days", difficulty: "Strenuous" },
-    ],
-  },
-  {
-    id: "dhaulagiri",
-    heading: "Dhaulagiri Region",
-    href: "/destinations/dhaulagiri",
-    subtitle: "Rugged circuits around the White Mountain.",
-    links: [
-      { title: "Dhaulagiri Circuit Trek", href: "/treks/dhaulagiri-circuit", duration: "18 Days", difficulty: "Strenuous" },
-    ],
-  },
-  {
-    id: "rolwaling",
-    heading: "Rolwaling Region",
-    href: "/destinations/rolwaling",
-    subtitle: "Hidden valleys between Everest and Langtang.",
-    links: [
-      { title: "Rolwaling Valley Trek", href: "/treks/rolwaling", duration: "12 Days", difficulty: "Challenging" },
-    ],
-  },
-  {
-    id: "hidden",
-    heading: "Hidden Himalayas",
-    href: "/destinations/hidden-himalayas",
-    subtitle: "Off-map journeys for true explorers.",
-    links: [
-      { title: "Hidden Himalayas Trek", href: "/treks/hidden-himalayas", duration: "15 Days", difficulty: "Challenging" },
+      { title: "Makalu Base Camp", href: "/treks/makalu-bc", duration: "20 Days", difficulty: "Strenuous" },
+      { title: "Makalu Barun Valley", href: "/treks/makalu-barun", duration: "18 Days", difficulty: "Challenging" },
+      { title: "Arun Valley Trek", href: "/treks/arun-valley", duration: "12 Days", difficulty: "Moderate" },
     ],
   },
 ];
