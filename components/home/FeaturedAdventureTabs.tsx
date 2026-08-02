@@ -39,18 +39,30 @@ function PackageCard({ pkg }: { pkg: FeaturedPackage }) {
   const samePlace =
     pkg.startLocation.trim().toLowerCase() ===
     pkg.endLocation.trim().toLowerCase();
+  const imageSrc = pkg.imageUrl.split("?")[0];
+  const isLocal = imageSrc.startsWith("/");
 
   return (
     <article className="group flex h-full flex-col overflow-hidden rounded-[16px] border border-[#e6ebf2] bg-white shadow-[0_8px_28px_rgba(11,21,36,0.06)] transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_18px_40px_rgba(11,21,36,0.11)]">
       <div className="relative aspect-[16/11] overflow-hidden bg-[#0b1524]/5">
-        <Image
-          src={pkg.imageUrl}
-          alt={pkg.title}
-          fill
-          className="object-cover transition-transform duration-500 ease-out group-hover:scale-[1.03]"
-          sizes="(max-width: 768px) 100vw, (max-width: 1280px) 50vw, 25vw"
-          unoptimized={pkg.imageUrl.startsWith("/")}
-        />
+        {isLocal ? (
+          // eslint-disable-next-line @next/next/no-img-element
+          <img
+            src={pkg.imageUrl}
+            alt={pkg.title}
+            className="absolute inset-0 h-full w-full object-cover transition-transform duration-500 ease-out group-hover:scale-[1.03]"
+            loading="lazy"
+            decoding="async"
+          />
+        ) : (
+          <Image
+            src={pkg.imageUrl}
+            alt={pkg.title}
+            fill
+            className="object-cover transition-transform duration-500 ease-out group-hover:scale-[1.03]"
+            sizes="(max-width: 768px) 100vw, (max-width: 1280px) 50vw, 25vw"
+          />
+        )}
         <div className="absolute inset-0 bg-gradient-to-t from-[#0b1524]/30 via-transparent to-transparent" />
         <button
           type="button"

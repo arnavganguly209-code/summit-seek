@@ -14,7 +14,7 @@ import type {
   FeaturedPackage,
   FeaturedPackagesContent,
 } from "@/types/featured-packages";
-import { orbitUploadFile } from "@/lib/orbit/client-upload";
+import { orbitUploadFile, withCacheBust } from "@/lib/orbit/client-upload";
 import { OrbitMediaPreview } from "@/components/orbit/OrbitMediaPreview";
 import { cn } from "@/lib/utils";
 type Props = {
@@ -25,6 +25,28 @@ function emptyImageFallback() {
   return "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?auto=format&fit=crop&w=900&q=80";
 }
 
+function coercePackages(content: FeaturedPackagesContent): FeaturedPackagesContent {
+  return {
+    categories: content.categories.map((cat) => ({
+      ...cat,
+      packages: cat.packages.map((pkg) => ({
+        ...pkg,
+        durationDays: Number(pkg.durationDays) || 1,
+        price: Number(pkg.price) || 0,
+        compareAtPrice:
+          pkg.compareAtPrice === null || pkg.compareAtPrice === undefined
+            ? null
+            : Number(pkg.compareAtPrice) || 0,
+        rating: Number(pkg.rating) || 0,
+        reviewCount: Number(pkg.reviewCount) || 0,
+        visible: pkg.visible !== false,
+        imageUrl: String(pkg.imageUrl || "").trim(),
+        title: String(pkg.title || "").trim(),
+      })),
+    })),
+  };
+}
+
 export function FeaturedPackagesEditor({ initial }: Props) {
   const router = useRouter();
   const [content, setContent] = useState(initial);
@@ -33,7 +55,10 @@ export function FeaturedPackagesEditor({ initial }: Props) {
   const [uploadingId, setUploadingId] = useState<string | null>(null);
   const [toast, setToast] = useState("");
   const [error, setError] = useState("");
+  const [uploadProgress, setUploadProgress] = useState(0);
   const fileRefs = useRef<Record<string, HTMLInputElement | null>>({});
+  const contentRef = useRef(content);
+  contentRef.current = content;
 
   const category =
     content.categories.find((c) => c.id === activeCat) ?? content.categories[0];
@@ -68,7 +93,7 @@ export function FeaturedPackagesEditor({ initial }: Props) {
   };
 
   const save = async (next?: FeaturedPackagesContent) => {
-    const payload = next || content;
+    const payload = coercePackages(next || contentRef.current);
     setSaving(true);
     setError("");
     setToast("");
@@ -78,12 +103,26 @@ export function FeaturedPackagesEditor({ initial }: Props) {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload),
       });
-      const data = (await res.json()) as { ok?: boolean; error?: string };
+      const raw = await res.text();
+      let data: { ok?: boolean; error?: string } = {};
+      try {
+        data = JSON.parse(raw) as { ok?: boolean; error?: string };
+      } catch {
+        setError(
+          res.status === 413
+            ? "Save rejected by server size limit. Retry."
+            : `Save failed (HTTP ${res.status}).`,
+        );
+        setSaving(false);
+        return false;
+      }
       if (!res.ok || !data.ok) {
         setError(data.error || "Failed to save packages.");
         setSaving(false);
         return false;
       }
+      setContent(payload);
+      contentRef.current = payload;
       setToast("Featured packages saved. Live homepage updated.");
       setSaving(false);
       router.refresh();
@@ -102,25 +141,34 @@ export function FeaturedPackagesEditor({ initial }: Props) {
       ["png", "jpg", "jpeg", "webp", "gif"].includes(ext) ||
       file.type.startsWith("image/");
     if (!ok) {
-      setError("Use png, jpg, jpeg, webp, or gif.");
+      setError("Use png, jpg, jpeg, webp, or gif (not HEIC/RAW).");
       return;
     }
 
     setUploadingId(pkg.id);
+    setUploadProgress(2);
     setError("");
     setToast("");
 
     try {
-      const prev = pkg.imageUrl;
+      const currentPkg =
+        contentRef.current.categories
+          .find((c) => c.id === category.id)
+          ?.packages.find((p) => p.id === pkg.id) || pkg;
+      const prev = currentPkg.imageUrl;
       const replaceUrl = prev.startsWith("/media/library/")
         ? prev.split("?")[0]
         : undefined;
-      const item = await orbitUploadFile({ file, replaceUrl });
-      const imageUrl = `${item.url}?t=${Date.now()}`;
+      const item = await orbitUploadFile({
+        file,
+        replaceUrl,
+        onProgress: setUploadProgress,
+      });
+      const imageUrl = withCacheBust(item.url);
 
       const next: FeaturedPackagesContent = {
-        ...content,
-        categories: content.categories.map((cat) =>
+        ...contentRef.current,
+        categories: contentRef.current.categories.map((cat) =>
           cat.id !== category.id
             ? cat
             : {
@@ -132,12 +180,19 @@ export function FeaturedPackagesEditor({ initial }: Props) {
         ),
       };
       setContent(next);
-      await save(next);
-      setToast(`Image uploaded and saved for “${pkg.title}”.`);
+      contentRef.current = next;
+
+      const saved = await save(next);
+      if (saved) {
+        setToast(`Image uploaded and saved for “${pkg.title}”.`);
+      } else {
+        setError((e) => e || "Image uploaded, but saving the package failed. Click Save & Publish.");
+      }
     } catch (err) {
       setError(err instanceof Error ? err.message : "Upload failed.");
     } finally {
       setUploadingId(null);
+      setUploadProgress(0);
     }
   };
 
@@ -210,6 +265,14 @@ export function FeaturedPackagesEditor({ initial }: Props) {
       {error ? (
         <div className="rounded-lg border border-red-500/30 bg-red-500/10 px-4 py-3 text-[13px] text-red-300">
           {error}
+        </div>
+      ) : null}
+      {uploadingId ? (
+        <div className="h-2 overflow-hidden rounded-full bg-white/10">
+          <div
+            className="h-full bg-[#F58220] transition-all"
+            style={{ width: `${Math.max(uploadProgress, 4)}%` }}
+          />
         </div>
       ) : null}
 

@@ -32,7 +32,26 @@ async function postForm(form: FormData): Promise<{ status: number; data: ApiResu
   return { status: res.status, data, raw };
 }
 
-/** Reliable Orbit upload — chunked so nginx/proxy size limits cannot block large videos. */
+function httpError(status: number, fallback: string, data: ApiResult): string {
+  if (data.error) return data.error;
+  if (status === 413) {
+    return `Server rejected upload (proxy size limit). Max ${ORBIT_MAX_UPLOAD_MB}MB.`;
+  }
+  if (status === 401) return "Orbit session expired. Sign in again, then retry upload.";
+  if (!status) return "Network error during upload. Check connection and retry.";
+  return `${fallback} (HTTP ${status}).`;
+}
+
+/** Cache-bust without creating `?t=…?v=1` double-query URLs. */
+export function withCacheBust(url: string): string {
+  const clean = url.split("?")[0].trim();
+  return `${clean}?t=${Date.now()}`;
+}
+
+/**
+ * Reliable Orbit upload — always chunked (same path as hero video).
+ * Avoids nginx/proxy body limits and fragile single-shot multipart parsing.
+ */
 export async function orbitUploadFile(opts: UploadOptions): Promise<MediaItem> {
   const { file, setAsHero, replaceUrl, onProgress } = opts;
 
@@ -45,39 +64,18 @@ export async function orbitUploadFile(opts: UploadOptions): Promise<MediaItem> {
     );
   }
 
-  // Small files: try direct first (1 request)
-  if (file.size <= ORBIT_UPLOAD_CHUNK_BYTES) {
-    const form = new FormData();
-    form.append("phase", "direct");
-    form.append("file", file);
-    if (setAsHero) form.append("setAsHero", "1");
-    if (replaceUrl) form.append("replaceUrl", replaceUrl);
-    onProgress?.(10);
-    const { status, data } = await postForm(form);
-    if (status >= 200 && status < 300 && data.ok && data.item) {
-      onProgress?.(100);
-      return data.item;
-    }
-    // fall through to chunked on failure
-  }
-
   onProgress?.(2);
   const init = new FormData();
   init.append("phase", "init");
-  init.append("filename", file.name);
+  init.append("filename", file.name || "upload.bin");
   init.append("mimeType", file.type || "application/octet-stream");
   init.append("size", String(file.size));
   if (setAsHero) init.append("setAsHero", "1");
-  if (replaceUrl) init.append("replaceUrl", replaceUrl);
+  if (replaceUrl) init.append("replaceUrl", replaceUrl.split("?")[0]);
 
   const initRes = await postForm(init);
   if (!initRes.data.ok || !initRes.data.uploadId) {
-    throw new Error(
-      initRes.data.error ||
-        (initRes.status === 413
-          ? `Server rejected upload (proxy size limit). Max ${ORBIT_MAX_UPLOAD_MB}MB.`
-          : `Upload init failed (HTTP ${initRes.status}).`),
-    );
+    throw new Error(httpError(initRes.status, "Upload init failed", initRes.data));
   }
 
   const uploadId = initRes.data.uploadId;
@@ -103,11 +101,11 @@ export async function orbitUploadFile(opts: UploadOptions): Promise<MediaItem> {
       if (chunkRes.status >= 200 && chunkRes.status < 300 && chunkRes.data.ok) {
         ok = true;
       } else {
-        lastError =
-          chunkRes.data.error ||
-          (chunkRes.status === 413
-            ? "Chunk rejected by proxy size limit."
-            : `Chunk ${index + 1}/${totalChunks} failed (HTTP ${chunkRes.status}).`);
+        lastError = httpError(
+          chunkRes.status,
+          `Chunk ${index + 1}/${totalChunks} failed`,
+          chunkRes.data,
+        );
         await new Promise((r) => setTimeout(r, 400 * attempt));
       }
     }
@@ -123,7 +121,7 @@ export async function orbitUploadFile(opts: UploadOptions): Promise<MediaItem> {
   onProgress?.(95);
   const done = await postForm(complete);
   if (!done.data.ok || !done.data.item) {
-    throw new Error(done.data.error || `Finalize failed (HTTP ${done.status}).`);
+    throw new Error(httpError(done.status, "Finalize failed", done.data));
   }
   onProgress?.(100);
   return done.data.item;

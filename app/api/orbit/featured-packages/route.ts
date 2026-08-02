@@ -41,6 +41,13 @@ export async function PUT(req: Request) {
         );
       }
       for (const pkg of cat.packages) {
+        pkg.durationDays = Number(pkg.durationDays) || 1;
+        pkg.price = Number(pkg.price) || 0;
+        pkg.rating = Number(pkg.rating) || 0;
+        pkg.reviewCount = Number(pkg.reviewCount) || 0;
+        if (pkg.compareAtPrice != null) {
+          pkg.compareAtPrice = Number(pkg.compareAtPrice) || 0;
+        }
         if (!pkg.title?.trim()) {
           return NextResponse.json(
             { ok: false, error: "Every package needs a title." },
@@ -53,7 +60,7 @@ export async function PUT(req: Request) {
             { status: 400 },
           );
         }
-        if (typeof pkg.price !== "number" || pkg.price < 0) {
+        if (typeof pkg.price !== "number" || Number.isNaN(pkg.price) || pkg.price < 0) {
           return NextResponse.json(
             { ok: false, error: `Invalid price for "${pkg.title}".` },
             { status: 400 },

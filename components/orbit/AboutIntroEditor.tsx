@@ -12,7 +12,7 @@ import {
 } from "lucide-react";
 import type { AboutIntroContent } from "@/types/about-intro";
 import { DEFAULT_ABOUT_INTRO } from "@/lib/orbit/about-intro-defaults";
-import { orbitUploadFile } from "@/lib/orbit/client-upload";
+import { orbitUploadFile, withCacheBust } from "@/lib/orbit/client-upload";
 import { OrbitMediaPreview } from "@/components/orbit/OrbitMediaPreview";
 
 type Props = { initial: AboutIntroContent };
@@ -22,10 +22,13 @@ export function AboutIntroEditor({ initial }: Props) {
   const [content, setContent] = useState(initial);
   const [saving, setSaving] = useState(false);
   const [uploading, setUploading] = useState<"main" | "circle" | null>(null);
+  const [progress, setProgress] = useState(0);
   const [toast, setToast] = useState("");
   const [error, setError] = useState("");
   const mainRef = useRef<HTMLInputElement>(null);
   const circleRef = useRef<HTMLInputElement>(null);
+  const contentRef = useRef(content);
+  contentRef.current = content;
 
   const update = <K extends keyof AboutIntroContent>(
     key: K,
@@ -33,7 +36,7 @@ export function AboutIntroEditor({ initial }: Props) {
   ) => setContent((prev) => ({ ...prev, [key]: value }));
 
   const save = async (next?: AboutIntroContent) => {
-    const payload = next || content;
+    const payload = next || contentRef.current;
     setSaving(true);
     setError("");
     setToast("");
@@ -43,12 +46,22 @@ export function AboutIntroEditor({ initial }: Props) {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload),
       });
-      const data = (await res.json()) as { ok?: boolean; error?: string };
+      const raw = await res.text();
+      let data: { ok?: boolean; error?: string } = {};
+      try {
+        data = JSON.parse(raw) as { ok?: boolean; error?: string };
+      } catch {
+        setError(`Save failed (HTTP ${res.status}).`);
+        setSaving(false);
+        return false;
+      }
       if (!res.ok || !data.ok) {
         setError(data.error || "Failed to save About section.");
         setSaving(false);
         return false;
       }
+      setContent(payload);
+      contentRef.current = payload;
       setToast("About section saved. Live homepage updated.");
       setSaving(false);
       router.refresh();
@@ -61,32 +74,57 @@ export function AboutIntroEditor({ initial }: Props) {
   };
 
   const uploadSlot = async (slot: "main" | "circle", file: File) => {
+    const ext = file.name.split(".").pop()?.toLowerCase() || "";
+    const ok =
+      ["png", "jpg", "jpeg", "webp", "gif"].includes(ext) ||
+      file.type.startsWith("image/");
+    if (!ok) {
+      setError("Use png, jpg, jpeg, webp, or gif (not HEIC/RAW).");
+      return;
+    }
+
     setUploading(slot);
+    setProgress(2);
     setError("");
     setToast("");
     try {
-      const prev =
-        slot === "main" ? content.mainImageUrl : content.circleImageUrl;
-      const replaceUrl = prev.startsWith("/media/library/")
-        ? prev.split("?")[0]
+      const prevUrl =
+        slot === "main"
+          ? contentRef.current.mainImageUrl
+          : contentRef.current.circleImageUrl;
+      const replaceUrl = prevUrl.startsWith("/media/library/")
+        ? prevUrl.split("?")[0]
         : undefined;
-      const item = await orbitUploadFile({ file, replaceUrl });
-      const url = `${item.url}?t=${Date.now()}`;
-      const next =
+
+      const item = await orbitUploadFile({
+        file,
+        replaceUrl,
+        onProgress: setProgress,
+      });
+      const url = withCacheBust(item.url);
+
+      const next: AboutIntroContent =
         slot === "main"
-          ? { ...content, mainImageUrl: url }
-          : { ...content, circleImageUrl: url };
+          ? { ...contentRef.current, mainImageUrl: url }
+          : { ...contentRef.current, circleImageUrl: url };
       setContent(next);
-      await save(next);
-      setToast(
-        slot === "main"
-          ? "Main image uploaded and saved."
-          : "Circle image uploaded and saved.",
-      );
+      contentRef.current = next;
+
+      const saved = await save(next);
+      if (saved) {
+        setToast(
+          slot === "main"
+            ? "Main image uploaded and saved."
+            : "Circle image uploaded and saved.",
+        );
+      } else {
+        setError((e) => e || "Image uploaded, but saving failed. Click Save & Publish.");
+      }
     } catch (err) {
       setError(err instanceof Error ? err.message : "Upload failed.");
     } finally {
       setUploading(null);
+      setProgress(0);
     }
   };
 
@@ -147,6 +185,14 @@ export function AboutIntroEditor({ initial }: Props) {
       {error ? (
         <div className="rounded-lg border border-red-500/30 bg-red-500/10 px-4 py-3 text-[13px] text-red-300">
           {error}
+        </div>
+      ) : null}
+      {uploading ? (
+        <div className="h-2 overflow-hidden rounded-full bg-white/10">
+          <div
+            className="h-full bg-[#F58220] transition-all"
+            style={{ width: `${Math.max(progress, 4)}%` }}
+          />
         </div>
       ) : null}
 

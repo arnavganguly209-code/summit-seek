@@ -41,10 +41,32 @@ const EXT_MIME: Record<string, string> = {
   ".gif": "image/gif",
 };
 
-function resolveMime(file: File): string {
-  if (file.type && file.type !== "application/octet-stream") return file.type;
-  const ext = path.extname(file.name).toLowerCase();
+const MIME_ALIASES: Record<string, string> = {
+  "image/jpg": "image/jpeg",
+  "image/pjpeg": "image/jpeg",
+  "image/x-png": "image/png",
+  "audio/mp4": "video/mp4",
+};
+
+const ALLOWED_MIME = new Set(Object.values(EXT_MIME));
+
+function normalizeMime(raw: string, filename = ""): string {
+  const lower = (raw || "").trim().toLowerCase();
+  if (lower && lower !== "application/octet-stream") {
+    const aliased = MIME_ALIASES[lower] || lower;
+    if (ALLOWED_MIME.has(aliased)) return aliased;
+  }
+  const ext = path.extname(filename).toLowerCase();
   return EXT_MIME[ext] || "";
+}
+
+function isFileLike(value: FormDataEntryValue | null): boolean {
+  return (
+    typeof value === "object" &&
+    value !== null &&
+    typeof (value as Blob).arrayBuffer === "function" &&
+    typeof (value as Blob).size === "number"
+  );
 }
 
 function extFor(mime: string, name: string) {
@@ -107,7 +129,8 @@ async function finalizeUploadedFile(opts: {
   });
 
   if (opts.replaceUrl) {
-    await permanentlyDeleteMedia({ url: opts.replaceUrl });
+    // Never fail a successful upload because the old file could not be removed
+    await permanentlyDeleteMedia({ url: opts.replaceUrl }).catch(() => undefined);
   }
 
   const item: MediaItem = {
@@ -129,7 +152,7 @@ async function finalizeUploadedFile(opts: {
     const hero = await getHeroContent();
     await saveHeroContent({
       ...hero,
-      videoUrl: `${item.url}?t=${Date.now()}`,
+      videoUrl: `${item.url.split("?")[0]}?t=${Date.now()}`,
     });
   }
 
@@ -283,19 +306,14 @@ export async function POST(req: Request) {
       });
 
       const stat = await fs.stat(assembled);
-      const mimeFromName = (() => {
-        const ext = path.extname(meta.filename).toLowerCase();
-        return EXT_MIME[ext] || "";
-      })();
-      const mime =
-        (meta.mime && meta.mime !== "application/octet-stream"
-          ? meta.mime
-          : mimeFromName) || "application/octet-stream";
-
-      if (!Object.values(EXT_MIME).includes(mime)) {
+      const mime = normalizeMime(meta.mime, meta.filename);
+      if (!mime || !ALLOWED_MIME.has(mime)) {
         await fs.rm(dir, { recursive: true, force: true }).catch(() => undefined);
         return NextResponse.json(
-          { ok: false, error: `Unsupported assembled format (${mime}).` },
+          {
+            ok: false,
+            error: `Unsupported image/video format (${meta.mime || path.extname(meta.filename) || "unknown"}). Use png, jpg, webp, gif, mp4, mov, or webm.`,
+          },
           { status: 400 },
         );
       }
@@ -312,22 +330,24 @@ export async function POST(req: Request) {
       return NextResponse.json({ ok: true, item });
     }
 
-    // ---- Direct (small) upload ----
-    const file = form.get("file");
-    if (!(file instanceof File)) {
+    // ---- Direct (small) upload fallback ----
+    const fileEntry = form.get("file");
+    if (!isFileLike(fileEntry)) {
       return NextResponse.json(
         { ok: false, error: "No file received. Please choose a file to upload." },
         { status: 400 },
       );
     }
+    const file = fileEntry as Blob & { name?: string; type?: string; stream?: () => ReadableStream };
 
-    const mime = resolveMime(file);
-    const allowed = new Set(Object.values(EXT_MIME));
-    if (!mime || !allowed.has(mime)) {
+    const originalName =
+      typeof file.name === "string" && file.name ? file.name : "upload.bin";
+    const mime = normalizeMime(typeof file.type === "string" ? file.type : "", originalName);
+    if (!mime || !ALLOWED_MIME.has(mime)) {
       return NextResponse.json(
         {
           ok: false,
-          error: `Unsupported format (${file.type || path.extname(file.name) || "unknown"}). Use mp4, mov, webm, png, jpg, or webp.`,
+          error: `Unsupported format (${file.type || path.extname(originalName) || "unknown"}). Use png, jpg, webp, gif, mp4, mov, or webm.`,
         },
         { status: 400 },
       );
@@ -357,11 +377,16 @@ export async function POST(req: Request) {
     await fs.mkdir(UPLOADS_DIR, { recursive: true });
 
     try {
-      const webStream = file.stream();
-      const nodeStream = Readable.fromWeb(
-        webStream as import("stream/web").ReadableStream,
-      );
-      await pipeline(nodeStream, createWriteStream(tmp));
+      if (typeof file.stream === "function") {
+        const webStream = file.stream();
+        const nodeStream = Readable.fromWeb(
+          webStream as import("stream/web").ReadableStream,
+        );
+        await pipeline(nodeStream, createWriteStream(tmp));
+      } else {
+        const buf = Buffer.from(await file.arrayBuffer());
+        await fs.writeFile(tmp, buf);
+      }
     } catch (err) {
       await fs.unlink(tmp).catch(() => undefined);
       const mapped = mapUploadError(err);
@@ -370,7 +395,7 @@ export async function POST(req: Request) {
 
     const item = await finalizeUploadedFile({
       absSource: tmp,
-      originalName: file.name,
+      originalName,
       mime,
       size: file.size,
       setAsHero,

@@ -14,7 +14,7 @@ import {
 import { Hero } from "@/components/home/Hero";
 import type { HeroContent, HeroFeature, MediaItem } from "@/types/hero";
 import { ORBIT_MAX_UPLOAD_MB } from "@/lib/orbit/upload-limits";
-import { orbitUploadFile } from "@/lib/orbit/client-upload";
+import { orbitUploadFile, withCacheBust } from "@/lib/orbit/client-upload";
 import { cn } from "@/lib/utils";
 
 type Props = {
@@ -118,7 +118,7 @@ export function HeroEditor({ initial }: Props) {
       });
 
       setUploadMeta(item);
-      update("videoUrl", `${item.url}?t=${Date.now()}`);
+      update("videoUrl", withCacheBust(item.url));
       setToast("Video uploaded and saved to hero. You can still tweak copy and click Save Changes.");
       router.refresh();
     } catch (err) {

@@ -51,25 +51,45 @@ export function AboutIntro({ content }: Props) {
             </svg>
 
             <div className="absolute inset-x-[8%] inset-y-[6%] overflow-hidden rounded-[2.25rem] shadow-[0_28px_70px_rgba(11,21,36,0.14)] sm:rounded-[2.75rem]">
-              <Image
-                src={content.mainImageUrl}
-                alt={content.mainImageAlt}
-                fill
-                className="object-cover object-center"
-                sizes="(max-width: 1024px) 90vw, 45vw"
-                unoptimized={isLocal(content.mainImageUrl)}
-              />
+              {isLocal(content.mainImageUrl) ? (
+                // eslint-disable-next-line @next/next/no-img-element
+                <img
+                  src={content.mainImageUrl}
+                  alt={content.mainImageAlt}
+                  className="absolute inset-0 h-full w-full object-cover object-center"
+                  loading="lazy"
+                  decoding="async"
+                />
+              ) : (
+                <Image
+                  src={content.mainImageUrl}
+                  alt={content.mainImageAlt}
+                  fill
+                  className="object-cover object-center"
+                  sizes="(max-width: 1024px) 90vw, 45vw"
+                />
+              )}
             </div>
 
             <div className="absolute left-0 top-0 z-10 size-[36%] max-w-[170px] overflow-hidden rounded-full border-[9px] border-white shadow-[0_18px_40px_rgba(11,21,36,0.16)] sm:size-[40%] sm:max-w-[190px] sm:border-[11px]">
-              <Image
-                src={content.circleImageUrl}
-                alt={content.circleImageAlt}
-                fill
-                className="object-cover object-center"
-                sizes="200px"
-                unoptimized={isLocal(content.circleImageUrl)}
-              />
+              {isLocal(content.circleImageUrl) ? (
+                // eslint-disable-next-line @next/next/no-img-element
+                <img
+                  src={content.circleImageUrl}
+                  alt={content.circleImageAlt}
+                  className="absolute inset-0 h-full w-full object-cover object-center"
+                  loading="lazy"
+                  decoding="async"
+                />
+              ) : (
+                <Image
+                  src={content.circleImageUrl}
+                  alt={content.circleImageAlt}
+                  fill
+                  className="object-cover object-center"
+                  sizes="200px"
+                />
+              )}
             </div>
 
             <motion.div

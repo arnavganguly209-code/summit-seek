@@ -55,7 +55,14 @@ export function Hero({ content, preview = false }: Props) {
         disableRemotePlayback
         style={{ transform: "translateZ(0)", willChange: "transform" }}
       >
-        <source src={`${content.videoUrl}?v=1`} type="video/mp4" />
+        <source
+          src={
+            content.videoUrl.includes("?")
+              ? content.videoUrl
+              : `${content.videoUrl}?v=1`
+          }
+          type="video/mp4"
+        />
       </video>
 
       <div
