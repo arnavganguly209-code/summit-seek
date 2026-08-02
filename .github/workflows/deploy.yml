@@ -40,7 +40,9 @@ jobs:
           key: ${{ secrets.VPS_SSH_KEY }}
           port: 22
           script_stop: true
-          command_timeout: 20m
+          timeout: 60s
+          command_timeout: 25m
+          max_attempts: 3
           envs: PROJECT_PATH,PM2_APP
           script: |
             set -euo pipefail
@@ -49,13 +51,12 @@ jobs:
             git fetch origin
             git reset --hard origin/main
 
-            # Ensure Orbit passkey file exists (never fail the deploy)
             if [ ! -f .env.local ] || ! grep -q '^ORBIT_PASSKEY=' .env.local 2>/dev/null; then
               echo 'ORBIT_PASSKEY=713304977' >> .env.local || true
               echo "Orbit .env.local ensured."
             fi
 
-            npm install
+            npm install --no-audit --no-fund
             npm run build
             pm2 restart "$PM2_APP" --update-env
             pm2 save
