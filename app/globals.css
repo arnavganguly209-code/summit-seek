@@ -197,6 +197,30 @@ body {
   border-radius: 999px;
 }
 
+/* Premium Destinations dropdown scrollbar */
+.destinations-scroll {
+  scrollbar-width: thin;
+  scrollbar-color: #f58220 transparent;
+  scroll-behavior: smooth;
+}
+
+.destinations-scroll::-webkit-scrollbar {
+  width: 6px;
+}
+
+.destinations-scroll::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.destinations-scroll::-webkit-scrollbar-thumb {
+  background: #f58220;
+  border-radius: 999px;
+}
+
+.destinations-scroll::-webkit-scrollbar-thumb:hover {
+  background: #e07010;
+}
+
 /* Reduce motion preference */
 @media (prefers-reduced-motion: reduce) {
   .hero-bg-zoom,

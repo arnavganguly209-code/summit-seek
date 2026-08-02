@@ -13,9 +13,11 @@ import {
   UserRound,
   Sparkles,
 } from "lucide-react";
-import { DestinationsDropdown } from "@/components/layout/DestinationsDropdown";
+import {
+  DestinationsDropdown,
+  DestinationsMobilePanel,
+} from "@/components/layout/DestinationsDropdown";
 import { TrekkingMegaMenu } from "@/components/layout/TrekkingMegaMenu";
-import { destinationNavItems } from "@/lib/data/destinations-nav";
 import { mainNav, trekkingColumns, type MegaKind } from "@/lib/data/navigation";
 import { cn } from "@/lib/utils";
 
@@ -245,20 +247,14 @@ export function Header({
                           className={cn("size-4 transition", open ? "rotate-180" : "")}
                         />
                       </button>
-                      {open && kind === "destinations" ? (
-                        <ul className="space-y-1 pb-2 pl-3">
-                          {destinationNavItems.map((d) => (
-                            <li key={d.href}>
-                              <Link
-                                href={d.href}
-                                className="block rounded-md px-3 py-2 text-[14px] text-[#334155]"
-                                onClick={() => setMobileOpen(false)}
-                              >
-                                {d.label}
-                              </Link>
-                            </li>
-                          ))}
-                        </ul>
+                      {kind === "destinations" ? (
+                        <DestinationsMobilePanel
+                          open={open}
+                          onClose={() => {
+                            setMobileOpen(false);
+                            setMobileMega(null);
+                          }}
+                        />
                       ) : null}
                       {open && kind === "trekking" ? (
                         <div className="space-y-3 pb-2 pl-3">
