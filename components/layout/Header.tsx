@@ -25,6 +25,10 @@ import {
   TravelInfoMegaMenu,
   TravelInfoMobilePanel,
 } from "@/components/layout/TravelInfoMegaMenu";
+import {
+  CompanyDropdown,
+  CompanyMobilePanel,
+} from "@/components/layout/CompanyDropdown";
 import { mainNav, type MegaKind } from "@/lib/data/navigation";
 import { cn } from "@/lib/utils";
 
@@ -34,6 +38,7 @@ function megaKindForLabel(label: string): MegaKind | null {
   if (label === "Destinations") return "destinations";
   if (label === "Trekking In Nepal") return "trekking";
   if (label === "Travel Info") return "travel-info";
+  if (label === "Company") return "company";
   return null;
 }
 
@@ -137,8 +142,13 @@ export function Header({
                       open={open}
                       onClose={() => setMegaKind(null)}
                     />
-                  ) : (
+                  ) : kind === "travel-info" ? (
                     <TravelInfoMegaMenu
+                      open={open}
+                      onClose={() => setMegaKind(null)}
+                    />
+                  ) : (
+                    <CompanyDropdown
                       open={open}
                       onClose={() => setMegaKind(null)}
                     />
@@ -277,6 +287,14 @@ export function Header({
                       ) : null}
                       {open && kind === "travel-info" ? (
                         <TravelInfoMobilePanel
+                          onClose={() => {
+                            setMobileOpen(false);
+                            setMobileMega(null);
+                          }}
+                        />
+                      ) : null}
+                      {open && kind === "company" ? (
+                        <CompanyMobilePanel
                           onClose={() => {
                             setMobileOpen(false);
                             setMobileMega(null);

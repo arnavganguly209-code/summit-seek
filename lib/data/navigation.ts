@@ -4,12 +4,12 @@ export const mainNav: NavItem[] = [
   { label: "Destinations", href: "/destinations", mega: true, dropdown: true },
   { label: "Trekking In Nepal", href: "/trekking", mega: true, dropdown: true },
   { label: "Travel Info", href: "/travel-guide", mega: true, dropdown: true },
-  { label: "Company", href: "/about", dropdown: true },
+  { label: "Company", href: "/about", mega: true, dropdown: true },
   { label: "Travel Blogs", href: "/blog" },
   { label: "Contact Us", href: "/contact" },
 ];
 
-export type MegaKind = "destinations" | "trekking" | "travel-info";
+export type MegaKind = "destinations" | "trekking" | "travel-info" | "company";
 
 export interface DestinationRegion {
   id: string;
