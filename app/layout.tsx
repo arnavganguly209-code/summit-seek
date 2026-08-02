@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Playfair_Display, Inter } from "next/font/google";
+import { Playfair_Display, Inter, Poppins } from "next/font/google";
 import { SITE } from "@/lib/constants";
 import "./globals.css";
 
@@ -15,6 +15,14 @@ const sans = Inter({
   variable: "--font-sans",
   subsets: ["latin"],
   weight: ["400", "500", "600", "700"],
+  display: "swap",
+});
+
+/** Bold UI sans — About + featured package cards (reference style) */
+const ui = Poppins({
+  variable: "--font-ui",
+  subsets: ["latin"],
+  weight: ["500", "600", "700", "800"],
   display: "swap",
 });
 
@@ -92,7 +100,7 @@ export default function RootLayout({
   };
 
   return (
-    <html lang="en" className={`${display.variable} ${sans.variable} h-full`}>
+    <html lang="en" className={`${display.variable} ${sans.variable} ${ui.variable} h-full`}>
       <body className="min-h-full flex flex-col bg-snow font-sans text-midnight antialiased">
         <script
           type="application/ld+json"

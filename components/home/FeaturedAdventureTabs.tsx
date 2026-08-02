@@ -41,16 +41,16 @@ function PackageCard({ pkg }: { pkg: FeaturedPackage }) {
     pkg.endLocation.trim().toLowerCase();
 
   return (
-    <article className="group flex h-full flex-col overflow-hidden rounded-[18px] border border-[#e6ebf2] bg-white shadow-[0_10px_32px_rgba(11,21,36,0.06)] transition-all duration-300 hover:-translate-y-1.5 hover:shadow-[0_22px_48px_rgba(11,21,36,0.12)]">
+    <article className="group flex h-full flex-col overflow-hidden rounded-[16px] border border-[#e6ebf2] bg-white shadow-[0_8px_28px_rgba(11,21,36,0.06)] transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_18px_40px_rgba(11,21,36,0.11)]">
       <div className="relative aspect-[16/11] overflow-hidden bg-[#0b1524]/5">
         <Image
           src={pkg.imageUrl}
           alt={pkg.title}
           fill
-          className="object-cover transition-transform duration-500 ease-out group-hover:scale-[1.04]"
+          className="object-cover transition-transform duration-500 ease-out group-hover:scale-[1.03]"
           sizes="(max-width: 768px) 100vw, (max-width: 1280px) 50vw, 25vw"
         />
-        <div className="absolute inset-0 bg-gradient-to-t from-[#0b1524]/35 via-transparent to-transparent" />
+        <div className="absolute inset-0 bg-gradient-to-t from-[#0b1524]/30 via-transparent to-transparent" />
         <button
           type="button"
           aria-label={saved ? "Remove from wishlist" : "Add to wishlist"}
@@ -67,32 +67,34 @@ function PackageCard({ pkg }: { pkg: FeaturedPackage }) {
         </button>
       </div>
 
-      <div className="flex flex-1 flex-col px-4 pb-4 pt-3.5">
+      <div className="flex flex-1 flex-col px-4 pb-4 pt-3.5 font-[family-name:var(--font-ui)]">
         <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-[12px] font-medium text-[#5a6577]">
           <span className="inline-flex items-center gap-1.5">
             <CalendarDays className="size-3.5 text-[#1d4ed8]" />
-            Duration: {pkg.durationDays} {pkg.durationDays === 1 ? "Day" : "Days"}
+            Duration: {pkg.durationDays}{" "}
+            {pkg.durationDays === 1 ? "Day" : "Days"}
           </span>
           {pkg.reviewCount > 0 ? (
             <span className="inline-flex items-center gap-1">
               <Star className="size-3.5 fill-[#D8A34A] text-[#D8A34A]" />
-              <span className="font-semibold text-[#0b1524]">
+              <span className="font-bold text-[#0b1524]">
                 {pkg.rating.toFixed(1)}
               </span>
               <span className="text-[#8a93a3]">
-                ({pkg.reviewCount} {pkg.reviewCount === 1 ? "Review" : "Reviews"})
+                ({pkg.reviewCount}{" "}
+                {pkg.reviewCount === 1 ? "Review" : "Reviews"})
               </span>
             </span>
           ) : null}
         </div>
 
-        <h3 className="mt-2.5 font-[family-name:var(--font-display)] text-[15px] font-bold leading-snug tracking-[-0.01em] text-[#0b1524] sm:text-[16px]">
+        <h3 className="mt-2.5 text-[15px] font-bold leading-snug tracking-[-0.015em] text-[#0b1524] sm:text-[16px]">
           <Link href={pkg.href} className="transition-colors hover:text-[#1d4ed8]">
             {pkg.title}
           </Link>
         </h3>
 
-        <div className="mt-3 flex items-center gap-2 text-[12px] font-medium text-[#5a6577]">
+        <div className="mt-3 flex items-center gap-2 text-[12px] font-semibold text-[#5a6577]">
           <span className="inline-flex min-w-0 items-center gap-1">
             <MapPin className="size-3.5 shrink-0 text-[#1d4ed8]" />
             <span className="truncate">{pkg.startLocation}</span>
@@ -110,15 +112,15 @@ function PackageCard({ pkg }: { pkg: FeaturedPackage }) {
 
         <div className="mt-auto flex items-end justify-between gap-3 pt-4">
           <div>
-            <p className="text-[11px] font-medium uppercase tracking-[0.06em] text-[#8a93a3]">
+            <p className="text-[11px] font-semibold uppercase tracking-[0.06em] text-[#8a93a3]">
               Per Person
             </p>
             <p className="mt-0.5 flex flex-wrap items-baseline gap-2">
-              <span className="font-[family-name:var(--font-display)] text-[1.35rem] font-bold leading-none text-[#0b1524]">
+              <span className="text-[1.3rem] font-extrabold leading-none tracking-[-0.02em] text-[#0b1524]">
                 {formatUsd(pkg.price)}
               </span>
               {pkg.compareAtPrice && pkg.compareAtPrice > pkg.price ? (
-                <span className="text-[13px] font-medium text-[#9aa3b2] line-through">
+                <span className="text-[13px] font-semibold text-[#9aa3b2] line-through">
                   {formatUsd(pkg.compareAtPrice)}
                 </span>
               ) : null}
@@ -149,7 +151,9 @@ export function FeaturedAdventureTabs({ content }: Props) {
   const active: FeaturedCategory | undefined =
     categories.find((c) => c.id === activeId) ?? categories[0];
 
-  const packages = (active?.packages ?? []).filter((p) => p.visible !== false).slice(0, 4);
+  const packages = (active?.packages ?? [])
+    .filter((p) => p.visible !== false)
+    .slice(0, 4);
 
   return (
     <section
@@ -162,7 +166,7 @@ export function FeaturedAdventureTabs({ content }: Props) {
         aria-hidden
       />
 
-      <div className="relative mx-auto w-full max-w-[1320px] px-4 sm:px-6 lg:px-8">
+      <div className="relative mx-auto w-full max-w-[1320px] px-4 font-[family-name:var(--font-ui)] sm:px-6 lg:px-8">
         <div className="sr-only">
           <h2 id="featured-adventures-heading">Featured Adventures</h2>
         </div>
@@ -183,7 +187,7 @@ export function FeaturedAdventureTabs({ content }: Props) {
                 aria-selected={selected}
                 onClick={() => setActiveId(cat.id)}
                 className={cn(
-                  "relative inline-flex shrink-0 items-center gap-2 px-3.5 py-3.5 text-[13px] font-semibold tracking-[-0.01em] transition-colors sm:px-5 sm:text-[14px]",
+                  "relative inline-flex shrink-0 items-center gap-2 px-3.5 py-3.5 text-[13px] font-bold tracking-[-0.01em] transition-colors sm:px-5 sm:text-[15px]",
                   selected
                     ? "text-[#0b1524]"
                     : "text-[#6b7587] hover:text-[#0b1524]",
@@ -194,7 +198,7 @@ export function FeaturedAdventureTabs({ content }: Props) {
                     "size-4 transition-colors",
                     selected ? "text-[#1d4ed8]" : "text-[#9aa3b2]",
                   )}
-                  strokeWidth={2.1}
+                  strokeWidth={2.25}
                 />
                 <span className="whitespace-nowrap">{cat.label}</span>
                 {selected ? (
