@@ -40,9 +40,11 @@ jobs:
           key: ${{ secrets.VPS_SSH_KEY }}
           port: 22
           script_stop: true
-          timeout: 60s
-          command_timeout: 25m
-          max_attempts: 3
+          timeout: 180s
+          command_timeout: 30m
+          max_attempts: 6
+          backoff_coefficient: 2
+          fingerprint_path: /dev/null
           envs: PROJECT_PATH,PM2_APP
           script: |
             set -euo pipefail
