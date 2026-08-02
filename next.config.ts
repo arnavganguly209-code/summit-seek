@@ -8,8 +8,19 @@ const nextConfig: NextConfig = {
         hostname: "images.unsplash.com",
       },
     ],
+    // Next 16: allow /media/** including ?t= cache-buster query strings
+    localPatterns: [
+      {
+        pathname: "/media/**",
+      },
+      {
+        pathname: "/logo-summit-seek*.png",
+      },
+      {
+        pathname: "/about-*.jpg",
+      },
+    ],
   },
-  // Allow Orbit media uploads (hero video / images) through Next proxy
   experimental: {
     serverActions: {
       bodySizeLimit: "200mb",

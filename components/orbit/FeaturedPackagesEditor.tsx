@@ -1,7 +1,6 @@
 "use client";
 
 import { useRef, useState } from "react";
-import Image from "next/image";
 import { useRouter } from "next/navigation";
 import {
   CheckCircle2,
@@ -16,8 +15,8 @@ import type {
   FeaturedPackagesContent,
 } from "@/types/featured-packages";
 import { orbitUploadFile } from "@/lib/orbit/client-upload";
+import { OrbitMediaPreview } from "@/components/orbit/OrbitMediaPreview";
 import { cn } from "@/lib/utils";
-
 type Props = {
   initial: FeaturedPackagesContent;
 };
@@ -68,7 +67,8 @@ export function FeaturedPackagesEditor({ initial }: Props) {
     }));
   };
 
-  const save = async () => {
+  const save = async (next?: FeaturedPackagesContent) => {
+    const payload = next || content;
     setSaving(true);
     setError("");
     setToast("");
@@ -76,20 +76,22 @@ export function FeaturedPackagesEditor({ initial }: Props) {
       const res = await fetch("/api/orbit/featured-packages", {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(content),
+        body: JSON.stringify(payload),
       });
       const data = (await res.json()) as { ok?: boolean; error?: string };
       if (!res.ok || !data.ok) {
         setError(data.error || "Failed to save packages.");
         setSaving(false);
-        return;
+        return false;
       }
       setToast("Featured packages saved. Live homepage updated.");
       setSaving(false);
       router.refresh();
+      return true;
     } catch {
       setError("Network error while saving. Please retry.");
       setSaving(false);
+      return false;
     }
   };
 
@@ -114,10 +116,24 @@ export function FeaturedPackagesEditor({ initial }: Props) {
         ? prev.split("?")[0]
         : undefined;
       const item = await orbitUploadFile({ file, replaceUrl });
-      updatePackage(category.id, pkg.id, {
-        imageUrl: `${item.url}?t=${Date.now()}`,
-      });
-      setToast(`Image updated for “${pkg.title}”. Click Save & Publish.`);
+      const imageUrl = `${item.url}?t=${Date.now()}`;
+
+      const next: FeaturedPackagesContent = {
+        ...content,
+        categories: content.categories.map((cat) =>
+          cat.id !== category.id
+            ? cat
+            : {
+                ...cat,
+                packages: cat.packages.map((p) =>
+                  p.id === pkg.id ? { ...p, imageUrl } : p,
+                ),
+              },
+        ),
+      };
+      setContent(next);
+      await save(next);
+      setToast(`Image uploaded and saved for “${pkg.title}”.`);
     } catch (err) {
       setError(err instanceof Error ? err.message : "Upload failed.");
     } finally {
@@ -130,16 +146,30 @@ export function FeaturedPackagesEditor({ initial }: Props) {
     const url = pkg.imageUrl.split("?")[0];
     if (url.startsWith("/media/library/")) {
       try {
-        await fetch(
-          `/api/orbit/media?url=${encodeURIComponent(url)}`,
-          { method: "DELETE" },
-        );
+        await fetch(`/api/orbit/media?url=${encodeURIComponent(url)}`, {
+          method: "DELETE",
+        });
       } catch {
         // still clear from package
       }
     }
-    updatePackage(category.id, pkg.id, { imageUrl: emptyImageFallback() });
-    setToast("Image removed. Upload a new one, then Save.");
+    const imageUrl = emptyImageFallback();
+    const next: FeaturedPackagesContent = {
+      ...content,
+      categories: content.categories.map((cat) =>
+        cat.id !== category.id
+          ? cat
+          : {
+              ...cat,
+              packages: cat.packages.map((p) =>
+                p.id === pkg.id ? { ...p, imageUrl } : p,
+              ),
+            },
+      ),
+    };
+    setContent(next);
+    await save(next);
+    setToast("Image removed and saved.");
   };
 
   return (
@@ -158,7 +188,7 @@ export function FeaturedPackagesEditor({ initial }: Props) {
         </div>
         <button
           type="button"
-          onClick={save}
+          onClick={() => void save()}
           disabled={saving}
           className="inline-flex h-11 items-center justify-center gap-2 rounded-lg bg-[#F58220] px-5 text-[13px] font-bold text-[#08121E] transition hover:bg-[#ff9440] disabled:opacity-60"
         >
@@ -242,13 +272,10 @@ export function FeaturedPackagesEditor({ initial }: Props) {
                 <div className="space-y-3.5 p-4">
                   <div className="relative aspect-[16/10] overflow-hidden rounded-lg bg-black/40">
                     {pkg.imageUrl ? (
-                      <Image
+                      <OrbitMediaPreview
                         src={pkg.imageUrl}
                         alt={pkg.title || "Package image"}
-                        fill
-                        className="object-cover"
-                        sizes="400px"
-                        unoptimized={pkg.imageUrl.startsWith("/media/")}
+                        className="h-full w-full object-cover"
                       />
                     ) : (
                       <div className="flex h-full items-center justify-center text-white/30">

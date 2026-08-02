@@ -1,5 +1,7 @@
-import PlaceholderPage from "@/components/orbit/PlaceholderPage";
+import { getAboutIntro } from "@/lib/orbit/store";
+import { AboutIntroEditor } from "@/components/orbit/AboutIntroEditor";
 
-export default function Page() {
-  return <PlaceholderPage title="About" />;
+export default async function OrbitAboutPage() {
+  const content = await getAboutIntro();
+  return <AboutIntroEditor initial={content} />;
 }

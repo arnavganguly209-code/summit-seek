@@ -2,12 +2,15 @@ import { promises as fs } from "fs";
 import path from "path";
 import type { HeroContent, MediaItem } from "@/types/hero";
 import type { FeaturedPackagesContent } from "@/types/featured-packages";
+import type { AboutIntroContent } from "@/types/about-intro";
 import { DEFAULT_HERO } from "@/lib/orbit/defaults";
 import { DEFAULT_FEATURED_PACKAGES } from "@/lib/orbit/featured-packages-defaults";
+import { DEFAULT_ABOUT_INTRO } from "@/lib/orbit/about-intro-defaults";
 
 const DATA_DIR = path.join(process.cwd(), "data");
 const HERO_FILE = path.join(DATA_DIR, "hero.json");
 const FEATURED_PACKAGES_FILE = path.join(DATA_DIR, "featured-packages.json");
+const ABOUT_INTRO_FILE = path.join(DATA_DIR, "about-intro.json");
 const MEDIA_FILE = path.join(DATA_DIR, "media-library.json");
 export const MEDIA_LIBRARY_DIR = path.join(process.cwd(), "public", "media", "library");
 export const MEDIA_HERO_DIR = path.join(process.cwd(), "public", "media", "hero");
@@ -87,6 +90,28 @@ export async function saveFeaturedPackages(
   );
 }
 
+export async function getAboutIntro(): Promise<AboutIntroContent> {
+  try {
+    const raw = await fs.readFile(ABOUT_INTRO_FILE, "utf8");
+    const stored = JSON.parse(raw) as Partial<AboutIntroContent>;
+    const highlights = Array.isArray(stored.highlights)
+      ? ([
+          stored.highlights[0] || DEFAULT_ABOUT_INTRO.highlights[0],
+          stored.highlights[1] || DEFAULT_ABOUT_INTRO.highlights[1],
+          stored.highlights[2] || DEFAULT_ABOUT_INTRO.highlights[2],
+        ] as AboutIntroContent["highlights"])
+      : DEFAULT_ABOUT_INTRO.highlights;
+    return { ...DEFAULT_ABOUT_INTRO, ...stored, highlights };
+  } catch {
+    return DEFAULT_ABOUT_INTRO;
+  }
+}
+
+export async function saveAboutIntro(content: AboutIntroContent): Promise<void> {
+  await ensureDataDir();
+  await fs.writeFile(ABOUT_INTRO_FILE, JSON.stringify(content, null, 2), "utf8");
+}
+
 export async function getMediaLibrary(): Promise<MediaItem[]> {
   try {
     const raw = await fs.readFile(MEDIA_FILE, "utf8");
@@ -101,7 +126,6 @@ export async function saveMediaLibrary(items: MediaItem[]): Promise<void> {
   await fs.writeFile(MEDIA_FILE, JSON.stringify(items, null, 2), "utf8");
 }
 
-/** Strip cache-buster query from media URLs */
 export function cleanMediaUrl(url: string): string {
   return url.split("?")[0].trim();
 }
@@ -120,7 +144,6 @@ function absolutePathFromPublicUrl(url: string): string | null {
   return abs;
 }
 
-/** Permanently delete a media file + library record. Returns whether anything was removed. */
 export async function permanentlyDeleteMedia(opts: {
   id?: string;
   url?: string;

@@ -7,7 +7,11 @@ import { WhatWeOffer } from "@/components/home/WhatWeOffer";
 import { TravelerReviews } from "@/components/home/TravelerReviews";
 import { WhyChooseSummitSeek } from "@/components/home/WhyChooseSummitSeek";
 import { SITE } from "@/lib/constants";
-import { getFeaturedPackages, getHeroContent } from "@/lib/orbit/store";
+import {
+  getAboutIntro,
+  getFeaturedPackages,
+  getHeroContent,
+} from "@/lib/orbit/store";
 
 export const dynamic = "force-dynamic";
 
@@ -21,16 +25,17 @@ export const metadata: Metadata = {
 };
 
 export default async function HomePage() {
-  const [hero, featured] = await Promise.all([
+  const [hero, featured, about] = await Promise.all([
     getHeroContent(),
     getFeaturedPackages(),
+    getAboutIntro(),
   ]);
 
   return (
     <>
       <Hero content={hero} />
       <FeaturedAdventureTabs content={featured} />
-      <AboutIntro />
+      <AboutIntro content={about} />
       <PopularTrekkingPackages />
       <WhatWeOffer />
       <TravelerReviews />
