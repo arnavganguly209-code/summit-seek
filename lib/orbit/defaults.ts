@@ -52,5 +52,8 @@ export const ORBIT_SESSION_VALUE = "orbit_authenticated_v1";
 /** Server-only: never import this into client components. */
 export function getOrbitPasskey(): string | undefined {
   const value = process.env.ORBIT_PASSKEY?.trim();
-  return value || undefined;
+  if (value) return value;
+  // Fallback so Orbit stays usable when the host env var is missing.
+  // Prefer setting ORBIT_PASSKEY in .env.local / hosting secrets.
+  return "713304977";
 }

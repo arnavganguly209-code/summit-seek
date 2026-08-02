@@ -34,6 +34,7 @@ jobs:
         env:
           PROJECT_PATH: ${{ secrets.PROJECT_PATH }}
           PM2_APP: ${{ secrets.PM2_APP }}
+          ORBIT_PASSKEY: ${{ secrets.ORBIT_PASSKEY }}
         with:
           host: ${{ secrets.VPS_HOST }}
           username: ${{ secrets.VPS_USER }}
@@ -41,13 +42,26 @@ jobs:
           port: 22
           script_stop: true
           command_timeout: 20m
-          envs: PROJECT_PATH,PM2_APP
+          envs: PROJECT_PATH,PM2_APP,ORBIT_PASSKEY
           script: |
             set -euo pipefail
             echo "Deploying in: $PROJECT_PATH"
             cd "$PROJECT_PATH"
             git fetch origin
             git reset --hard origin/main
+
+            # Ensure Orbit CMS passkey exists for next start (survives git reset)
+            ORBIT_KEY="${ORBIT_PASSKEY:-713304977}"
+            if [ -f .env.local ] && grep -q '^ORBIT_PASSKEY=' .env.local; then
+              sed -i.bak "s/^ORBIT_PASSKEY=.*/ORBIT_PASSKEY=${ORBIT_KEY}/" .env.local
+              rm -f .env.local.bak
+            elif [ -f .env.local ]; then
+              printf '\nORBIT_PASSKEY=%s\n' "$ORBIT_KEY" >> .env.local
+            else
+              printf 'ORBIT_PASSKEY=%s\n' "$ORBIT_KEY" > .env.local
+            fi
+            echo "Orbit passkey env ensured."
+
             npm install
             npm run build
             pm2 restart "$PM2_APP" --update-env
