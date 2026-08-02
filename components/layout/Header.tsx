@@ -21,6 +21,10 @@ import {
   TrekkingMegaMenu,
   TrekkingMobileAccordion,
 } from "@/components/layout/TrekkingMegaMenu";
+import {
+  TravelInfoMegaMenu,
+  TravelInfoMobilePanel,
+} from "@/components/layout/TravelInfoMegaMenu";
 import { mainNav, type MegaKind } from "@/lib/data/navigation";
 import { cn } from "@/lib/utils";
 
@@ -29,6 +33,7 @@ const HEADER_H = 72;
 function megaKindForLabel(label: string): MegaKind | null {
   if (label === "Destinations") return "destinations";
   if (label === "Trekking In Nepal") return "trekking";
+  if (label === "Travel Info") return "travel-info";
   return null;
 }
 
@@ -127,8 +132,13 @@ export function Header({
                       open={open}
                       onClose={() => setMegaKind(null)}
                     />
-                  ) : (
+                  ) : kind === "trekking" ? (
                     <TrekkingMegaMenu
+                      open={open}
+                      onClose={() => setMegaKind(null)}
+                    />
+                  ) : (
+                    <TravelInfoMegaMenu
                       open={open}
                       onClose={() => setMegaKind(null)}
                     />
@@ -259,6 +269,14 @@ export function Header({
                       ) : null}
                       {open && kind === "trekking" ? (
                         <TrekkingMobileAccordion
+                          onClose={() => {
+                            setMobileOpen(false);
+                            setMobileMega(null);
+                          }}
+                        />
+                      ) : null}
+                      {open && kind === "travel-info" ? (
+                        <TravelInfoMobilePanel
                           onClose={() => {
                             setMobileOpen(false);
                             setMobileMega(null);
