@@ -17,13 +17,13 @@ type DestinationsListProps = {
   className?: string;
 };
 
-/** Shared slim destinations list — desktop dropdown + mobile panel */
+/** Slim dark destinations list — all items fit, no scroll */
 export function DestinationsList({ onNavigate, className }: DestinationsListProps) {
   const pathname = usePathname();
 
   return (
-    <ul className={cn("flex flex-col gap-0.5", className)}>
-      {destinationNavItems.map((item) => {
+    <ul className={cn("flex flex-col", className)}>
+      {destinationNavItems.map((item, index) => {
         const active =
           pathname === item.href || pathname.startsWith(`${item.href}/`);
 
@@ -34,19 +34,17 @@ export function DestinationsList({ onNavigate, className }: DestinationsListProp
               onClick={onNavigate}
               aria-current={active ? "page" : undefined}
               className={cn(
-                "group flex h-[45px] items-center justify-between gap-2 rounded-[10px] px-2.5 text-[15px] font-semibold tracking-[0.2px] transition-all duration-[220ms] ease-out",
-                active
-                  ? "bg-[rgba(255,170,40,0.12)] text-[#F58220]"
-                  : "text-[#243042] hover:bg-[rgba(255,170,40,0.08)] hover:text-[#F58220]",
+                "group flex h-9 items-center justify-between gap-2 px-3.5 text-[13.5px] font-bold tracking-[0.01em] text-white transition-all duration-[180ms] ease-out hover:bg-white/[0.08]",
+                active && "bg-white/[0.1] text-white",
+                index < destinationNavItems.length - 1 &&
+                  "border-b border-white/[0.08]",
               )}
             >
               <span className="min-w-0 flex-1 truncate">{item.label}</span>
               <ChevronRight
                 className={cn(
-                  "size-3.5 shrink-0 transition-transform duration-[220ms] ease-out",
-                  active
-                    ? "translate-x-1 text-[#F58220]"
-                    : "text-[#C5CDD8] group-hover:translate-x-1 group-hover:text-[#F58220]",
+                  "size-3.5 shrink-0 text-white/35 transition-all duration-[180ms] ease-out group-hover:translate-x-[3px] group-hover:text-[#D8A34A]",
+                  active && "text-[#D8A34A]",
                 )}
                 strokeWidth={2.25}
               />
@@ -58,8 +56,9 @@ export function DestinationsList({ onNavigate, className }: DestinationsListProp
   );
 }
 
-const panelGlass =
-  "destinations-scroll overflow-y-auto overscroll-contain rounded-[18px] border border-[rgba(255,255,255,0.35)] bg-[rgba(255,255,255,0.88)] shadow-[0_20px_60px_rgba(0,0,0,0.12)] backdrop-blur-[22px]";
+/** Dark frosted panel — matches hero-adjacent offer frame mood */
+const panelDark =
+  "overflow-hidden rounded-[14px] border border-white/15 bg-[rgba(4,13,24,0.92)] shadow-[0_22px_55px_rgba(0,0,0,0.35)] backdrop-blur-[18px]";
 
 export function DestinationsDropdown({ open, onClose }: DestinationsDropdownProps) {
   return (
@@ -69,16 +68,10 @@ export function DestinationsDropdown({ open, onClose }: DestinationsDropdownProp
           initial={{ opacity: 0, y: -8 }}
           animate={{ opacity: 1, y: 0 }}
           exit={{ opacity: 0, y: -6 }}
-          transition={{ duration: 0.22, ease: "easeOut" }}
-          className="absolute left-0 top-full z-50 mt-1 w-[260px] xl:w-[270px] 2xl:w-[290px]"
+          transition={{ duration: 0.18, ease: "easeOut" }}
+          className="absolute left-0 top-full z-50 mt-1.5 w-[232px]"
         >
-          <div
-            className={cn(
-              panelGlass,
-              "max-h-[300px] px-[14px] py-[10px] xl:max-h-[340px] 2xl:max-h-[380px]",
-            )}
-            style={{ scrollBehavior: "smooth" }}
-          >
+          <div className={cn(panelDark, "py-1.5")}>
             <DestinationsList onNavigate={onClose} />
           </div>
         </motion.div>
@@ -87,7 +80,7 @@ export function DestinationsDropdown({ open, onClose }: DestinationsDropdownProp
   );
 }
 
-/** Full-width slide-down panel for tablet / mobile menu */
+/** Mobile panel — same dark slim list, no inner scroll trap */
 export function DestinationsMobilePanel({
   open,
   onClose,
@@ -99,16 +92,10 @@ export function DestinationsMobilePanel({
           initial={{ opacity: 0, height: 0 }}
           animate={{ opacity: 1, height: "auto" }}
           exit={{ opacity: 0, height: 0 }}
-          transition={{ duration: 0.22, ease: "easeOut" }}
+          transition={{ duration: 0.18, ease: "easeOut" }}
           className="overflow-hidden"
         >
-          <div
-            className={cn(
-              panelGlass,
-              "mb-2 w-full max-h-[300px] px-[14px] py-[10px] sm:max-h-[340px]",
-            )}
-            style={{ scrollBehavior: "smooth" }}
-          >
+          <div className={cn(panelDark, "mb-2 w-full py-1.5")}>
             <DestinationsList onNavigate={onClose} />
           </div>
         </motion.div>
