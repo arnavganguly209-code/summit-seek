@@ -24,7 +24,7 @@ export default function OrbitLoginClient() {
       });
       const data = (await res.json()) as { ok?: boolean; error?: string };
       if (!res.ok || !data.ok) {
-        setError(data.error || "Incorrect passkey. Access denied.");
+        setError(data.error || "Invalid Passkey");
         setLoading(false);
         return;
       }

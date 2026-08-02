@@ -46,6 +46,11 @@ export const DEFAULT_HERO: HeroContent = {
   ],
 };
 
-export const ORBIT_PASSKEY = "713304977";
 export const ORBIT_SESSION_COOKIE = "orbit_session";
 export const ORBIT_SESSION_VALUE = "orbit_authenticated_v1";
+
+/** Server-only: never import this into client components. */
+export function getOrbitPasskey(): string | undefined {
+  const value = process.env.ORBIT_PASSKEY?.trim();
+  return value || undefined;
+}

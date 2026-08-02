@@ -1,19 +1,27 @@
 import { NextResponse } from "next/server";
 import { cookies } from "next/headers";
 import {
-  ORBIT_PASSKEY,
+  getOrbitPasskey,
   ORBIT_SESSION_COOKIE,
   ORBIT_SESSION_VALUE,
 } from "@/lib/orbit/defaults";
 
 export async function POST(req: Request) {
   try {
+    const configuredPasskey = getOrbitPasskey();
+    if (!configuredPasskey) {
+      return NextResponse.json(
+        { ok: false, error: "Orbit Passkey is not configured." },
+        { status: 500 },
+      );
+    }
+
     const body = (await req.json()) as { passkey?: string };
     const passkey = String(body.passkey ?? "").trim();
 
-    if (passkey !== ORBIT_PASSKEY) {
+    if (!passkey || passkey !== configuredPasskey) {
       return NextResponse.json(
-        { ok: false, error: "Incorrect passkey. Access denied." },
+        { ok: false, error: "Invalid Passkey" },
         { status: 401 },
       );
     }
