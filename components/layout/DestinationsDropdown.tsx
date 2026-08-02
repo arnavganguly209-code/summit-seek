@@ -33,13 +33,13 @@ export function DestinationsList({ onNavigate, className }: DestinationsListProp
               onClick={onNavigate}
               aria-current={active ? "page" : undefined}
               className={cn(
-                "flex h-9 items-center px-3.5 text-[13.5px] font-bold tracking-[0.01em] text-white transition-all duration-[180ms] ease-out hover:bg-white/[0.08]",
+                "flex h-9 items-center px-3 text-[13.5px] font-bold tracking-[0.01em] text-white transition-all duration-[180ms] ease-out hover:bg-white/[0.08]",
                 active && "bg-white/[0.1] text-white",
                 index < destinationNavItems.length - 1 &&
                   "border-b border-white/[0.08]",
               )}
             >
-              <span className="min-w-0 truncate">{item.label}</span>
+              <span className="whitespace-nowrap">{item.label}</span>
             </Link>
           </li>
         );
@@ -61,7 +61,7 @@ export function DestinationsDropdown({ open, onClose }: DestinationsDropdownProp
           animate={{ opacity: 1, y: 0 }}
           exit={{ opacity: 0, y: -6 }}
           transition={{ duration: 0.18, ease: "easeOut" }}
-          className="absolute left-0 top-full z-50 mt-0 w-[232px]"
+          className="absolute left-0 top-full z-50 mt-0 w-max"
         >
           <div className={cn(panelDark, "py-1.5")}>
             <DestinationsList onNavigate={onClose} />
