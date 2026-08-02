@@ -187,7 +187,7 @@ export function FeaturedAdventureTabs({ content }: Props) {
                 aria-selected={selected}
                 onClick={() => setActiveId(cat.id)}
                 className={cn(
-                  "relative inline-flex shrink-0 items-center gap-2 px-3.5 py-3.5 text-[13px] font-bold tracking-[-0.01em] transition-colors sm:px-5 sm:text-[15px]",
+                  "relative inline-flex shrink-0 items-center gap-2 px-3.5 py-3.5 text-[15px] font-extrabold tracking-[-0.015em] transition-colors sm:px-5 sm:text-[17px]",
                   selected
                     ? "text-[#0b1524]"
                     : "text-[#6b7587] hover:text-[#0b1524]",
@@ -195,10 +195,10 @@ export function FeaturedAdventureTabs({ content }: Props) {
               >
                 <Icon
                   className={cn(
-                    "size-4 transition-colors",
+                    "size-[1.15rem] transition-colors sm:size-5",
                     selected ? "text-[#1d4ed8]" : "text-[#9aa3b2]",
                   )}
-                  strokeWidth={2.25}
+                  strokeWidth={2.4}
                 />
                 <span className="whitespace-nowrap">{cat.label}</span>
                 {selected ? (
