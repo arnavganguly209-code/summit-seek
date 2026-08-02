@@ -2,7 +2,7 @@ import type { HeroContent } from "@/types/hero";
 
 export const DEFAULT_HERO: HeroContent = {
   videoUrl: "/media/hero/hero.mp4",
-  logoUrl: "/logo-summit-seek-header.png",
+  logoUrl: "/logo-summit-seek-white.png",
   logoUrlLight: "/logo-summit-seek-white.png",
   eyebrow: "Discover and book tours and activities",
   headingLine1: "Start Planning",

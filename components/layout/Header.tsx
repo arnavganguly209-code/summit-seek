@@ -33,7 +33,7 @@ type Props = {
 };
 
 export function Header({
-  logoUrl = "/logo-summit-seek-header.png",
+  logoUrl = "/logo-summit-seek-white.png",
   logoUrlLight = "/logo-summit-seek-white.png",
 }: Props) {
   const [scrolled, setScrolled] = useState(false);
@@ -71,8 +71,8 @@ export function Header({
       )}
       style={{ height: HEADER_H }}
     >
-      <div className="relative mx-auto flex h-full max-w-[1440px] items-center gap-6 px-4 sm:px-6 lg:gap-8 lg:px-8">
-        {/* Logo — left, transparent, fixed visual height */}
+      <div className="relative mx-auto flex h-full max-w-[1440px] items-center gap-4 px-4 sm:gap-6 sm:px-6 lg:px-8">
+        {/* Logo — left, transparent, same size */}
         <Link
           href="/"
           aria-label="Summit Seek — Home"
@@ -81,17 +81,20 @@ export function Header({
           <Image
             src={activeLogo}
             alt="Summit Seek Travels & Tours"
-            width={888}
-            height={269}
+            width={980}
+            height={322}
             unoptimized
             priority
-            className="h-[44px] w-auto max-w-[168px] bg-transparent object-contain object-left sm:h-[52px] sm:max-w-[200px] lg:h-[56px] lg:max-w-[220px]"
+            className={cn(
+              "h-[44px] w-auto max-w-[168px] bg-transparent object-contain object-left sm:h-[52px] sm:max-w-[200px] lg:h-[56px] lg:max-w-[220px]",
+              scrolled && "brightness-0",
+            )}
           />
         </Link>
 
-        {/* Nav — single-line, centered, professional spacing */}
+        {/* Nav shifted slightly left so Contact Us never touches wishlist */}
         <nav
-          className="absolute left-1/2 hidden -translate-x-1/2 items-center gap-1 xl:flex"
+          className="absolute left-[46%] hidden -translate-x-1/2 items-center gap-0.5 xl:flex"
           aria-label="Primary"
           onMouseLeave={() => setMegaKind(null)}
         >
@@ -108,7 +111,7 @@ export function Header({
                   <button
                     type="button"
                     className={cn(
-                      "inline-flex items-center gap-1 whitespace-nowrap rounded-md px-3.5 py-2 text-[13px] font-semibold tracking-wide transition-colors lg:text-[14px]",
+                      "inline-flex items-center gap-1 whitespace-nowrap rounded-md px-3 py-2 text-[13px] font-semibold tracking-wide transition-colors lg:px-3.5 lg:text-[14px]",
                       navText,
                     )}
                     aria-expanded={open}
@@ -135,7 +138,7 @@ export function Header({
                 key={item.href}
                 href={item.href}
                 className={cn(
-                  "whitespace-nowrap rounded-md px-3.5 py-2 text-[13px] font-semibold tracking-wide transition-colors lg:text-[14px]",
+                  "whitespace-nowrap rounded-md px-3 py-2 text-[13px] font-semibold tracking-wide transition-colors lg:px-3.5 lg:text-[14px]",
                   navText,
                 )}
               >
@@ -145,8 +148,8 @@ export function Header({
           })}
         </nav>
 
-        {/* Actions — right */}
-        <div className="ml-auto hidden items-center gap-1 lg:flex">
+        {/* Actions — right, with clear breathing room from nav */}
+        <div className="ml-auto hidden items-center gap-2 pl-6 lg:flex xl:pl-10">
           <button
             type="button"
             className={cn(
