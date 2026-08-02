@@ -17,8 +17,11 @@ import {
   DestinationsDropdown,
   DestinationsMobilePanel,
 } from "@/components/layout/DestinationsDropdown";
-import { TrekkingMegaMenu } from "@/components/layout/TrekkingMegaMenu";
-import { mainNav, trekkingColumns, type MegaKind } from "@/lib/data/navigation";
+import {
+  TrekkingMegaMenu,
+  TrekkingMobileAccordion,
+} from "@/components/layout/TrekkingMegaMenu";
+import { mainNav, type MegaKind } from "@/lib/data/navigation";
 import { cn } from "@/lib/utils";
 
 const HEADER_H = 72;
@@ -257,28 +260,12 @@ export function Header({
                         />
                       ) : null}
                       {open && kind === "trekking" ? (
-                        <div className="space-y-3 pb-2 pl-3">
-                          {trekkingColumns.map((col) => (
-                            <div key={col.id}>
-                              <p className="px-3 text-[12px] font-bold uppercase tracking-wide text-[#64748b]">
-                                {col.heading}
-                              </p>
-                              <ul>
-                                {col.links.map((link) => (
-                                  <li key={link.href}>
-                                    <Link
-                                      href={link.href}
-                                      className="block rounded-md px-3 py-2 text-[14px] text-[#334155]"
-                                      onClick={() => setMobileOpen(false)}
-                                    >
-                                      {link.title}
-                                    </Link>
-                                  </li>
-                                ))}
-                              </ul>
-                            </div>
-                          ))}
-                        </div>
+                        <TrekkingMobileAccordion
+                          onClose={() => {
+                            setMobileOpen(false);
+                            setMobileMega(null);
+                          }}
+                        />
                       ) : null}
                     </div>
                   );
