@@ -1,7 +1,9 @@
 import { NextResponse } from "next/server";
-import { promises as fs } from "fs";
+import { createWriteStream, promises as fs } from "fs";
 import path from "path";
 import { randomUUID } from "crypto";
+import { Readable } from "stream";
+import { pipeline } from "stream/promises";
 import { isOrbitAuthenticated } from "@/lib/orbit/auth";
 import {
   cleanMediaUrl,
@@ -14,12 +16,13 @@ import {
   saveMediaLibrary,
 } from "@/lib/orbit/store";
 import type { MediaItem } from "@/types/hero";
+import { ORBIT_MAX_UPLOAD_BYTES, ORBIT_MAX_UPLOAD_MB } from "@/lib/orbit/upload-limits";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 export const maxDuration = 300;
 
-const MAX_BYTES = 500 * 1024 * 1024;
+const MAX_BYTES = ORBIT_MAX_UPLOAD_BYTES;
 
 const EXT_MIME: Record<string, string> = {
   ".mp4": "video/mp4",
@@ -64,7 +67,7 @@ function mapUploadError(err: unknown): { status: number; error: string } {
   if (/Body exceeded|request entity too large|413|max.*body|body.*limit/i.test(message)) {
     return {
       status: 413,
-      error: "File too large for server limit. Use a video under 500MB (preferably under 100MB).",
+      error: `File too large for server limit. Maximum upload size is ${ORBIT_MAX_UPLOAD_MB}MB.`,
     };
   }
   if (/Unexpected end of form|Failed to parse body|multipart/i.test(message)) {
@@ -151,7 +154,7 @@ export async function POST(req: Request) {
       return NextResponse.json(
         {
           ok: false,
-          error: `File too large (${(file.size / 1024 / 1024).toFixed(1)}MB). Maximum is 500MB.`,
+          error: `File too large (${(file.size / 1024 / 1024).toFixed(1)}MB). Maximum is ${ORBIT_MAX_UPLOAD_MB}MB.`,
         },
         { status: 400 },
       );
@@ -163,15 +166,24 @@ export async function POST(req: Request) {
       await permanentlyDeleteMedia({ url: replaceUrl });
     }
 
-    const buf = Buffer.from(await file.arrayBuffer());
     const id = randomUUID();
     const ext = extFor(mime, file.name) || ".mp4";
     const filename = `${id}${ext}`;
     const abs = path.join(MEDIA_LIBRARY_DIR, filename);
 
     try {
-      await fs.writeFile(abs, buf);
+      // Stream to disk — avoids loading the full video into memory twice
+      const webStream = file.stream();
+      const nodeStream = Readable.fromWeb(
+        webStream as import("stream/web").ReadableStream,
+      );
+      await pipeline(nodeStream, createWriteStream(abs));
     } catch (err) {
+      try {
+        await fs.unlink(abs);
+      } catch {
+        // ignore cleanup errors
+      }
       const mapped = mapUploadError(err);
       return NextResponse.json({ ok: false, error: mapped.error }, { status: mapped.status });
     }

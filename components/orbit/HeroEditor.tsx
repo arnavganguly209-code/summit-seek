@@ -13,6 +13,7 @@ import {
 } from "lucide-react";
 import { Hero } from "@/components/home/Hero";
 import type { HeroContent, HeroFeature, MediaItem } from "@/types/hero";
+import { ORBIT_MAX_UPLOAD_BYTES, ORBIT_MAX_UPLOAD_MB } from "@/lib/orbit/upload-limits";
 import { cn } from "@/lib/utils";
 
 type Props = {
@@ -88,13 +89,15 @@ export function HeroEditor({ initial }: Props) {
   };
 
   const uploadVideo = (file: File) => {
-    const maxBytes = 500 * 1024 * 1024;
+    const maxBytes = ORBIT_MAX_UPLOAD_BYTES;
     if (file.size <= 0) {
       setError("Empty file. Choose a valid video and retry.");
       return;
     }
     if (file.size > maxBytes) {
-      setError(`File too large (${(file.size / 1024 / 1024).toFixed(1)}MB). Maximum is 500MB.`);
+      setError(
+        `File too large (${(file.size / 1024 / 1024).toFixed(1)}MB). Maximum is ${ORBIT_MAX_UPLOAD_MB}MB.`,
+      );
       return;
     }
 
@@ -150,7 +153,7 @@ export function HeroEditor({ initial }: Props) {
       } catch {
         setError(
           xhr.status === 413
-            ? "File too large for server limit. Compress video under 100MB and retry."
+            ? `Server rejected the upload (size limit). Videos up to ${ORBIT_MAX_UPLOAD_MB}MB are allowed — retry in a minute after deploy finishes.`
             : `Upload failed (HTTP ${xhr.status || "unknown"}). Server returned a non-JSON response.`,
         );
         setUploading(false);
@@ -159,7 +162,12 @@ export function HeroEditor({ initial }: Props) {
       }
 
       if (xhr.status < 200 || xhr.status >= 300 || !data.ok || !data.item) {
-        setError(data.error || `Upload failed (HTTP ${xhr.status}).`);
+        setError(
+          data.error ||
+            (xhr.status === 413
+              ? `File too large for server limit. Maximum is ${ORBIT_MAX_UPLOAD_MB}MB.`
+              : `Upload failed (HTTP ${xhr.status}).`),
+        );
         setUploading(false);
         setProgress(0);
         return;
@@ -263,7 +271,7 @@ export function HeroEditor({ initial }: Props) {
             >
               <Upload className="mx-auto size-6 text-white/50" />
               <p className="mt-2 text-[13px] text-white/70">
-                Drag & drop mp4 / mov / webm (max 500MB)
+                Drag & drop mp4 / mov / webm (max {ORBIT_MAX_UPLOAD_MB}MB)
               </p>
               <button
                 type="button"

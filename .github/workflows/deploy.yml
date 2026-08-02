@@ -52,4 +52,26 @@ jobs:
             npm run build
             pm2 restart "$PM2_APP" --update-env
             pm2 save
+
+            # Raise nginx body size so Orbit hero videos (<=100MB) are not rejected with HTTP 413
+            if [ -f "$PROJECT_PATH/deploy/nginx-client-max-body.conf" ]; then
+              if command -v nginx >/dev/null 2>&1 && command -v sudo >/dev/null 2>&1; then
+                if sudo -n true 2>/dev/null; then
+                  sudo cp "$PROJECT_PATH/deploy/nginx-client-max-body.conf" /etc/nginx/conf.d/zz-summit-seek-upload.conf
+                  if sudo nginx -t; then
+                    sudo systemctl reload nginx || sudo service nginx reload || true
+                    echo "Nginx client_max_body_size set to 100m."
+                  else
+                    echo "WARN: nginx -t failed; left previous nginx config in place."
+                    sudo rm -f /etc/nginx/conf.d/zz-summit-seek-upload.conf || true
+                  fi
+                else
+                  echo "WARN: passwordless sudo unavailable — could not set nginx client_max_body_size 100m."
+                  echo "Manually add: client_max_body_size 100m;  then reload nginx."
+                fi
+              else
+                echo "Nginx not found or sudo missing — skipping upload-limit nginx snippet."
+              fi
+            fi
+
             echo "Deploy finished."
