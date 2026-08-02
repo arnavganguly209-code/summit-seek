@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - main
+  workflow_dispatch:
 
 jobs:
   deploy:
@@ -27,59 +28,102 @@ jobs:
               echo "Secret $name is set."
             fi
           done
+          # Basic shape checks (no secret values printed)
+          echo "VPS_HOST length: ${#VPS_HOST}"
+          echo "VPS_USER length: ${#VPS_USER}"
+          echo "VPS_SSH_KEY length: ${#VPS_SSH_KEY}"
+          if ! printf '%s' "$VPS_SSH_KEY" | grep -q "BEGIN.*PRIVATE KEY"; then
+            echo "::error::VPS_SSH_KEY does not look like a private key (missing BEGIN PRIVATE KEY header)."
+            missing=1
+          fi
           exit $missing
 
-      - name: Deploy via SSH
-        uses: appleboy/ssh-action@v1.2.0
+      - name: Preflight TCP check (port 22)
         env:
+          VPS_HOST: ${{ secrets.VPS_HOST }}
+        run: |
+          set +e
+          echo "Checking TCP connectivity to ${VPS_HOST}:22 ..."
+          for i in 1 2 3 4 5; do
+            if timeout 8 bash -c "echo >/dev/tcp/${VPS_HOST}/22" 2>/dev/null; then
+              echo "Port 22 is reachable (attempt $i)."
+              exit 0
+            fi
+            echo "Attempt $i failed — waiting..."
+            sleep $((i * 3))
+          done
+          echo "::error::Cannot reach ${VPS_HOST}:22 from GitHub Actions. VPS may be down, SSH blocked, or firewall/fail2ban is rejecting GitHub IPs."
+          exit 1
+
+      - name: Deploy via OpenSSH
+        env:
+          VPS_HOST: ${{ secrets.VPS_HOST }}
+          VPS_USER: ${{ secrets.VPS_USER }}
+          VPS_SSH_KEY: ${{ secrets.VPS_SSH_KEY }}
           PROJECT_PATH: ${{ secrets.PROJECT_PATH }}
           PM2_APP: ${{ secrets.PM2_APP }}
-        with:
-          host: ${{ secrets.VPS_HOST }}
-          username: ${{ secrets.VPS_USER }}
-          key: ${{ secrets.VPS_SSH_KEY }}
-          port: 22
-          script_stop: true
-          timeout: 180s
-          command_timeout: 30m
-          max_attempts: 6
-          backoff_coefficient: 2
-          envs: PROJECT_PATH,PM2_APP
-          script: |
-            set -euo pipefail
-            echo "Deploying in: $PROJECT_PATH"
-            cd "$PROJECT_PATH"
-            git fetch origin
-            git reset --hard origin/main
+        run: |
+          set -euo pipefail
+          mkdir -p ~/.ssh
+          chmod 700 ~/.ssh
 
-            if [ ! -f .env.local ] || ! grep -q '^ORBIT_PASSKEY=' .env.local 2>/dev/null; then
-              echo 'ORBIT_PASSKEY=713304977' >> .env.local || true
-              echo "Orbit .env.local ensured."
+          # Write key with exact newlines (handles escaped \n from secrets UI)
+          printf '%s\n' "$VPS_SSH_KEY" | sed 's/\r$//' > ~/.ssh/deploy_key
+          if ! grep -q "BEGIN.*PRIVATE KEY" ~/.ssh/deploy_key; then
+            # Secret may be stored with literal \n sequences
+            printf '%s\n' "$VPS_SSH_KEY" | sed 's/\\n/\n/g' | sed 's/\r$//' > ~/.ssh/deploy_key
+          fi
+          chmod 600 ~/.ssh/deploy_key
+
+          # Known hosts — retry keyscan
+          for i in 1 2 3 4 5; do
+            if ssh-keyscan -T 10 -H "$VPS_HOST" >> ~/.ssh/known_hosts 2>/dev/null; then
+              echo "Host key captured (attempt $i)."
+              break
             fi
-
-            # Raise nginx upload limit for Orbit hero/media (idempotent)
-            if [ -f deploy/nginx-client-max-body.conf ]; then
-              if command -v sudo >/dev/null 2>&1 && sudo -n true 2>/dev/null; then
-                sudo cp deploy/nginx-client-max-body.conf /etc/nginx/conf.d/summit-seek-uploads.conf
-                if sudo nginx -t; then
-                  sudo systemctl reload nginx || sudo service nginx reload || true
-                  echo "Nginx client_max_body_size applied."
-                else
-                  echo "Nginx config test failed — skipped reload."
-                fi
-              elif [ "$(id -u)" = "0" ]; then
-                cp deploy/nginx-client-max-body.conf /etc/nginx/conf.d/summit-seek-uploads.conf
-                nginx -t && (systemctl reload nginx || service nginx reload || true)
-                echo "Nginx client_max_body_size applied as root."
-              else
-                echo "Skipping nginx upload limit (no passwordless sudo)."
-              fi
+            echo "ssh-keyscan attempt $i failed..."
+            sleep $((i * 2))
+            if [ "$i" = "5" ]; then
+              echo "::error::ssh-keyscan failed for $VPS_HOST. Host unreachable or SSH not responding."
+              exit 1
             fi
+          done
 
-            mkdir -p public/media/library public/media/hero public/media/.uploads
+          SSH=(ssh -i ~/.ssh/deploy_key -o IdentitiesOnly=yes -o StrictHostKeyChecking=yes -o ConnectTimeout=30 -o ServerAliveInterval=15 -o ServerAliveCountMax=6)
 
-            npm install --no-audit --no-fund
-            npm run build
-            pm2 restart "$PM2_APP" --update-env
-            pm2 save
-            echo "Deploy finished."
+          echo "Connecting as ${VPS_USER}@${VPS_HOST} ..."
+          "${SSH[@]}" "${VPS_USER}@${VPS_HOST}" bash -s <<EOF
+          set -euo pipefail
+          echo "Deploying in: ${PROJECT_PATH}"
+          cd "${PROJECT_PATH}"
+          git fetch origin
+          git reset --hard origin/main
+
+          if [ ! -f .env.local ] || ! grep -q '^ORBIT_PASSKEY=' .env.local 2>/dev/null; then
+            echo 'ORBIT_PASSKEY=713304977' >> .env.local || true
+            echo "Orbit .env.local ensured."
+          fi
+
+          # Nginx upload limit (best-effort, never fail deploy)
+          if [ -f deploy/nginx-client-max-body.conf ]; then
+            if command -v sudo >/dev/null 2>&1 && sudo -n true 2>/dev/null; then
+              sudo cp deploy/nginx-client-max-body.conf /etc/nginx/conf.d/summit-seek-uploads.conf || true
+              sudo nginx -t && (sudo systemctl reload nginx || sudo service nginx reload) || true
+              echo "Nginx upload limit applied (or skipped)."
+            elif [ "\$(id -u)" = "0" ]; then
+              cp deploy/nginx-client-max-body.conf /etc/nginx/conf.d/summit-seek-uploads.conf || true
+              nginx -t && (systemctl reload nginx || service nginx reload) || true
+            else
+              echo "Skipping nginx upload limit (no passwordless sudo)."
+            fi
+          fi
+
+          mkdir -p public/media/library public/media/hero public/media/.uploads
+          npm install --no-audit --no-fund
+          npm run build
+          pm2 restart "${PM2_APP}" --update-env
+          pm2 save
+          echo "Deploy finished."
+          EOF
+
+          echo "Remote deploy completed."
