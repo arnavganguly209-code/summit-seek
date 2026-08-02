@@ -97,7 +97,7 @@ export function TrekkingMegaMenu({ open, onClose }: TrekkingMegaMenuProps) {
           animate={{ opacity: 1, y: 0 }}
           exit={{ opacity: 0, y: -6 }}
           transition={{ duration: 0.18, ease: "easeOut" }}
-          className="pointer-events-auto fixed left-1/2 top-[72px] z-[60] hidden w-[min(980px,calc(100vw-2rem))] -translate-x-1/2 pt-2 xl:block"
+          className="pointer-events-auto fixed left-1/2 top-[68px] z-[60] hidden w-[min(980px,calc(100vw-2rem))] -translate-x-1/2 xl:block"
           onMouseLeave={onClose}
         >
           <div className={cn(panelDark, "px-4 py-4")}>

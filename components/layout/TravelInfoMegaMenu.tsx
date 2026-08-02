@@ -1,8 +1,9 @@
 "use client";
 
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { AnimatePresence, motion } from "framer-motion";
-import { ArrowRight } from "lucide-react";
+import { ChevronRight } from "lucide-react";
 import { travelInfoGuides } from "@/lib/data/travel-info-nav";
 import { cn } from "@/lib/utils";
 
@@ -11,40 +12,49 @@ interface TravelInfoMegaMenuProps {
   onClose: () => void;
 }
 
+/** Same dark glass language as Destinations */
+const panelDark =
+  "overflow-hidden rounded-[14px] border border-white/15 bg-[rgba(4,13,24,0.92)] shadow-[0_22px_55px_rgba(0,0,0,0.35)] backdrop-blur-[18px]";
+
 function TravelInfoList({ onClose }: { onClose: () => void }) {
+  const pathname = usePathname();
+
   return (
-    <ul>
-      {travelInfoGuides.map((guide, index) => (
-        <li key={guide.id}>
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ duration: 0.18, ease: "easeOut", delay: index * 0.02 }}
-          >
+    <ul className="flex flex-col">
+      {travelInfoGuides.map((guide, index) => {
+        const active =
+          pathname === guide.href || pathname.startsWith(`${guide.href}/`);
+
+        return (
+          <li key={guide.id}>
             <Link
               href={guide.href}
               onClick={onClose}
+              aria-current={active ? "page" : undefined}
               className={cn(
-                "group flex items-center justify-between gap-3 px-[18px] py-[14px] text-[16px] font-semibold tracking-[-0.01em] text-[#1A1A1A]",
-                "transition-all duration-[180ms] ease-out hover:-translate-y-0.5 hover:bg-black/[0.035]",
+                "group flex h-9 items-center justify-between gap-2 px-3.5 text-[13.5px] font-bold tracking-[0.01em] text-white transition-all duration-[180ms] ease-out hover:bg-white/[0.08]",
+                active && "bg-white/[0.1] text-white",
                 index < travelInfoGuides.length - 1 &&
-                  "border-b border-[rgba(0,0,0,0.06)]",
+                  "border-b border-white/[0.08]",
               )}
             >
               <span className="min-w-0 flex-1 truncate">{guide.title}</span>
-              <ArrowRight
-                className="size-3.5 shrink-0 text-[#C5CAD3] transition-all duration-[180ms] ease-out group-hover:translate-x-[5px] group-hover:text-[#D8A34A]"
-                strokeWidth={2}
+              <ChevronRight
+                className={cn(
+                  "size-3.5 shrink-0 text-white/35 transition-all duration-[180ms] ease-out group-hover:translate-x-[3px] group-hover:text-[#D8A34A]",
+                  active && "text-[#D8A34A]",
+                )}
+                strokeWidth={2.25}
               />
             </Link>
-          </motion.div>
-        </li>
-      ))}
+          </li>
+        );
+      })}
     </ul>
   );
 }
 
-/** Simple premium dropdown under Travel Info — not a mega menu */
+/** Compact dropdown under Travel Info — Destinations style */
 export function TravelInfoMegaMenu({ open, onClose }: TravelInfoMegaMenuProps) {
   return (
     <AnimatePresence>
@@ -54,15 +64,9 @@ export function TravelInfoMegaMenu({ open, onClose }: TravelInfoMegaMenuProps) {
           animate={{ opacity: 1, y: 0 }}
           exit={{ opacity: 0, y: -6 }}
           transition={{ duration: 0.18, ease: "easeOut" }}
-          className="absolute left-0 top-full z-50 mt-1.5 w-[300px]"
+          className="absolute left-0 top-full z-50 mt-0 w-[280px]"
         >
-          <div
-            className={cn(
-              "overflow-hidden rounded-[16px]",
-              "border border-[rgba(255,255,255,0.45)] bg-[rgba(255,255,255,0.90)]",
-              "shadow-[0_20px_50px_rgba(0,0,0,0.14)] backdrop-blur-[18px]",
-            )}
-          >
+          <div className={cn(panelDark, "py-1.5")}>
             <TravelInfoList onClose={onClose} />
           </div>
         </motion.div>
@@ -71,10 +75,10 @@ export function TravelInfoMegaMenu({ open, onClose }: TravelInfoMegaMenuProps) {
   );
 }
 
-/** Mobile panel — same 7 clean rows */
+/** Mobile panel — same Destinations dark list */
 export function TravelInfoMobilePanel({ onClose }: { onClose: () => void }) {
   return (
-    <div className="mb-2 overflow-hidden rounded-[16px] border border-black/[0.06] bg-[rgba(255,255,255,0.96)]">
+    <div className={cn(panelDark, "mb-2 w-full py-1.5")}>
       <TravelInfoList onClose={onClose} />
     </div>
   );

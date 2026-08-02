@@ -69,7 +69,7 @@ export function DestinationsDropdown({ open, onClose }: DestinationsDropdownProp
           animate={{ opacity: 1, y: 0 }}
           exit={{ opacity: 0, y: -6 }}
           transition={{ duration: 0.18, ease: "easeOut" }}
-          className="absolute left-0 top-full z-50 mt-1.5 w-[232px]"
+          className="absolute left-0 top-full z-50 mt-0 w-[232px]"
         >
           <div className={cn(panelDark, "py-1.5")}>
             <DestinationsList onNavigate={onClose} />
