@@ -3,7 +3,6 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { AnimatePresence, motion } from "framer-motion";
-import { ChevronRight } from "lucide-react";
 import { destinationNavItems } from "@/lib/data/destinations-nav";
 import { cn } from "@/lib/utils";
 
@@ -34,20 +33,13 @@ export function DestinationsList({ onNavigate, className }: DestinationsListProp
               onClick={onNavigate}
               aria-current={active ? "page" : undefined}
               className={cn(
-                "group flex h-9 items-center justify-between gap-2 px-3.5 text-[13.5px] font-bold tracking-[0.01em] text-white transition-all duration-[180ms] ease-out hover:bg-white/[0.08]",
+                "flex h-9 items-center px-3.5 text-[13.5px] font-bold tracking-[0.01em] text-white transition-all duration-[180ms] ease-out hover:bg-white/[0.08]",
                 active && "bg-white/[0.1] text-white",
                 index < destinationNavItems.length - 1 &&
                   "border-b border-white/[0.08]",
               )}
             >
-              <span className="min-w-0 flex-1 truncate">{item.label}</span>
-              <ChevronRight
-                className={cn(
-                  "size-3.5 shrink-0 text-white/35 transition-all duration-[180ms] ease-out group-hover:translate-x-[3px] group-hover:text-[#D8A34A]",
-                  active && "text-[#D8A34A]",
-                )}
-                strokeWidth={2.25}
-              />
+              <span className="min-w-0 truncate">{item.label}</span>
             </Link>
           </li>
         );
