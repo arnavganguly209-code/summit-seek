@@ -6,13 +6,14 @@ import { BestSellingPackagesSection } from "@/components/home/BestSellingPackage
 import { WhatWeOffer } from "@/components/home/WhatWeOffer";
 import { UpcomingTripsSection } from "@/components/home/UpcomingTrips";
 import { TravelerReviews } from "@/components/home/TravelerReviews";
-import { WhyChooseSummitSeek } from "@/components/home/WhyChooseSummitSeek";
+import { TravelArticlesSection } from "@/components/home/TravelArticles";
 import { SITE } from "@/lib/constants";
 import {
   getAboutIntro,
   getBestSellingPackages,
   getFeaturedPackages,
   getHeroContent,
+  getTravelArticles,
   getTravelerReviews,
   getUpcomingTrips,
   getWhatWeOffer,
@@ -30,16 +31,25 @@ export const metadata: Metadata = {
 };
 
 export default async function HomePage() {
-  const [hero, featured, about, bestSelling, whatWeOffer, upcoming, reviews] =
-    await Promise.all([
-      getHeroContent(),
-      getFeaturedPackages(),
-      getAboutIntro(),
-      getBestSellingPackages(),
-      getWhatWeOffer(),
-      getUpcomingTrips(),
-      getTravelerReviews(),
-    ]);
+  const [
+    hero,
+    featured,
+    about,
+    bestSelling,
+    whatWeOffer,
+    upcoming,
+    reviews,
+    articles,
+  ] = await Promise.all([
+    getHeroContent(),
+    getFeaturedPackages(),
+    getAboutIntro(),
+    getBestSellingPackages(),
+    getWhatWeOffer(),
+    getUpcomingTrips(),
+    getTravelerReviews(),
+    getTravelArticles(),
+  ]);
 
   return (
     <>
@@ -50,7 +60,7 @@ export default async function HomePage() {
       <WhatWeOffer content={whatWeOffer} />
       <UpcomingTripsSection content={upcoming} />
       <TravelerReviews content={reviews} />
-      <WhyChooseSummitSeek />
+      <TravelArticlesSection content={articles} />
     </>
   );
 }

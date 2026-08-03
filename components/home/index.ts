@@ -5,4 +5,4 @@ export { BestSellingPackagesSection } from "./BestSellingPackages";
 export { WhatWeOffer } from "./WhatWeOffer";
 export { UpcomingTripsSection } from "./UpcomingTrips";
 export { TravelerReviews } from "./TravelerReviews";
-export { WhyChooseSummitSeek } from "./WhyChooseSummitSeek";
+export { TravelArticlesSection } from "./TravelArticles";

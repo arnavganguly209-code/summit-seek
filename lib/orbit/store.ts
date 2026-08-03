@@ -7,6 +7,7 @@ import type { BestSellingPackagesContent } from "@/types/best-selling-packages";
 import type { WhatWeOfferContent } from "@/types/what-we-offer";
 import type { UpcomingTripsContent } from "@/types/upcoming-trips";
 import type { TravelerReviewsContent } from "@/types/traveler-reviews";
+import type { TravelArticlesContent } from "@/types/travel-articles";
 import { DEFAULT_HERO } from "@/lib/orbit/defaults";
 import { DEFAULT_FEATURED_PACKAGES } from "@/lib/orbit/featured-packages-defaults";
 import { DEFAULT_ABOUT_INTRO } from "@/lib/orbit/about-intro-defaults";
@@ -14,6 +15,7 @@ import { DEFAULT_BEST_SELLING } from "@/lib/orbit/best-selling-defaults";
 import { DEFAULT_WHAT_WE_OFFER } from "@/lib/orbit/what-we-offer-defaults";
 import { DEFAULT_UPCOMING_TRIPS } from "@/lib/orbit/upcoming-trips-defaults";
 import { DEFAULT_TRAVELER_REVIEWS } from "@/lib/orbit/traveler-reviews-defaults";
+import { DEFAULT_TRAVEL_ARTICLES } from "@/lib/orbit/travel-articles-defaults";
 
 const DATA_DIR = path.join(process.cwd(), "data");
 const HERO_FILE = path.join(DATA_DIR, "hero.json");
@@ -23,6 +25,7 @@ const BEST_SELLING_FILE = path.join(DATA_DIR, "best-selling-packages.json");
 const WHAT_WE_OFFER_FILE = path.join(DATA_DIR, "what-we-offer.json");
 const UPCOMING_TRIPS_FILE = path.join(DATA_DIR, "upcoming-trips.json");
 const TRAVELER_REVIEWS_FILE = path.join(DATA_DIR, "traveler-reviews.json");
+const TRAVEL_ARTICLES_FILE = path.join(DATA_DIR, "travel-articles.json");
 const MEDIA_FILE = path.join(DATA_DIR, "media-library.json");
 
 /** Durable upload root — survives `git reset --hard` (unlike public/). */
@@ -359,6 +362,48 @@ export async function saveTravelerReviews(
 ): Promise<void> {
   await ensureDataDir();
   await fs.writeFile(TRAVELER_REVIEWS_FILE, JSON.stringify(content, null, 2), "utf8");
+}
+
+function mergeTravelArticles(
+  stored: Partial<TravelArticlesContent> | null,
+): TravelArticlesContent {
+  if (!stored) return DEFAULT_TRAVEL_ARTICLES;
+  const articles =
+    Array.isArray(stored.articles) && stored.articles.length > 0
+      ? stored.articles.map((a, i) => {
+          const fallback =
+            DEFAULT_TRAVEL_ARTICLES.articles[i] || DEFAULT_TRAVEL_ARTICLES.articles[0];
+          return {
+            ...fallback,
+            ...a,
+            id: a.id || `ta-${i + 1}`,
+            visible: a.visible !== false,
+          };
+        })
+      : DEFAULT_TRAVEL_ARTICLES.articles;
+
+  return {
+    eyebrow: stored.eyebrow?.trim() || DEFAULT_TRAVEL_ARTICLES.eyebrow,
+    heading: stored.heading?.trim() || DEFAULT_TRAVEL_ARTICLES.heading,
+    viewMoreLabel: stored.viewMoreLabel?.trim() || DEFAULT_TRAVEL_ARTICLES.viewMoreLabel,
+    viewMoreHref: stored.viewMoreHref?.trim() || DEFAULT_TRAVEL_ARTICLES.viewMoreHref,
+    visible: stored.visible !== false,
+    articles,
+  };
+}
+
+export async function getTravelArticles(): Promise<TravelArticlesContent> {
+  try {
+    const raw = await fs.readFile(TRAVEL_ARTICLES_FILE, "utf8");
+    return mergeTravelArticles(JSON.parse(raw) as Partial<TravelArticlesContent>);
+  } catch {
+    return DEFAULT_TRAVEL_ARTICLES;
+  }
+}
+
+export async function saveTravelArticles(content: TravelArticlesContent): Promise<void> {
+  await ensureDataDir();
+  await fs.writeFile(TRAVEL_ARTICLES_FILE, JSON.stringify(content, null, 2), "utf8");
 }
 
 export async function getMediaLibrary(): Promise<MediaItem[]> {

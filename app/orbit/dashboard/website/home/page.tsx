@@ -2,10 +2,13 @@ import Link from "next/link";
 
 const sections = [
   { href: "/orbit/dashboard/website/home/hero", label: "Hero Section", status: "Live" },
-  { href: "/orbit/dashboard/website/packages", label: "Packages", status: "Ready" },
-  { href: "/orbit/dashboard/website/services", label: "Services", status: "Ready" },
-  { href: "/orbit/dashboard/website/reviews", label: "Reviews", status: "Ready" },
-  { href: "/orbit/dashboard/website/about", label: "About", status: "Ready" },
+  { href: "/orbit/dashboard/website/packages", label: "Featured Packages", status: "Live" },
+  { href: "/orbit/dashboard/website/best-selling", label: "Best Selling", status: "Live" },
+  { href: "/orbit/dashboard/website/services", label: "What We Offer", status: "Live" },
+  { href: "/orbit/dashboard/website/upcoming-trips", label: "Upcoming Trips", status: "Live" },
+  { href: "/orbit/dashboard/website/reviews", label: "Reviews", status: "Live" },
+  { href: "/orbit/dashboard/website/articles", label: "Travel Articles", status: "Live" },
+  { href: "/orbit/dashboard/website/about", label: "About", status: "Live" },
   { href: "/orbit/dashboard/website/footer", label: "Footer", status: "Ready" },
 ];
 
