@@ -75,7 +75,7 @@ function HimalayanLandscape() {
       className="relative z-0 mt-3 w-full overflow-hidden leading-none sm:mt-4"
       aria-hidden
     >
-      <div className="relative h-[200px] w-full sm:h-[260px] lg:h-[300px]">
+      <div className="relative h-[180px] w-full sm:h-[220px] lg:h-[250px]">
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img
           src="/footer-himalayan-premium.png"
@@ -200,10 +200,10 @@ export function Footer({ content }: { content: FooterContent }) {
       <HimalayanLandscape />
 
       <div
-        className="relative -mt-px px-5 pb-6 pt-8 sm:px-8 sm:pb-7 sm:pt-10 lg:px-10 lg:pt-11"
+        className="relative -mt-px px-5 pb-5 pt-6 sm:px-8 sm:pb-6 sm:pt-8 lg:px-10 lg:pt-9"
         style={{ background: NAVY }}
       >
-        <div className="mx-auto grid max-w-[1320px] grid-cols-2 items-start gap-x-5 gap-y-8 sm:grid-cols-3 lg:grid-cols-6 lg:gap-x-5 lg:gap-y-0">
+        <div className="mx-auto grid max-w-[1320px] grid-cols-2 items-start gap-x-5 gap-y-6 sm:grid-cols-3 lg:grid-cols-6 lg:gap-x-5 lg:gap-y-0">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
@@ -262,64 +262,19 @@ export function Footer({ content }: { content: FooterContent }) {
               </li>
             </ul>
 
-            <div className="mt-4 flex flex-col gap-3 sm:gap-3.5">
-              <div className="flex items-center gap-2">
-                {socials.map(({ href, label, Icon }) => (
-                  <a
-                    key={label}
-                    href={href}
-                    aria-label={label}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="flex size-10 items-center justify-center rounded-full border border-white/20 bg-white/10 text-white transition-all duration-300 hover:-translate-y-1 hover:rotate-[-6deg] hover:border-[#F58220] hover:text-[#F58220]"
-                  >
-                    <Icon className="size-4" />
-                  </a>
-                ))}
-              </div>
-              {/* Recommended On — transparent strip after socials */}
-              <div className="flex flex-wrap items-center gap-x-3 gap-y-2" aria-label="Recommended on">
-                <span className="text-[12px] font-bold text-white sm:text-[13px]">Recommended On:</span>
+            <div className="mt-4 flex items-center gap-2">
+              {socials.map(({ href, label, Icon }) => (
                 <a
-                  href="https://www.bookmundi.com/"
+                  key={label}
+                  href={href}
+                  aria-label={label}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="inline-flex items-center gap-1.5 transition-opacity hover:opacity-85"
-                  aria-label="Bookmundi"
+                  className="flex size-10 items-center justify-center rounded-full border border-white/20 bg-white/10 text-white transition-all duration-300 hover:-translate-y-1 hover:rotate-[-6deg] hover:border-[#F58220] hover:text-[#F58220]"
                 >
-                  <span className="flex size-5 items-center justify-center rounded-[3px] bg-[#7CB342] text-[11px] font-black text-white">
-                    B
-                  </span>
-                  <span className="text-[13px] font-bold tracking-tight text-[#7CB342]">bookmundi</span>
+                  <Icon className="size-4" />
                 </a>
-                <a
-                  href={SOCIAL.tripadvisor}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="inline-flex items-center gap-1.5 transition-opacity hover:opacity-85"
-                  aria-label="Tripadvisor"
-                >
-                  <svg viewBox="0 0 24 24" className="size-5 text-[#34E0A1]" fill="currentColor" aria-hidden>
-                    <circle cx="12" cy="12" r="11" />
-                    <circle cx="8.2" cy="12" r="2.2" fill="#071526" />
-                    <circle cx="15.8" cy="12" r="2.2" fill="#071526" />
-                    <path d="M12 7.2c-1.4 0-2.6.6-3.4 1.5l1.1 1c.5-.6 1.3-1 2.3-1s1.8.4 2.3 1l1.1-1C14.6 7.8 13.4 7.2 12 7.2z" fill="#071526" />
-                  </svg>
-                  <span className="text-[13px] font-semibold text-white">Tripadvisor</span>
-                </a>
-                <a
-                  href="https://www.tourradar.com/"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="inline-flex items-center transition-opacity hover:opacity-85"
-                  aria-label="Tourradar"
-                >
-                  <span className="text-[13px] font-bold tracking-tight text-[#5EB3E4]">
-                    tourradar
-                    <sup className="ml-0.5 text-[8px]">™</sup>
-                  </span>
-                </a>
-              </div>
+              ))}
             </div>
           </motion.div>
 
@@ -391,11 +346,11 @@ export function Footer({ content }: { content: FooterContent }) {
         </div>
 
         {/* We Accept — full-width centered row, no scroll */}
-        <div className="mx-auto mt-8 max-w-[1320px] border-t border-white/10 pt-6 sm:mt-9">
+        <div className="mx-auto mt-5 max-w-[1320px] border-t border-white/10 pt-5 sm:mt-6">
           <PaymentRow label={content.weAcceptLabel} payments={content.payments} />
         </div>
 
-        <div className="mx-auto mt-6 max-w-[1320px] border-t border-white/10 pt-4 sm:mt-7 sm:pt-5">
+        <div className="mx-auto mt-4 max-w-[1320px] border-t border-white/10 pt-3.5 sm:mt-5 sm:pt-4">
           <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
             <p className="text-[12px] font-semibold tracking-[0.02em] sm:text-[13px]" style={{ color: TEXT }}>
               {content.copyrightText}
