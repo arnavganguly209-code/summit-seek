@@ -4,7 +4,7 @@ import { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { motion } from "framer-motion";
-import { Mail, Phone, MapPin, MessageCircle } from "lucide-react";
+import { Mail, Phone, MapPin, MessageCircle, ChevronRight } from "lucide-react";
 import {
   TikTokIcon,
   FacebookIcon,
@@ -31,24 +31,173 @@ const socials = [
   { href: SOCIAL.instagram, label: "Instagram", Icon: InstagramIcon },
 ];
 
+function VisaMark({ className }: { className?: string }) {
+  return (
+    <svg viewBox="0 0 48 32" className={className} aria-hidden>
+      <rect width="48" height="32" rx="4" fill="#ffffff" />
+      <path
+        fill="#1A1F71"
+        d="M19.6 21.4h-2.7l1.7-10.3h2.7l-1.7 10.3zm11.1-10l-1.7 10.3h-2.5l.2-1.1c-.6.8-1.6 1.3-2.7 1.3-1.7 0-2.8-1.3-2.5-2.9.3-1.6 1.9-2.9 3.6-2.9 1 0 1.8.4 2.3 1l.4-2.4 2.9-.3zm-4.1 6.4c-.7 0-1.4.5-1.5 1.1-.1.5.3.9.9.9.7 0 1.4-.5 1.5-1.1.1-.5-.3-.9-.9-.9zm12.1-6.4l-2.9.3-.4 2.4c-.5-.6-1.3-1-2.3-1-1.7 0-3.3 1.3-3.6 2.9-.3 1.6.8 2.9 2.5 2.9 1.1 0 2.1-.5 2.7-1.3l-.2 1.1h2.5l1.7-10.3zm-4.1 6.4c-.6 0-1-.4-.9-.9.1-.6.8-1.1 1.5-1.1.6 0 1 .4.9.9-.1.6-.8 1.1-1.5 1.1zM15.2 11.1l-2.6 7.2-.3-1.4c-.5-1.7-2.1-3.5-3.9-4.4l2.5 8.9h2.8l4.2-10.3h-2.7z"
+      />
+      <path fill="#F7B600" d="M9.4 11.1H5.8l-.1.3c2.8.7 4.7 2.4 5.5 4.4l-.8-3.8c-.1-.5-.5-.8-1-.9z" />
+    </svg>
+  );
+}
+
+function MastercardMark({ className }: { className?: string }) {
+  return (
+    <svg viewBox="0 0 48 32" className={className} aria-hidden>
+      <rect width="48" height="32" rx="4" fill="#ffffff" />
+      <circle cx="19.5" cy="16" r="7.2" fill="#EB001B" />
+      <circle cx="28.5" cy="16" r="7.2" fill="#F79E1B" />
+      <path
+        fill="#FF5F00"
+        d="M24 10.8c1.5 1.3 2.5 3.2 2.5 5.2S25.5 20 24 21.2C22.5 20 21.5 18.1 21.5 16s1-3.9 2.5-5.2z"
+      />
+    </svg>
+  );
+}
+
+function AlipayMark({ className }: { className?: string }) {
+  return (
+    <svg viewBox="0 0 48 32" className={className} aria-hidden>
+      <rect width="48" height="32" rx="4" fill="#ffffff" />
+      <rect x="7" y="8" width="12" height="12" rx="2.5" fill="#1677FF" />
+      <path
+        fill="#ffffff"
+        d="M15.2 16.4c-.4.3-.9.5-1.5.5-1.4 0-2.5-1.1-2.5-2.5S12.3 12 13.7 12c.6 0 1.1.2 1.5.5l.9-.9c-.7-.5-1.5-.8-2.4-.8-2.1 0-3.8 1.7-3.8 3.8s1.7 3.8 3.8 3.8c.9 0 1.7-.3 2.4-.8l-.9-.9z"
+      />
+      <text x="22" y="18.5" fill="#1677FF" fontSize="7.5" fontWeight="700" fontFamily="Arial, Helvetica, sans-serif">
+        Alipay
+      </text>
+    </svg>
+  );
+}
+
+function UnionPayMark({ className }: { className?: string }) {
+  return (
+    <svg viewBox="0 0 48 32" className={className} aria-hidden>
+      <rect width="48" height="32" rx="4" fill="#ffffff" />
+      <path fill="#E21836" d="M10 8h7.2l-2.4 16H7.6z" />
+      <path fill="#00447C" d="M18.2 8h7.2l-2.4 16h-7.2z" />
+      <path fill="#007B5F" d="M26.4 8H33.6l-2.4 16h-7.2z" />
+      <text x="8.5" y="18" fill="#ffffff" fontSize="4.2" fontWeight="700" fontFamily="Arial, Helvetica, sans-serif">
+        UnionPay
+      </text>
+    </svg>
+  );
+}
+
+function AmexMark({ className }: { className?: string }) {
+  return (
+    <svg viewBox="0 0 48 32" className={className} aria-hidden>
+      <rect width="48" height="32" rx="4" fill="#ffffff" />
+      <rect x="4" y="6" width="40" height="20" rx="2" fill="#2E77BC" />
+      <text
+        x="24"
+        y="15.2"
+        textAnchor="middle"
+        fill="#ffffff"
+        fontSize="5.2"
+        fontWeight="700"
+        fontFamily="Arial, Helvetica, sans-serif"
+        letterSpacing="0.4"
+      >
+        AMERICAN
+      </text>
+      <text
+        x="24"
+        y="22.2"
+        textAnchor="middle"
+        fill="#ffffff"
+        fontSize="5.2"
+        fontWeight="700"
+        fontFamily="Arial, Helvetica, sans-serif"
+        letterSpacing="0.4"
+      >
+        EXPRESS
+      </text>
+    </svg>
+  );
+}
+
+const paymentMethods = [
+  { id: "visa", label: "Visa", Icon: VisaMark },
+  { id: "mastercard", label: "Mastercard", Icon: MastercardMark },
+  { id: "alipay", label: "Alipay", Icon: AlipayMark },
+  { id: "unionpay", label: "UnionPay", Icon: UnionPayMark },
+  { id: "amex", label: "American Express", Icon: AmexMark },
+] as const;
+
+function PaymentBadges() {
+  return (
+    <div className="flex flex-wrap items-center gap-2.5 sm:gap-3" role="list" aria-label="Accepted payment methods">
+      {paymentMethods.map(({ id, label, Icon }) => (
+        <div
+          key={id}
+          role="listitem"
+          title={label}
+          className="rounded-[6px] shadow-[0_4px_14px_rgba(0,0,0,0.28)] ring-1 ring-white/15 transition-transform duration-300 hover:-translate-y-0.5 hover:ring-[#F58220]/70"
+        >
+          <Icon className="h-10 w-[60px] sm:h-11 sm:w-[66px]" />
+          <span className="sr-only">{label}</span>
+        </div>
+      ))}
+    </div>
+  );
+}
+
+function NepalFlag({ x, y, scale = 1 }: { x: number; y: number; scale?: number }) {
+  const w = 34 * scale;
+  const h = 42 * scale;
+  return (
+    <g transform={`translate(${x} ${y})`}>
+      {/* pole */}
+      <rect x={-2} y={-2} width={3.2} height={h + 18} rx={1} fill={NAVY} />
+      {/* double-pennant Nepal flag */}
+      <g transform="translate(2 0)">
+        <path
+          fill="#003893"
+          d={`M0 0 L${w} ${h * 0.42} L${w * 0.38} ${h * 0.42} L${w} ${h} L0 ${h} Z`}
+        />
+        <path
+          fill="#DC143C"
+          d={`M1.6 1.8 L${w * 0.88} ${h * 0.4} L${w * 0.34} ${h * 0.4} L${w * 0.88} ${h * 0.94} L1.6 ${h * 0.94} Z`}
+        />
+        {/* moon */}
+        <circle cx={w * 0.22} cy={h * 0.22} r={3.1 * scale} fill="#fff" />
+        <circle cx={w * 0.22} cy={h * 0.2} r={2.4 * scale} fill="#DC143C" />
+        {/* sun */}
+        <circle cx={w * 0.28} cy={h * 0.68} r={3.4 * scale} fill="#fff" />
+      </g>
+    </g>
+  );
+}
+
 function HimalayanLandscape() {
   return (
     <div className="relative z-0 mt-6 w-full overflow-hidden leading-none sm:mt-8" aria-hidden>
       <svg
-        viewBox="0 40 1440 320"
+        viewBox="0 20 1440 340"
         preserveAspectRatio="xMidYMax slice"
-        className="block h-[200px] w-full sm:h-[260px] lg:h-[300px]"
+        className="block h-[220px] w-full sm:h-[280px] lg:h-[320px]"
       >
         <defs>
           <linearGradient id="skyFade" x1="0" y1="0" x2="0" y2="1">
-            <stop offset="0%" stopColor="#FFFFFF" stopOpacity="1" />
-            <stop offset="40%" stopColor="#F7FAFD" stopOpacity="1" />
-            <stop offset="100%" stopColor="#EAF1F8" stopOpacity="1" />
+            <stop offset="0%" stopColor="#F4F8FC" />
+            <stop offset="45%" stopColor="#E8F0F8" />
+            <stop offset="100%" stopColor="#D5E4F0" />
           </linearGradient>
           <linearGradient id="farPeak" x1="0" y1="0" x2="0" y2="1">
-            <stop offset="0%" stopColor="#E4EEF6" />
-            <stop offset="55%" stopColor="#C5D8EA" />
-            <stop offset="100%" stopColor="#A9C2D8" />
+            <stop offset="0%" stopColor="#DCE8F2" />
+            <stop offset="55%" stopColor="#B7CBDD" />
+            <stop offset="100%" stopColor="#8FAABC" />
+          </linearGradient>
+          <linearGradient id="ebcPeak" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stopColor="#F7FBFF" />
+            <stop offset="18%" stopColor="#D7E6F2" />
+            <stop offset="55%" stopColor="#8FB0C8" />
+            <stop offset="100%" stopColor="#5E849E" />
           </linearGradient>
           <linearGradient id="midPeak" x1="0" y1="0" x2="0" y2="1">
             <stop offset="0%" stopColor="#B7D0E4" />
@@ -71,109 +220,114 @@ function HimalayanLandscape() {
           </linearGradient>
         </defs>
 
-        <rect width="1440" height="360" fill="url(#skyFade)" />
+        <rect width="1440" height="380" fill="url(#skyFade)" />
 
-        <g fill="none" stroke="#8A9EB4" strokeWidth="1.35" strokeLinecap="round" opacity="0.6">
-          <path d="M1040 58 Q1045 52 1050 58 Q1055 52 1060 58" />
-          <path d="M1078 72 Q1082 67 1086 72 Q1090 67 1094 72" />
-          <path d="M1105 48 Q1109 43 1113 48 Q1117 43 1121 48" />
-          <path d="M1135 66 Q1138 62 1141 66 Q1144 62 1147 66" />
-          <path d="M1160 54 Q1164 49 1168 54 Q1172 49 1176 54" />
-        </g>
-
+        {/* Distant Everest / EBC massif — tall, dominant sky peaks */}
         <path
           fill="url(#farPeak)"
-          d="M0 195
-             C55 175 100 120 155 145
-             C210 85 270 40 340 95
-             C400 35 470 15 545 80
-             C610 25 690 20 765 85
-             C835 35 915 25 990 90
-             C1060 45 1135 55 1205 110
-             C1280 70 1355 85 1440 125
-             L1440 360 L0 360 Z"
+          d="M0 210
+             C80 190 140 150 210 170
+             C280 110 360 55 450 115
+             C520 40 610 8 720 70
+             C800 15 880 5 970 65
+             C1060 20 1160 45 1260 110
+             C1340 75 1400 95 1440 120
+             L1440 380 L0 380 Z"
         />
 
-        <path fill="#FFFFFF" opacity="0.55" d="M320 98 C340 55 365 62 385 100 C360 90 338 92 320 98 Z" />
-        <path fill="#FFFFFF" opacity="0.5" d="M520 82 C545 30 575 38 600 88 C570 76 542 78 520 82 Z" />
-        <path fill="#FFFFFF" opacity="0.48" d="M740 88 C765 35 800 42 825 92 C795 80 762 82 740 88 Z" />
-        <path fill="#FFFFFF" opacity="0.42" d="M960 92 C980 52 1005 58 1025 95 C1000 88 978 88 960 92 Z" />
+        {/* Main Everest pyramid — sharp professional silhouette */}
+        <path
+          fill="url(#ebcPeak)"
+          d="M520 220
+             L640 28
+             L700 95
+             L760 18
+             L900 210
+             L860 230
+             L760 140
+             L700 170
+             L640 120
+             L580 230 Z"
+        />
+        {/* Snow face / glacier highlights */}
+        <path fill="#FFFFFF" opacity="0.92" d="M640 28 L700 95 L675 108 L640 55 Z" />
+        <path fill="#FFFFFF" opacity="0.88" d="M760 18 L820 110 L790 120 L745 70 Z" />
+        <path fill="#F3F8FC" opacity="0.75" d="M700 95 L760 140 L730 150 L700 120 Z" />
+        <path fill="#EAF2F8" opacity="0.55" d="M640 120 L700 170 L670 180 L620 145 Z" />
 
+        {/* Secondary high peaks flanking Everest */}
         <path
           fill="url(#midPeak)"
-          d="M0 230
-             C90 210 155 155 240 185
-             C310 130 395 110 485 165
-             C560 115 650 105 740 160
-             C825 115 920 120 1010 170
-             C1100 130 1200 140 1300 185
-             C1365 165 1410 175 1440 190
-             L1440 360 L0 360 Z"
+          d="M0 245
+             C100 220 180 165 270 195
+             C350 140 440 120 530 175
+             C600 145 680 155 760 185
+             C860 140 980 145 1100 190
+             C1200 155 1320 170 1440 200
+             L1440 380 L0 380 Z"
         />
+        <path fill="#F8FCFF" opacity="0.7" d="M300 175 C330 125 365 132 390 185 C360 170 325 168 300 175 Z" />
+        <path fill="#F8FCFF" opacity="0.65" d="M1020 175 C1050 125 1090 132 1120 185 C1090 170 1045 168 1020 175 Z" />
 
-        <path fill="#F8FCFF" opacity="0.72" d="M460 168 C480 125 505 132 525 170 C500 160 475 162 460 168 Z" />
-        <path fill="#F8FCFF" opacity="0.68" d="M715 162 C738 115 768 122 790 168 C760 156 732 158 715 162 Z" />
-        <path fill="#F8FCFF" opacity="0.62" d="M980 172 C998 135 1020 140 1040 174 C1015 166 995 166 980 172 Z" />
+        {/* Soft birds */}
+        <g fill="none" stroke="#7A93AB" strokeWidth="1.35" strokeLinecap="round" opacity="0.55">
+          <path d="M1080 52 Q1085 46 1090 52 Q1095 46 1100 52" />
+          <path d="M1120 66 Q1124 61 1128 66 Q1132 61 1136 66" />
+          <path d="M1155 44 Q1159 39 1163 44 Q1167 39 1171 44" />
+        </g>
 
         <path
           fill="url(#greenHill)"
           opacity="0.92"
-          d="M0 275
-             C140 255 250 248 380 265
-             C520 245 660 252 820 268
-             C980 252 1140 258 1280 272
-             C1360 265 1410 268 1440 275
-             L1440 360 L0 360 Z"
+          d="M0 285
+             C140 265 250 258 380 275
+             C520 255 660 262 820 278
+             C980 262 1140 268 1280 282
+             C1360 275 1410 278 1440 285
+             L1440 380 L0 380 Z"
         />
 
         <path
           fill="url(#greenHillFront)"
-          d="M0 300
-             C110 285 200 278 310 292
-             C440 272 580 280 720 295
-             C860 278 1010 285 1160 298
-             C1280 288 1380 292 1440 300
-             L1440 360 L0 360 Z"
+          d="M0 310
+             C110 295 200 288 310 302
+             C440 282 580 290 720 305
+             C860 288 1010 295 1160 308
+             C1280 298 1380 302 1440 310
+             L1440 380 L0 380 Z"
         />
 
         <path
           fill="#2A5538"
           opacity="0.16"
-          d="M0 320 C160 308 320 312 480 322 C700 308 920 315 1140 328 C1300 318 1400 320 1440 322 L1440 360 L0 360 Z"
+          d="M0 330 C160 318 320 322 480 332 C700 318 920 325 1140 338 C1300 328 1400 330 1440 332 L1440 380 L0 380 Z"
         />
 
         <path
           fill="url(#navyRidge)"
-          d="M0 328
-             C85 316 165 310 255 322
-             C370 308 490 314 610 326
-             C760 310 920 318 1070 330
-             C1200 318 1330 322 1440 334
-             L1440 360 L0 360 Z"
+          d="M0 338
+             C85 326 165 320 255 332
+             C370 318 490 324 610 336
+             C760 320 920 328 1070 340
+             C1200 328 1330 332 1440 344
+             L1440 380 L0 380 Z"
         />
-        <rect x="0" y="348" width="1440" height="12" fill={NAVY} />
+        <rect x="0" y="358" width="1440" height="22" fill={NAVY} />
 
         <image
           href="/footer-trekkers.png"
           x="40"
-          y="175"
+          y="185"
           width="480"
           height="175"
           preserveAspectRatio="xMidYMax meet"
         />
 
-        <g>
-          <rect x="1275" y={278} width="3.5" height="54" rx="1" fill={NAVY} />
-          <path d="M1267 278 L1286 278 L1276.5 267 Z" fill={NAVY} />
-          <path d="M1279 285 C1310 290 1350 300 1395 308" fill="none" stroke="#E85D4C" strokeWidth="2.5" strokeLinecap="round" />
-          <path d="M1279 292 C1308 298 1345 309 1388 318" fill="none" stroke="#F4A623" strokeWidth="2.4" strokeLinecap="round" />
-          <path d="M1279 299 C1305 306 1340 317 1380 327" fill="none" stroke="#4A90D9" strokeWidth="2.3" strokeLinecap="round" />
-          <path d="M1279 306 C1302 313 1334 324 1372 335" fill="none" stroke="#FFFFFF" strokeWidth="2.2" strokeLinecap="round" />
-          <path d="M1279 313 C1298 320 1328 331 1362 342" fill="none" stroke="#3D9B6E" strokeWidth="2.3" strokeLinecap="round" />
-          <ellipse cx="1408" cy="338" rx="11" ry="4.5" fill={NAVY} opacity="0.9" />
-          <rect x="1400" y="324" width="16" height="12" rx="2" fill={NAVY} />
-          <rect x="1404" y="314" width="9" height="10" rx="1.5" fill={NAVY} />
-        </g>
+        {/* Nepal flag on right ridge */}
+        <NepalFlag x={1295} y={268} scale={1.15} />
+        {/* small stone cairn under pole */}
+        <ellipse cx="1296" cy="348" rx="14" ry="5" fill={NAVY} opacity="0.85" />
+        <rect x="1286" y="336" width="20" height="12" rx="2" fill={NAVY} />
       </svg>
     </div>
   );
@@ -183,10 +337,14 @@ function FooterLink({ href, children }: { href: string; children: React.ReactNod
   return (
     <Link
       href={href}
-      className="block text-[14px] font-semibold leading-6 tracking-[0.01em] transition-colors duration-200 hover:text-white sm:text-[15px]"
+      className="group inline-flex items-center gap-1.5 text-[14px] font-semibold leading-6 tracking-[0.01em] transition-all duration-300 hover:translate-x-1.5 hover:text-[#F58220] sm:text-[15px]"
       style={{ color: TEXT }}
     >
-      {children}
+      <ChevronRight
+        className="size-3.5 shrink-0 -translate-x-1 opacity-0 transition-all duration-300 group-hover:translate-x-0 group-hover:opacity-100"
+        style={{ color: ORANGE }}
+      />
+      <span className="transition-colors duration-300">{children}</span>
     </Link>
   );
 }
@@ -270,13 +428,11 @@ export function Footer() {
 
       <HimalayanLandscape />
 
-      {/* Dark navy footer panel */}
       <div
-        className="relative -mt-px px-5 pb-14 pt-12 sm:px-8 sm:pb-16 sm:pt-14 lg:px-10 lg:pt-16"
+        className="relative -mt-px px-5 pb-8 pt-12 sm:px-8 sm:pb-10 sm:pt-14 lg:px-10 lg:pt-16"
         style={{ background: NAVY }}
       >
         <div className="mx-auto grid max-w-[1320px] grid-cols-1 items-start gap-x-8 gap-y-10 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6">
-          {/* Brand + contact + socials */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
@@ -308,7 +464,7 @@ export function Footer() {
               <li>
                 <a
                   href={`mailto:${SITE.email}`}
-                  className="inline-flex items-center gap-2.5 leading-6 transition-colors hover:text-white"
+                  className="inline-flex items-center gap-2.5 leading-6 transition-all duration-300 hover:translate-x-1 hover:text-[#F58220]"
                 >
                   <Mail className="size-4 shrink-0" style={{ color: ORANGE }} />
                   {SITE.email}
@@ -317,7 +473,7 @@ export function Footer() {
               <li>
                 <a
                   href={`tel:${SITE.phone}`}
-                  className="inline-flex items-center gap-2.5 leading-6 transition-colors hover:text-white"
+                  className="inline-flex items-center gap-2.5 leading-6 transition-all duration-300 hover:translate-x-1 hover:text-[#F58220]"
                 >
                   <Phone className="size-4 shrink-0" style={{ color: ORANGE }} />
                   {SITE.phoneDisplay}
@@ -328,7 +484,7 @@ export function Footer() {
                   href={`https://wa.me/${SITE.whatsapp.replace(/\D/g, "")}`}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="inline-flex items-center gap-2.5 leading-6 transition-colors hover:text-white"
+                  className="inline-flex items-center gap-2.5 leading-6 transition-all duration-300 hover:translate-x-1 hover:text-[#F58220]"
                 >
                   <MessageCircle className="size-4 shrink-0" style={{ color: ORANGE }} />
                   WhatsApp
@@ -344,7 +500,7 @@ export function Footer() {
                   aria-label={label}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="flex size-10 items-center justify-center rounded-full border border-white/20 bg-white/10 text-white transition-all duration-300 hover:-translate-y-0.5 hover:border-[#F58220] hover:text-[#F58220]"
+                  className="flex size-10 items-center justify-center rounded-full border border-white/20 bg-white/10 text-white transition-all duration-300 hover:-translate-y-1 hover:rotate-[-6deg] hover:border-[#F58220] hover:text-[#F58220]"
                 >
                   <Icon className="size-4" />
                 </a>
@@ -357,7 +513,6 @@ export function Footer() {
           <FooterCol title="Company" links={footerCompany} />
           <FooterCol title="Useful Links" links={footerUseful} />
 
-          {/* Newsletter + We Accept */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
@@ -407,18 +562,41 @@ export function Footer() {
               <h3 className="font-[family-name:var(--font-ui)] text-[12px] font-bold uppercase tracking-[0.2em] text-white sm:text-[13px]">
                 We Accept
               </h3>
-              <div className="mt-2.5 mb-3 h-[2px] w-9 rounded-full" style={{ background: ORANGE }} />
-              <Image
-                src="/payments-we-accept.png"
-                alt="We accept Mastercard, Visa, UnionPay, Alipay, American Express, and Wire Transfer"
-                width={1024}
-                height={131}
-                unoptimized
-                className="h-auto w-full max-w-[280px] bg-transparent object-contain object-left"
-                sizes="280px"
-              />
+              <div className="mt-2.5 mb-4 h-[2px] w-9 rounded-full" style={{ background: ORANGE }} />
+              <PaymentBadges />
+              <p className="mt-5 text-[12px] font-medium leading-relaxed sm:text-[13px]" style={{ color: TEXT }}>
+                Developed By{" "}
+                <a
+                  href="https://theglobalorbit.com/"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="font-bold text-white underline-offset-4 transition-all duration-300 hover:text-[#F58220] hover:underline"
+                >
+                  The Global Orbit
+                </a>
+              </p>
             </div>
           </motion.div>
+        </div>
+
+        {/* Bottom copyright bar */}
+        <div className="mx-auto mt-10 max-w-[1320px] border-t border-white/10 pt-6 sm:mt-12">
+          <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+            <p className="text-[12px] font-semibold tracking-[0.02em] sm:text-[13px]" style={{ color: TEXT }}>
+              © 2026 Summit Seek Travel. All rights reserved.
+            </p>
+            <p className="text-[12px] font-medium sm:text-[13px]" style={{ color: TEXT }}>
+              Developed By{" "}
+              <a
+                href="https://theglobalorbit.com/"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="font-bold text-white underline-offset-4 transition-all duration-300 hover:text-[#F58220] hover:underline"
+              >
+                The Global Orbit
+              </a>
+            </p>
+          </div>
         </div>
       </div>
     </footer>
