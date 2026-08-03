@@ -2,6 +2,14 @@ import type { SVGProps } from "react";
 
 type IconProps = SVGProps<SVGSVGElement> & { className?: string };
 
+export function TikTokIcon({ className, ...props }: IconProps) {
+  return (
+    <svg viewBox="0 0 24 24" fill="currentColor" className={className} aria-hidden {...props}>
+      <path d="M19.6 7.4c-1.7-.1-3.1-.9-4.1-2.1V15a5.5 5.5 0 1 1-4.7-5.4v2.4a3.1 3.1 0 1 0 2.2 3V2.5h2.3c.2 1.8 1.4 3.4 3.1 4.2.7.3 1.5.5 2.3.5v2.2c-.4 0-.7 0-1.1-.1z" />
+    </svg>
+  );
+}
+
 export function FacebookIcon({ className, ...props }: IconProps) {
   return (
     <svg viewBox="0 0 24 24" fill="currentColor" className={className} aria-hidden {...props}>

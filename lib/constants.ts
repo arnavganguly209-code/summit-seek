@@ -20,6 +20,7 @@ export const SITE = {
 } as const;
 
 export const SOCIAL = {
+  tiktok: "https://tiktok.com/@summitseek",
   facebook: "https://facebook.com/summitseek",
   instagram: "https://instagram.com/summitseek",
   youtube: "https://youtube.com/@summitseek",

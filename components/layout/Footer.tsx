@@ -4,13 +4,11 @@ import { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { motion } from "framer-motion";
-import { Mail, Phone, MapPin, MessageCircle, ChevronRight } from "lucide-react";
+import { Mail, Phone, MapPin, MessageCircle } from "lucide-react";
 import {
+  TikTokIcon,
   FacebookIcon,
   InstagramIcon,
-  YoutubeIcon,
-  LinkedInIcon,
-  TripadvisorIcon,
 } from "@/components/ui/SocialIcons";
 import { TravelersChoiceBadges } from "@/components/layout/TravelersChoiceBadges";
 import { SITE, SOCIAL } from "@/lib/constants";
@@ -22,17 +20,15 @@ import {
   footerUseful,
 } from "@/lib/data/footer";
 
-const ORANGE = "#F4A623";
+const ORANGE = "#F58220";
 const NAVY = "#071526";
-const TEXT = "#D6DCE8";
+const TEXT = "#E8EDF5";
 const ease = [0.22, 1, 0.36, 1] as const;
 
 const socials = [
+  { href: SOCIAL.tiktok, label: "TikTok", Icon: TikTokIcon },
   { href: SOCIAL.facebook, label: "Facebook", Icon: FacebookIcon },
   { href: SOCIAL.instagram, label: "Instagram", Icon: InstagramIcon },
-  { href: SOCIAL.youtube, label: "YouTube", Icon: YoutubeIcon },
-  { href: SOCIAL.linkedin, label: "LinkedIn", Icon: LinkedInIcon },
-  { href: SOCIAL.tripadvisor, label: "Tripadvisor", Icon: TripadvisorIcon },
 ];
 
 function HimalayanLandscape() {
@@ -70,14 +66,13 @@ function HimalayanLandscape() {
             <stop offset="100%" stopColor="#356848" />
           </linearGradient>
           <linearGradient id="navyRidge" x1="0" y1="0" x2="0" y2="1">
-            <stop offset="0%" stopColor="#0D243C" />
-            <stop offset="100%" stopColor={NAVY} />
+            <stop offset="0%" stopColor="#163454" />
+            <stop offset="100%" stopColor="#0d243c" />
           </linearGradient>
         </defs>
 
         <rect width="1440" height="360" fill="url(#skyFade)" />
 
-        {/* Birds — right sky */}
         <g fill="none" stroke="#8A9EB4" strokeWidth="1.35" strokeLinecap="round" opacity="0.6">
           <path d="M1040 58 Q1045 52 1050 58 Q1055 52 1060 58" />
           <path d="M1078 72 Q1082 67 1086 72 Q1090 67 1094 72" />
@@ -86,7 +81,6 @@ function HimalayanLandscape() {
           <path d="M1160 54 Q1164 49 1168 54 Q1172 49 1176 54" />
         </g>
 
-        {/* Back layer — tall distant pale peaks */}
         <path
           fill="url(#farPeak)"
           d="M0 195
@@ -100,13 +94,11 @@ function HimalayanLandscape() {
              L1440 360 L0 360 Z"
         />
 
-        {/* Soft snow on far peaks */}
         <path fill="#FFFFFF" opacity="0.55" d="M320 98 C340 55 365 62 385 100 C360 90 338 92 320 98 Z" />
         <path fill="#FFFFFF" opacity="0.5" d="M520 82 C545 30 575 38 600 88 C570 76 542 78 520 82 Z" />
         <path fill="#FFFFFF" opacity="0.48" d="M740 88 C765 35 800 42 825 92 C795 80 762 82 740 88 Z" />
         <path fill="#FFFFFF" opacity="0.42" d="M960 92 C980 52 1005 58 1025 95 C1000 88 978 88 960 92 Z" />
 
-        {/* Middle layer — defined snow mountains */}
         <path
           fill="url(#midPeak)"
           d="M0 230
@@ -119,12 +111,10 @@ function HimalayanLandscape() {
              L1440 360 L0 360 Z"
         />
 
-        {/* Snow caps mid */}
         <path fill="#F8FCFF" opacity="0.72" d="M460 168 C480 125 505 132 525 170 C500 160 475 162 460 168 Z" />
         <path fill="#F8FCFF" opacity="0.68" d="M715 162 C738 115 768 122 790 168 C760 156 732 158 715 162 Z" />
         <path fill="#F8FCFF" opacity="0.62" d="M980 172 C998 135 1020 140 1040 174 C1015 166 995 166 980 172 Z" />
 
-        {/* Soft green hills — atmospheric mid-ground */}
         <path
           fill="url(#greenHill)"
           opacity="0.92"
@@ -136,7 +126,6 @@ function HimalayanLandscape() {
              L1440 360 L0 360 Z"
         />
 
-        {/* Front green hills — richer organic curves */}
         <path
           fill="url(#greenHillFront)"
           d="M0 300
@@ -147,14 +136,12 @@ function HimalayanLandscape() {
              L1440 360 L0 360 Z"
         />
 
-        {/* Soft shade on green for depth */}
         <path
           fill="#2A5538"
           opacity="0.16"
           d="M0 320 C160 308 320 312 480 322 C700 308 920 315 1140 328 C1300 318 1400 320 1440 322 L1440 360 L0 360 Z"
         />
 
-        {/* Foreground dark navy hills */}
         <path
           fill="url(#navyRidge)"
           d="M0 328
@@ -164,9 +151,8 @@ function HimalayanLandscape() {
              C1200 318 1330 322 1440 334
              L1440 360 L0 360 Z"
         />
-        <rect x="0" y="348" width="1440" height="12" fill={NAVY} />
+        <rect x="0" y="348" width="1440" height="12" fill="#0d243c" />
 
-        {/* Human trekkers — realistic silhouettes walking RIGHT */}
         <image
           href="/footer-trekkers.png"
           x="40"
@@ -176,7 +162,6 @@ function HimalayanLandscape() {
           preserveAspectRatio="xMidYMax meet"
         />
 
-        {/* Prayer flags on right hilltop */}
         <g>
           <rect x="1275" y={278} width="3.5" height="54" rx="1" fill={NAVY} />
           <path d="M1267 278 L1286 278 L1276.5 267 Z" fill={NAVY} />
@@ -198,14 +183,10 @@ function FooterLink({ href, children }: { href: string; children: React.ReactNod
   return (
     <Link
       href={href}
-      className="group inline-flex items-center gap-1.5 text-[15px] font-medium transition-all duration-300 hover:translate-x-1 sm:text-[17px]"
+      className="block text-[14px] font-semibold leading-6 tracking-[0.01em] transition-colors duration-200 hover:text-white sm:text-[15px]"
       style={{ color: TEXT }}
     >
-      <ChevronRight
-        className="size-3.5 shrink-0 opacity-0 transition-opacity duration-300 group-hover:opacity-100"
-        style={{ color: ORANGE }}
-      />
-      <span className="group-hover:text-white">{children}</span>
+      {children}
     </Link>
   );
 }
@@ -223,14 +204,15 @@ function FooterCol({
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true, amount: 0.2 }}
       transition={{ duration: 0.5, ease }}
+      className="min-w-0"
     >
-      <h3 className="text-[13px] font-bold uppercase tracking-[0.18em] text-white sm:text-[14px]">
+      <h3 className="font-[family-name:var(--font-ui)] text-[12px] font-bold uppercase tracking-[0.2em] text-white sm:text-[13px]">
         {title}
       </h3>
-      <div className="mt-3 mb-5 h-px w-10" style={{ background: ORANGE }} />
-      <ul className="space-y-3">
+      <div className="mt-2.5 mb-4 h-[2px] w-9 rounded-full" style={{ background: ORANGE }} />
+      <ul className="space-y-2.5">
         {links.map((link) => (
-          <li key={link.href + link.label}>
+          <li key={link.href + link.label} className="leading-none">
             <FooterLink href={link.href}>{link.label}</FooterLink>
           </li>
         ))}
@@ -244,7 +226,6 @@ export function Footer() {
 
   return (
     <footer className="relative w-full bg-white">
-      {/* ===== TOP WHITE: logo + partners (must stay fully above landscape) ===== */}
       <div className="relative z-20 bg-white px-5 pb-10 pt-6 sm:px-8 sm:pb-12 sm:pt-8 lg:px-10 lg:pb-14 lg:pt-10">
         <div className="mx-auto flex max-w-[1320px] flex-col items-center">
           <Link href="/" aria-label="Summit Seek — Home" className="bg-transparent">
@@ -287,37 +268,52 @@ export function Footer() {
         </div>
       </div>
 
-      {/* ===== SVG mountain landscape ===== */}
       <HimalayanLandscape />
 
-      {/* ===== LOWER NAVY: 6 columns ===== */}
-      <div style={{ background: NAVY }} className="relative -mt-px px-5 pb-16 pt-12 sm:px-8 sm:pb-20 sm:pt-14 lg:px-10 lg:pt-16">
-        <div className="mx-auto grid max-w-[1320px] gap-10 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 xl:gap-7">
-          {/* Col 1 — Brand */}
+      {/* Glass footer panel — ~50% lighter navy + frosted transparency */}
+      <div
+        className="relative -mt-px border-t border-white/15 px-5 pb-14 pt-12 sm:px-8 sm:pb-16 sm:pt-14 lg:px-10 lg:pt-16"
+        style={{
+          background: "linear-gradient(180deg, rgba(13, 36, 60, 0.52) 0%, rgba(8, 24, 42, 0.48) 100%)",
+          backdropFilter: "blur(22px) saturate(145%)",
+          WebkitBackdropFilter: "blur(22px) saturate(145%)",
+          boxShadow: "inset 0 1px 0 rgba(255,255,255,0.08)",
+        }}
+      >
+        <div className="mx-auto grid max-w-[1320px] grid-cols-1 items-start gap-x-8 gap-y-10 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6">
+          {/* Brand + contact + socials */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.5, ease }}
-            className="sm:col-span-2 xl:col-span-1"
+            className="min-w-0 sm:col-span-2 xl:col-span-1"
           >
-            <p className="font-[family-name:var(--font-display)] text-[20px] font-bold text-white sm:text-[24px]">
-              Summit <span style={{ color: ORANGE }}>Seek</span>
-            </p>
-            <p className="mt-3 max-w-[280px] text-[14px] leading-[1.7]" style={{ color: TEXT }}>
+            <Link href="/" aria-label="Summit Seek — Home" className="inline-block bg-transparent">
+              <Image
+                src="/logo-summit-seek-white.png"
+                alt="Summit Seek Travels & Tours"
+                width={480}
+                height={180}
+                unoptimized
+                className="h-auto w-[168px] bg-transparent object-contain object-left sm:w-[188px]"
+                sizes="188px"
+              />
+            </Link>
+            <p className="mt-3 max-w-[260px] text-[13px] font-medium leading-[1.65] sm:text-[14px]" style={{ color: TEXT }}>
               Unforgettable Himalayan adventures with expert local guides, personalized
               itineraries, and trusted care across Nepal.
             </p>
 
-            <ul className="mt-5 space-y-3 text-[14px]" style={{ color: TEXT }}>
+            <ul className="mt-5 space-y-2.5 text-[13px] font-semibold sm:text-[14px]" style={{ color: TEXT }}>
               <li className="flex items-start gap-2.5">
                 <MapPin className="mt-0.5 size-4 shrink-0" style={{ color: ORANGE }} />
-                {SITE.address}
+                <span className="leading-6">{SITE.address}</span>
               </li>
               <li>
                 <a
                   href={`mailto:${SITE.email}`}
-                  className="inline-flex items-center gap-2.5 transition-colors hover:text-white"
+                  className="inline-flex items-center gap-2.5 leading-6 transition-colors hover:text-white"
                 >
                   <Mail className="size-4 shrink-0" style={{ color: ORANGE }} />
                   {SITE.email}
@@ -326,7 +322,7 @@ export function Footer() {
               <li>
                 <a
                   href={`tel:${SITE.phone}`}
-                  className="inline-flex items-center gap-2.5 transition-colors hover:text-white"
+                  className="inline-flex items-center gap-2.5 leading-6 transition-colors hover:text-white"
                 >
                   <Phone className="size-4 shrink-0" style={{ color: ORANGE }} />
                   {SITE.phoneDisplay}
@@ -337,7 +333,7 @@ export function Footer() {
                   href={`https://wa.me/${SITE.whatsapp.replace(/\D/g, "")}`}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="inline-flex items-center gap-2.5 transition-colors hover:text-white"
+                  className="inline-flex items-center gap-2.5 leading-6 transition-colors hover:text-white"
                 >
                   <MessageCircle className="size-4 shrink-0" style={{ color: ORANGE }} />
                   WhatsApp
@@ -345,7 +341,7 @@ export function Footer() {
               </li>
             </ul>
 
-            <div className="mt-5 flex flex-wrap gap-2.5">
+            <div className="mt-5 flex items-center gap-2.5">
               {socials.map(({ href, label, Icon }) => (
                 <a
                   key={label}
@@ -353,7 +349,7 @@ export function Footer() {
                   aria-label={label}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="flex size-10 items-center justify-center rounded-full border border-white/15 bg-white/[0.06] text-white/75 transition-all duration-300 hover:-rotate-6 hover:border-[#F4A623] hover:text-[#F4A623]"
+                  className="flex size-10 items-center justify-center rounded-full border border-white/20 bg-white/10 text-white transition-all duration-300 hover:-translate-y-0.5 hover:border-[#F58220] hover:text-[#F58220]"
                 >
                   <Icon className="size-4" />
                 </a>
@@ -366,23 +362,24 @@ export function Footer() {
           <FooterCol title="Company" links={footerCompany} />
           <FooterCol title="Useful Links" links={footerUseful} />
 
-          {/* Col 6 — Newsletter */}
+          {/* Newsletter + We Accept */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.5, delay: 0.1, ease }}
+            className="min-w-0"
           >
-            <h3 className="text-[13px] font-bold uppercase tracking-[0.18em] text-white sm:text-[14px]">
+            <h3 className="font-[family-name:var(--font-ui)] text-[12px] font-bold uppercase tracking-[0.2em] text-white sm:text-[13px]">
               Join Our Newsletter
             </h3>
-            <div className="mt-3 mb-5 h-px w-10" style={{ background: ORANGE }} />
-            <p className="text-[14px] leading-relaxed" style={{ color: TEXT }}>
+            <div className="mt-2.5 mb-4 h-[2px] w-9 rounded-full" style={{ background: ORANGE }} />
+            <p className="text-[13px] font-medium leading-relaxed sm:text-[14px]" style={{ color: TEXT }}>
               Trekking deals, travel inspiration and seasonal updates.
             </p>
 
             <form
-              className="mt-4 flex overflow-hidden rounded-full border border-white/15 bg-[#0a1a2c]"
+              className="mt-4 flex overflow-hidden rounded-full border border-white/20 bg-white/10 backdrop-blur-md"
               onSubmit={(e) => {
                 e.preventDefault();
                 setEmail("");
@@ -398,27 +395,34 @@ export function Footer() {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder="Enter your email"
-                className="min-w-0 flex-1 bg-transparent px-4 py-2.5 text-[13px] text-white outline-none placeholder:text-white/40"
+                className="min-w-0 flex-1 bg-transparent px-4 py-2.5 text-[13px] font-medium text-white outline-none placeholder:text-white/45"
               />
               <button
                 type="submit"
                 className="shrink-0 px-4 py-2.5 text-[12px] font-bold uppercase tracking-wide text-[#071526] transition-all duration-300 hover:brightness-110"
-                style={{
-                  background: ORANGE,
-                  boxShadow: "0 0 0 rgba(244,166,35,0)",
-                }}
-                onMouseEnter={(e) => {
-                  e.currentTarget.style.boxShadow = "0 0 22px rgba(244,166,35,0.55)";
-                }}
-                onMouseLeave={(e) => {
-                  e.currentTarget.style.boxShadow = "0 0 0 rgba(244,166,35,0)";
-                }}
+                style={{ background: ORANGE }}
               >
                 Subscribe
               </button>
             </form>
 
             <TravelersChoiceBadges />
+
+            <div className="mt-6">
+              <h3 className="font-[family-name:var(--font-ui)] text-[12px] font-bold uppercase tracking-[0.2em] text-white sm:text-[13px]">
+                We Accept
+              </h3>
+              <div className="mt-2.5 mb-3 h-[2px] w-9 rounded-full" style={{ background: ORANGE }} />
+              <Image
+                src="/payments-we-accept.png"
+                alt="We accept Mastercard, Visa, UnionPay, Alipay, American Express, and Wire Transfer"
+                width={1024}
+                height={131}
+                unoptimized
+                className="h-auto w-full max-w-[280px] bg-transparent object-contain object-left"
+                sizes="280px"
+              />
+            </div>
           </motion.div>
         </div>
       </div>
