@@ -144,32 +144,32 @@ export function Hero({ content, preview = false }: Props) {
                 return (
                   <div
                     key={feature.id}
-                    className="flex items-start gap-3 px-5 py-5 sm:px-6 sm:py-6"
+                    className="flex items-center gap-2.5 px-4 py-3 sm:px-5 sm:py-3.5"
                   >
                     <motion.div
-                      className="mt-0.5 flex size-10 shrink-0 items-center justify-center rounded-full border border-white/20 bg-white/10"
-                      animate={preview ? undefined : { y: [0, -3, 0] }}
+                      className="flex size-8 shrink-0 items-center justify-center rounded-full border border-white/20 bg-white/10"
+                      animate={preview ? undefined : { y: [0, -2, 0] }}
                       transition={
                         preview
                           ? undefined
                           : { duration: 3.2, repeat: Infinity, ease: "easeInOut" }
                       }
                     >
-                      <Icon className="size-5 text-white" strokeWidth={1.75} />
+                      <Icon className="size-4 text-white" strokeWidth={1.75} />
                     </motion.div>
                     <div className="min-w-0 text-left">
-                      <p className="text-[14px] font-semibold text-white sm:text-[15px]">
+                      <p className="text-[13px] font-semibold leading-tight text-white sm:text-[14px]">
                         {feature.title}
                       </p>
-                      <p className="mt-1 text-[12px] leading-snug text-white/75 sm:text-[13px]">
+                      <p className="mt-0.5 text-[11px] leading-snug text-white/75 sm:text-[12px]">
                         {feature.subtitle}
                       </p>
                       {feature.showStars ? (
-                        <div className="mt-2 flex gap-0.5" aria-hidden>
+                        <div className="mt-1 flex gap-0.5" aria-hidden>
                           {Array.from({ length: 4 }).map((_, i) => (
                             <Star
                               key={i}
-                              className="size-3 fill-[#F4A623] text-[#F4A623]"
+                              className="size-2.5 fill-[#F4A623] text-[#F4A623]"
                             />
                           ))}
                         </div>

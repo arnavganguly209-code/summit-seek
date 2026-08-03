@@ -31,6 +31,11 @@ const nav = [
         icon: PanelsTopLeft,
       },
       { href: "/orbit/dashboard/website/packages", label: "Featured Packages", icon: Package },
+      {
+        href: "/orbit/dashboard/website/best-selling",
+        label: "Best Selling Packages",
+        icon: Package,
+      },
       { href: "/orbit/dashboard/website/services", label: "Services", icon: BriefcaseBusiness },
       { href: "/orbit/dashboard/website/reviews", label: "Reviews", icon: MessageSquareQuote },
       { href: "/orbit/dashboard/website/about", label: "Get to Know Us", icon: Info },

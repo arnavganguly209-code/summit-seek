@@ -3,14 +3,17 @@ import path from "path";
 import type { HeroContent, MediaItem } from "@/types/hero";
 import type { FeaturedPackagesContent } from "@/types/featured-packages";
 import type { AboutIntroContent } from "@/types/about-intro";
+import type { BestSellingPackagesContent } from "@/types/best-selling-packages";
 import { DEFAULT_HERO } from "@/lib/orbit/defaults";
 import { DEFAULT_FEATURED_PACKAGES } from "@/lib/orbit/featured-packages-defaults";
 import { DEFAULT_ABOUT_INTRO } from "@/lib/orbit/about-intro-defaults";
+import { DEFAULT_BEST_SELLING } from "@/lib/orbit/best-selling-defaults";
 
 const DATA_DIR = path.join(process.cwd(), "data");
 const HERO_FILE = path.join(DATA_DIR, "hero.json");
 const FEATURED_PACKAGES_FILE = path.join(DATA_DIR, "featured-packages.json");
 const ABOUT_INTRO_FILE = path.join(DATA_DIR, "about-intro.json");
+const BEST_SELLING_FILE = path.join(DATA_DIR, "best-selling-packages.json");
 const MEDIA_FILE = path.join(DATA_DIR, "media-library.json");
 
 /** Durable upload root — survives `git reset --hard` (unlike public/). */
@@ -134,6 +137,57 @@ export async function getAboutIntro(): Promise<AboutIntroContent> {
 export async function saveAboutIntro(content: AboutIntroContent): Promise<void> {
   await ensureDataDir();
   await fs.writeFile(ABOUT_INTRO_FILE, JSON.stringify(content, null, 2), "utf8");
+}
+
+function mergeBestSelling(
+  stored: Partial<BestSellingPackagesContent> | null,
+): BestSellingPackagesContent {
+  if (!stored) return DEFAULT_BEST_SELLING;
+  const packages =
+    Array.isArray(stored.packages) && stored.packages.length > 0
+      ? stored.packages.map((pkg, i) => {
+          const fallback = DEFAULT_BEST_SELLING.packages[i] || DEFAULT_BEST_SELLING.packages[0];
+          return {
+            ...fallback,
+            ...pkg,
+            id: pkg.id || `bs-${i + 1}`,
+            price: Number(pkg.price) || 0,
+            compareAtPrice:
+              pkg.compareAtPrice === null || pkg.compareAtPrice === undefined
+                ? null
+                : Number(pkg.compareAtPrice) || 0,
+            reviewCount: Number(pkg.reviewCount) || 0,
+            rating: Number(pkg.rating) || 5,
+            durationDays: Number(pkg.durationDays) || 1,
+            showOnHome: pkg.showOnHome !== false,
+            visible: pkg.visible !== false,
+          };
+        })
+      : DEFAULT_BEST_SELLING.packages;
+
+  return {
+    heading: stored.heading?.trim() || DEFAULT_BEST_SELLING.heading,
+    viewAllLabel: stored.viewAllLabel?.trim() || DEFAULT_BEST_SELLING.viewAllLabel,
+    viewAllHref: stored.viewAllHref?.trim() || DEFAULT_BEST_SELLING.viewAllHref,
+    visible: stored.visible !== false,
+    packages,
+  };
+}
+
+export async function getBestSellingPackages(): Promise<BestSellingPackagesContent> {
+  try {
+    const raw = await fs.readFile(BEST_SELLING_FILE, "utf8");
+    return mergeBestSelling(JSON.parse(raw) as Partial<BestSellingPackagesContent>);
+  } catch {
+    return DEFAULT_BEST_SELLING;
+  }
+}
+
+export async function saveBestSellingPackages(
+  content: BestSellingPackagesContent,
+): Promise<void> {
+  await ensureDataDir();
+  await fs.writeFile(BEST_SELLING_FILE, JSON.stringify(content, null, 2), "utf8");
 }
 
 export async function getMediaLibrary(): Promise<MediaItem[]> {

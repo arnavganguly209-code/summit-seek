@@ -2,13 +2,14 @@ import type { Metadata } from "next";
 import { Hero } from "@/components/home/Hero";
 import { FeaturedAdventureTabs } from "@/components/home/FeaturedAdventureTabs";
 import { AboutIntro } from "@/components/home/AboutIntro";
-import { PopularTrekkingPackages } from "@/components/home/PopularTrekkingPackages";
+import { BestSellingPackagesSection } from "@/components/home/BestSellingPackages";
 import { WhatWeOffer } from "@/components/home/WhatWeOffer";
 import { TravelerReviews } from "@/components/home/TravelerReviews";
 import { WhyChooseSummitSeek } from "@/components/home/WhyChooseSummitSeek";
 import { SITE } from "@/lib/constants";
 import {
   getAboutIntro,
+  getBestSellingPackages,
   getFeaturedPackages,
   getHeroContent,
 } from "@/lib/orbit/store";
@@ -25,10 +26,11 @@ export const metadata: Metadata = {
 };
 
 export default async function HomePage() {
-  const [hero, featured, about] = await Promise.all([
+  const [hero, featured, about, bestSelling] = await Promise.all([
     getHeroContent(),
     getFeaturedPackages(),
     getAboutIntro(),
+    getBestSellingPackages(),
   ]);
 
   return (
@@ -36,7 +38,7 @@ export default async function HomePage() {
       <Hero content={hero} />
       <FeaturedAdventureTabs content={featured} />
       <AboutIntro content={about} />
-      <PopularTrekkingPackages />
+      <BestSellingPackagesSection content={bestSelling} mode="home" />
       <WhatWeOffer />
       <TravelerReviews />
       <WhyChooseSummitSeek />
