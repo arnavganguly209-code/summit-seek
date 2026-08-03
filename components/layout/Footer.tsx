@@ -10,15 +10,8 @@ import {
   FacebookIcon,
   InstagramIcon,
 } from "@/components/ui/SocialIcons";
-import { TravelersChoiceBadges } from "@/components/layout/TravelersChoiceBadges";
 import { SITE, SOCIAL } from "@/lib/constants";
-import {
-  footerPartners,
-  footerDestinations,
-  footerTrekking,
-  footerCompany,
-  footerUseful,
-} from "@/lib/data/footer";
+import type { FooterContent, FooterPayment } from "@/types/footer-cms";
 
 const ORANGE = "#F58220";
 const NAVY = "#071526";
@@ -31,122 +24,47 @@ const socials = [
   { href: SOCIAL.instagram, label: "Instagram", Icon: InstagramIcon },
 ];
 
-function VisaMark({ className }: { className?: string }) {
-  return (
-    <svg viewBox="0 0 48 32" className={className} aria-hidden>
-      <rect width="48" height="32" rx="4" fill="#ffffff" />
-      <path
-        fill="#1A1F71"
-        d="M19.6 21.4h-2.7l1.7-10.3h2.7l-1.7 10.3zm11.1-10l-1.7 10.3h-2.5l.2-1.1c-.6.8-1.6 1.3-2.7 1.3-1.7 0-2.8-1.3-2.5-2.9.3-1.6 1.9-2.9 3.6-2.9 1 0 1.8.4 2.3 1l.4-2.4 2.9-.3zm-4.1 6.4c-.7 0-1.4.5-1.5 1.1-.1.5.3.9.9.9.7 0 1.4-.5 1.5-1.1.1-.5-.3-.9-.9-.9zm12.1-6.4l-2.9.3-.4 2.4c-.5-.6-1.3-1-2.3-1-1.7 0-3.3 1.3-3.6 2.9-.3 1.6.8 2.9 2.5 2.9 1.1 0 2.1-.5 2.7-1.3l-.2 1.1h2.5l1.7-10.3zm-4.1 6.4c-.6 0-1-.4-.9-.9.1-.6.8-1.1 1.5-1.1.6 0 1 .4.9.9-.1.6-.8 1.1-1.5 1.1zM15.2 11.1l-2.6 7.2-.3-1.4c-.5-1.7-2.1-3.5-3.9-4.4l2.5 8.9h2.8l4.2-10.3h-2.7z"
-      />
-      <path fill="#F7B600" d="M9.4 11.1H5.8l-.1.3c2.8.7 4.7 2.4 5.5 4.4l-.8-3.8c-.1-.5-.5-.8-1-.9z" />
-    </svg>
-  );
-}
+function PaymentRow({
+  label,
+  payments,
+}: {
+  label: string;
+  payments: FooterPayment[];
+}) {
+  const visible = payments.filter((p) => p.visible !== false);
+  if (visible.length === 0) return null;
 
-function MastercardMark({ className }: { className?: string }) {
   return (
-    <svg viewBox="0 0 48 32" className={className} aria-hidden>
-      <rect width="48" height="32" rx="4" fill="#ffffff" />
-      <circle cx="19.5" cy="16" r="7.2" fill="#EB001B" />
-      <circle cx="28.5" cy="16" r="7.2" fill="#F79E1B" />
-      <path
-        fill="#FF5F00"
-        d="M24 10.8c1.5 1.3 2.5 3.2 2.5 5.2S25.5 20 24 21.2C22.5 20 21.5 18.1 21.5 16s1-3.9 2.5-5.2z"
-      />
-    </svg>
-  );
-}
-
-function AlipayMark({ className }: { className?: string }) {
-  return (
-    <svg viewBox="0 0 48 32" className={className} aria-hidden>
-      <rect width="48" height="32" rx="4" fill="#ffffff" />
-      <rect x="7" y="8" width="12" height="12" rx="2.5" fill="#1677FF" />
-      <path
-        fill="#ffffff"
-        d="M15.2 16.4c-.4.3-.9.5-1.5.5-1.4 0-2.5-1.1-2.5-2.5S12.3 12 13.7 12c.6 0 1.1.2 1.5.5l.9-.9c-.7-.5-1.5-.8-2.4-.8-2.1 0-3.8 1.7-3.8 3.8s1.7 3.8 3.8 3.8c.9 0 1.7-.3 2.4-.8l-.9-.9z"
-      />
-      <text x="22" y="18.5" fill="#1677FF" fontSize="7.5" fontWeight="700" fontFamily="Arial, Helvetica, sans-serif">
-        Alipay
-      </text>
-    </svg>
-  );
-}
-
-function UnionPayMark({ className }: { className?: string }) {
-  return (
-    <svg viewBox="0 0 48 32" className={className} aria-hidden>
-      <rect width="48" height="32" rx="4" fill="#ffffff" />
-      <path fill="#E21836" d="M10 8h7.2l-2.4 16H7.6z" />
-      <path fill="#00447C" d="M18.2 8h7.2l-2.4 16h-7.2z" />
-      <path fill="#007B5F" d="M26.4 8H33.6l-2.4 16h-7.2z" />
-      <text x="8.5" y="18" fill="#ffffff" fontSize="4.2" fontWeight="700" fontFamily="Arial, Helvetica, sans-serif">
-        UnionPay
-      </text>
-    </svg>
-  );
-}
-
-function AmexMark({ className }: { className?: string }) {
-  return (
-    <svg viewBox="0 0 48 32" className={className} aria-hidden>
-      <rect width="48" height="32" rx="4" fill="#ffffff" />
-      <rect x="4" y="6" width="40" height="20" rx="2" fill="#2E77BC" />
-      <text
-        x="24"
-        y="15.2"
-        textAnchor="middle"
-        fill="#ffffff"
-        fontSize="5.2"
-        fontWeight="700"
-        fontFamily="Arial, Helvetica, sans-serif"
-        letterSpacing="0.4"
+    <div className="mx-auto flex w-full max-w-[1320px] flex-col items-center gap-3">
+      <div className="text-center">
+        <h3 className="font-[family-name:var(--font-ui)] text-[12px] font-bold uppercase tracking-[0.2em] text-white sm:text-[13px]">
+          {label}
+        </h3>
+        <div className="mx-auto mt-2.5 h-[2px] w-9 rounded-full" style={{ background: ORANGE }} />
+      </div>
+      <div
+        className="flex flex-wrap items-center justify-center gap-2.5 sm:gap-3"
+        role="list"
+        aria-label="Accepted payment methods"
       >
-        AMERICAN
-      </text>
-      <text
-        x="24"
-        y="22.2"
-        textAnchor="middle"
-        fill="#ffffff"
-        fontSize="5.2"
-        fontWeight="700"
-        fontFamily="Arial, Helvetica, sans-serif"
-        letterSpacing="0.4"
-      >
-        EXPRESS
-      </text>
-    </svg>
-  );
-}
-
-const paymentMethods = [
-  { id: "visa", label: "Visa", Icon: VisaMark },
-  { id: "mastercard", label: "Mastercard", Icon: MastercardMark },
-  { id: "alipay", label: "Alipay", Icon: AlipayMark },
-  { id: "unionpay", label: "UnionPay", Icon: UnionPayMark },
-  { id: "amex", label: "American Express", Icon: AmexMark },
-] as const;
-
-function PaymentBadges() {
-  return (
-    <div
-      className="flex flex-nowrap items-center gap-1.5 overflow-x-auto pb-0.5 sm:gap-2"
-      role="list"
-      aria-label="Accepted payment methods"
-    >
-      {paymentMethods.map(({ id, label, Icon }) => (
-        <div
-          key={id}
-          role="listitem"
-          title={label}
-          className="shrink-0 rounded-[5px] shadow-[0_3px_10px_rgba(0,0,0,0.25)] ring-1 ring-white/15 transition-transform duration-300 hover:-translate-y-0.5 hover:ring-[#F58220]/70"
-        >
-          <Icon className="h-8 w-[48px] sm:h-9 sm:w-[54px]" />
-          <span className="sr-only">{label}</span>
-        </div>
-      ))}
+        {visible.map((pay) => (
+          <div
+            key={pay.id}
+            role="listitem"
+            title={pay.label}
+            className="flex h-10 w-[60px] items-center justify-center overflow-hidden rounded-[6px] bg-white shadow-[0_3px_10px_rgba(0,0,0,0.22)] ring-1 ring-white/20 sm:h-11 sm:w-[66px]"
+          >
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src={pay.imageUrl}
+              alt={pay.label}
+              className="h-full w-full object-contain p-0.5"
+              loading="lazy"
+              decoding="async"
+            />
+          </div>
+        ))}
+      </div>
     </div>
   );
 }
@@ -383,8 +301,9 @@ function FooterCol({
   );
 }
 
-export function Footer() {
+export function Footer({ content }: { content: FooterContent }) {
   const [email, setEmail] = useState("");
+  const partners = content.partners.filter((p) => p.visible !== false);
 
   return (
     <footer className="relative w-full bg-white">
@@ -392,7 +311,7 @@ export function Footer() {
         <div className="mx-auto flex max-w-[1320px] flex-col items-center">
           <Link href="/" aria-label="Summit Seek — Home" className="bg-transparent">
             <Image
-              src="/logo-summit-seek-transparent.png"
+              src={content.topLogoUrl}
               alt="Summit Seek Travels & Tours"
               width={1024}
               height={576}
@@ -403,7 +322,7 @@ export function Footer() {
           </Link>
 
           <div className="relative z-20 mt-1.5 flex flex-wrap items-center justify-center gap-2.5 sm:mt-2 sm:gap-3.5 lg:gap-4">
-            {footerPartners.map((partner, i) => (
+            {partners.map((partner, i) => (
               <motion.a
                 key={partner.id}
                 href={partner.href}
@@ -416,13 +335,13 @@ export function Footer() {
                 transition={{ duration: 0.4, delay: i * 0.06, ease }}
                 className="box-border flex h-[88px] w-[88px] shrink-0 items-center justify-center rounded-[12px] border border-[#e8ebf0] bg-white p-2 shadow-[0_8px_22px_rgba(8,18,30,0.07)] transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_12px_28px_rgba(8,18,30,0.11)] sm:h-[100px] sm:w-[100px] sm:p-2.5"
               >
-                <Image
-                  src={partner.logo}
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img
+                  src={partner.logoUrl}
                   alt={partner.label}
-                  width={160}
-                  height={160}
-                  unoptimized
                   className="h-full w-full object-contain"
+                  loading="lazy"
+                  decoding="async"
                 />
               </motion.a>
             ))}
@@ -446,7 +365,7 @@ export function Footer() {
           >
             <Link href="/" aria-label="Summit Seek — Home" className="inline-block bg-transparent">
               <Image
-                src="/logo-summit-seek-white.png"
+                src={content.brandLogoUrl}
                 alt="Summit Seek Travels & Tours"
                 width={480}
                 height={180}
@@ -456,7 +375,7 @@ export function Footer() {
               />
             </Link>
             <p className="mt-2.5 max-w-[240px] text-[12.5px] font-medium leading-[1.55] sm:text-[13px]" style={{ color: TEXT }}>
-              Unforgettable Himalayan adventures with expert local guides and trusted care across Nepal.
+              {content.brandTagline}
             </p>
 
             <ul className="mt-4 space-y-2 text-[12.5px] font-semibold sm:text-[13px]" style={{ color: TEXT }}>
@@ -511,10 +430,10 @@ export function Footer() {
             </div>
           </motion.div>
 
-          <FooterCol title="Destinations" links={footerDestinations} />
-          <FooterCol title="Trekking" links={footerTrekking} />
-          <FooterCol title="Company" links={footerCompany} />
-          <FooterCol title="Useful Links" links={footerUseful} />
+          <FooterCol title="Destinations" links={content.destinations} />
+          <FooterCol title="Trekking" links={content.trekking} />
+          <FooterCol title="Company" links={content.company} />
+          <FooterCol title="Useful Links" links={content.useful} />
 
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -524,11 +443,11 @@ export function Footer() {
             className="min-w-0"
           >
             <h3 className="font-[family-name:var(--font-ui)] text-[12px] font-bold uppercase tracking-[0.2em] text-white sm:text-[13px]">
-              Join Our Newsletter
+              {content.newsletterHeading}
             </h3>
             <div className="mt-2.5 mb-4 h-[2px] w-9 rounded-full" style={{ background: ORANGE }} />
             <p className="text-[13px] font-medium leading-relaxed sm:text-[14px]" style={{ color: TEXT }}>
-              Trekking deals, travel inspiration and seasonal updates.
+              {content.newsletterDescription}
             </p>
 
             <form
@@ -559,33 +478,44 @@ export function Footer() {
               </button>
             </form>
 
-            <TravelersChoiceBadges />
-
-            <div className="mt-5">
-              <h3 className="font-[family-name:var(--font-ui)] text-[12px] font-bold uppercase tracking-[0.2em] text-white sm:text-[13px]">
-                We Accept
-              </h3>
-              <div className="mt-2.5 mb-3 h-[2px] w-9 rounded-full" style={{ background: ORANGE }} />
-              <PaymentBadges />
-            </div>
+            <a
+              href={content.travelersChoiceHref}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="mt-4 block bg-transparent transition-opacity hover:opacity-90"
+              aria-label="Tripadvisor Travelers' Choice Awards"
+            >
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                src={content.travelersChoiceBadgeUrl}
+                alt="Tripadvisor Travelers' Choice"
+                className="mx-auto h-auto w-full max-w-[220px] bg-transparent object-contain lg:mx-0"
+                loading="lazy"
+                decoding="async"
+              />
+            </a>
           </motion.div>
         </div>
 
-        {/* Bottom copyright bar */}
-        <div className="mx-auto mt-7 max-w-[1320px] border-t border-white/10 pt-4 sm:mt-8 sm:pt-5">
+        {/* We Accept — full-width centered row, no scroll */}
+        <div className="mx-auto mt-8 max-w-[1320px] border-t border-white/10 pt-6 sm:mt-9">
+          <PaymentRow label={content.weAcceptLabel} payments={content.payments} />
+        </div>
+
+        <div className="mx-auto mt-6 max-w-[1320px] border-t border-white/10 pt-4 sm:mt-7 sm:pt-5">
           <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
             <p className="text-[12px] font-semibold tracking-[0.02em] sm:text-[13px]" style={{ color: TEXT }}>
-              © 2026 Summit Seek Travel. All rights reserved.
+              {content.copyrightText}
             </p>
             <p className="text-[12px] font-medium sm:text-[13px]" style={{ color: TEXT }}>
-              Developed By{" "}
+              {content.developedByLabel}{" "}
               <a
-                href="https://theglobalorbit.com/"
+                href={content.developedByHref}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="font-bold text-white underline-offset-4 transition-all duration-300 hover:text-[#F58220] hover:underline"
               >
-                The Global Orbit
+                {content.developedByName}
               </a>
             </p>
           </div>
@@ -594,3 +524,4 @@ export function Footer() {
     </footer>
   );
 }
+

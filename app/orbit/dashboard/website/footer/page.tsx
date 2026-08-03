@@ -1,5 +1,9 @@
-import PlaceholderPage from "@/components/orbit/PlaceholderPage";
+import { getFooterContent } from "@/lib/orbit/store";
+import { FooterEditor } from "@/components/orbit/FooterEditor";
 
-export default function Page() {
-  return <PlaceholderPage title="Footer" />;
+export const dynamic = "force-dynamic";
+
+export default async function Page() {
+  const content = await getFooterContent();
+  return <FooterEditor initial={content} />;
 }

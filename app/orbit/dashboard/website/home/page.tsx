@@ -9,7 +9,7 @@ const sections = [
   { href: "/orbit/dashboard/website/reviews", label: "Reviews", status: "Live" },
   { href: "/orbit/dashboard/website/articles", label: "Travel Articles", status: "Live" },
   { href: "/orbit/dashboard/website/about", label: "About", status: "Live" },
-  { href: "/orbit/dashboard/website/footer", label: "Footer", status: "Ready" },
+  { href: "/orbit/dashboard/website/footer", label: "Footer", status: "Live" },
 ];
 
 export default function OrbitHomePage() {

@@ -8,6 +8,7 @@ import type { WhatWeOfferContent } from "@/types/what-we-offer";
 import type { UpcomingTripsContent } from "@/types/upcoming-trips";
 import type { TravelerReviewsContent } from "@/types/traveler-reviews";
 import type { TravelArticlesContent } from "@/types/travel-articles";
+import type { FooterContent } from "@/types/footer-cms";
 import { DEFAULT_HERO } from "@/lib/orbit/defaults";
 import { DEFAULT_FEATURED_PACKAGES } from "@/lib/orbit/featured-packages-defaults";
 import { DEFAULT_ABOUT_INTRO } from "@/lib/orbit/about-intro-defaults";
@@ -16,6 +17,7 @@ import { DEFAULT_WHAT_WE_OFFER } from "@/lib/orbit/what-we-offer-defaults";
 import { DEFAULT_UPCOMING_TRIPS } from "@/lib/orbit/upcoming-trips-defaults";
 import { DEFAULT_TRAVELER_REVIEWS } from "@/lib/orbit/traveler-reviews-defaults";
 import { DEFAULT_TRAVEL_ARTICLES } from "@/lib/orbit/travel-articles-defaults";
+import { DEFAULT_FOOTER } from "@/lib/orbit/footer-defaults";
 
 const DATA_DIR = path.join(process.cwd(), "data");
 const HERO_FILE = path.join(DATA_DIR, "hero.json");
@@ -26,6 +28,7 @@ const WHAT_WE_OFFER_FILE = path.join(DATA_DIR, "what-we-offer.json");
 const UPCOMING_TRIPS_FILE = path.join(DATA_DIR, "upcoming-trips.json");
 const TRAVELER_REVIEWS_FILE = path.join(DATA_DIR, "traveler-reviews.json");
 const TRAVEL_ARTICLES_FILE = path.join(DATA_DIR, "travel-articles.json");
+const FOOTER_FILE = path.join(DATA_DIR, "footer.json");
 const MEDIA_FILE = path.join(DATA_DIR, "media-library.json");
 
 /** Durable upload root — survives `git reset --hard` (unlike public/). */
@@ -418,6 +421,82 @@ export async function getTravelArticles(): Promise<TravelArticlesContent> {
 export async function saveTravelArticles(content: TravelArticlesContent): Promise<void> {
   await ensureDataDir();
   await fs.writeFile(TRAVEL_ARTICLES_FILE, JSON.stringify(content, null, 2), "utf8");
+}
+
+function mergeFooter(stored: Partial<FooterContent> | null): FooterContent {
+  if (!stored) return DEFAULT_FOOTER;
+
+  const mergeList = <T extends { id?: string }>(
+    items: T[] | undefined,
+    fallback: T[],
+    mapItem: (item: T, fb: T, i: number) => T,
+  ): T[] => {
+    if (!Array.isArray(items) || items.length === 0) return fallback;
+    return items.map((item, i) => mapItem(item, fallback[i] || fallback[0], i));
+  };
+
+  const partners = mergeList(stored.partners, DEFAULT_FOOTER.partners, (p, fb, i) => ({
+    ...fb,
+    ...p,
+    id: p.id || fb.id || `partner-${i + 1}`,
+    visible: p.visible !== false,
+  }));
+
+  const payments = mergeList(stored.payments, DEFAULT_FOOTER.payments, (p, fb, i) => ({
+    ...fb,
+    ...p,
+    id: p.id || fb.id || `pay-${i + 1}`,
+    visible: p.visible !== false,
+  }));
+
+  const mergeLinks = (
+    items: FooterContent["destinations"] | undefined,
+    fallback: FooterContent["destinations"],
+  ) => {
+    if (!Array.isArray(items) || items.length === 0) return fallback;
+    return items.map((l, i) => ({
+      label: l.label?.trim() || fallback[i]?.label || "Link",
+      href: l.href?.trim() || fallback[i]?.href || "/",
+    }));
+  };
+
+  return {
+    topLogoUrl: stored.topLogoUrl?.trim() || DEFAULT_FOOTER.topLogoUrl,
+    brandLogoUrl: stored.brandLogoUrl?.trim() || DEFAULT_FOOTER.brandLogoUrl,
+    brandTagline: stored.brandTagline?.trim() || DEFAULT_FOOTER.brandTagline,
+    newsletterHeading: stored.newsletterHeading?.trim() || DEFAULT_FOOTER.newsletterHeading,
+    newsletterDescription:
+      stored.newsletterDescription?.trim() || DEFAULT_FOOTER.newsletterDescription,
+    weAcceptLabel: stored.weAcceptLabel?.trim() || DEFAULT_FOOTER.weAcceptLabel,
+    travelersChoiceBadgeUrl:
+      stored.travelersChoiceBadgeUrl?.trim() || DEFAULT_FOOTER.travelersChoiceBadgeUrl,
+    travelersChoiceHref:
+      stored.travelersChoiceHref?.trim() || DEFAULT_FOOTER.travelersChoiceHref,
+    copyrightText: stored.copyrightText?.trim() || DEFAULT_FOOTER.copyrightText,
+    developedByLabel: stored.developedByLabel?.trim() || DEFAULT_FOOTER.developedByLabel,
+    developedByName: stored.developedByName?.trim() || DEFAULT_FOOTER.developedByName,
+    developedByHref: stored.developedByHref?.trim() || DEFAULT_FOOTER.developedByHref,
+    partners,
+    payments,
+    destinations: mergeLinks(stored.destinations, DEFAULT_FOOTER.destinations),
+    trekking: mergeLinks(stored.trekking, DEFAULT_FOOTER.trekking),
+    company: mergeLinks(stored.company, DEFAULT_FOOTER.company),
+    useful: mergeLinks(stored.useful, DEFAULT_FOOTER.useful),
+  };
+}
+
+export async function getFooterContent(): Promise<FooterContent> {
+  try {
+    const raw = await fs.readFile(FOOTER_FILE, "utf8");
+    return mergeFooter(JSON.parse(raw) as Partial<FooterContent>);
+  } catch {
+    return DEFAULT_FOOTER;
+  }
+}
+
+export async function saveFooterContent(content: FooterContent): Promise<void> {
+  await ensureDataDir();
+  await fs.writeFile(FOOTER_FILE, JSON.stringify(content, null, 2), "utf8");
 }
 
 export async function getMediaLibrary(): Promise<MediaItem[]> {
