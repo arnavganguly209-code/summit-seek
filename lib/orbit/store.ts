@@ -4,16 +4,22 @@ import type { HeroContent, MediaItem } from "@/types/hero";
 import type { FeaturedPackagesContent } from "@/types/featured-packages";
 import type { AboutIntroContent } from "@/types/about-intro";
 import type { BestSellingPackagesContent } from "@/types/best-selling-packages";
+import type { WhatWeOfferContent } from "@/types/what-we-offer";
+import type { UpcomingTripsContent } from "@/types/upcoming-trips";
 import { DEFAULT_HERO } from "@/lib/orbit/defaults";
 import { DEFAULT_FEATURED_PACKAGES } from "@/lib/orbit/featured-packages-defaults";
 import { DEFAULT_ABOUT_INTRO } from "@/lib/orbit/about-intro-defaults";
 import { DEFAULT_BEST_SELLING } from "@/lib/orbit/best-selling-defaults";
+import { DEFAULT_WHAT_WE_OFFER } from "@/lib/orbit/what-we-offer-defaults";
+import { DEFAULT_UPCOMING_TRIPS } from "@/lib/orbit/upcoming-trips-defaults";
 
 const DATA_DIR = path.join(process.cwd(), "data");
 const HERO_FILE = path.join(DATA_DIR, "hero.json");
 const FEATURED_PACKAGES_FILE = path.join(DATA_DIR, "featured-packages.json");
 const ABOUT_INTRO_FILE = path.join(DATA_DIR, "about-intro.json");
 const BEST_SELLING_FILE = path.join(DATA_DIR, "best-selling-packages.json");
+const WHAT_WE_OFFER_FILE = path.join(DATA_DIR, "what-we-offer.json");
+const UPCOMING_TRIPS_FILE = path.join(DATA_DIR, "upcoming-trips.json");
 const MEDIA_FILE = path.join(DATA_DIR, "media-library.json");
 
 /** Durable upload root — survives `git reset --hard` (unlike public/). */
@@ -188,6 +194,111 @@ export async function saveBestSellingPackages(
 ): Promise<void> {
   await ensureDataDir();
   await fs.writeFile(BEST_SELLING_FILE, JSON.stringify(content, null, 2), "utf8");
+}
+
+function mergeWhatWeOffer(
+  stored: Partial<WhatWeOfferContent> | null,
+): WhatWeOfferContent {
+  if (!stored) return DEFAULT_WHAT_WE_OFFER;
+  const cards =
+    Array.isArray(stored.cards) && stored.cards.length > 0
+      ? stored.cards.map((card, i) => {
+          const fallback = DEFAULT_WHAT_WE_OFFER.cards[i] || DEFAULT_WHAT_WE_OFFER.cards[0];
+          return {
+            ...fallback,
+            ...card,
+            id: card.id || `svc-${i + 1}`,
+            visible: card.visible !== false,
+          };
+        })
+      : DEFAULT_WHAT_WE_OFFER.cards;
+
+  return {
+    eyebrow: stored.eyebrow?.trim() || DEFAULT_WHAT_WE_OFFER.eyebrow,
+    heading: stored.heading?.trim() || DEFAULT_WHAT_WE_OFFER.heading,
+    description: stored.description?.trim() || DEFAULT_WHAT_WE_OFFER.description,
+    visible: stored.visible !== false,
+    cards,
+  };
+}
+
+export async function getWhatWeOffer(): Promise<WhatWeOfferContent> {
+  try {
+    const raw = await fs.readFile(WHAT_WE_OFFER_FILE, "utf8");
+    return mergeWhatWeOffer(JSON.parse(raw) as Partial<WhatWeOfferContent>);
+  } catch {
+    return DEFAULT_WHAT_WE_OFFER;
+  }
+}
+
+export async function saveWhatWeOffer(content: WhatWeOfferContent): Promise<void> {
+  await ensureDataDir();
+  await fs.writeFile(WHAT_WE_OFFER_FILE, JSON.stringify(content, null, 2), "utf8");
+}
+
+function mergeUpcomingTrips(
+  stored: Partial<UpcomingTripsContent> | null,
+): UpcomingTripsContent {
+  if (!stored) return DEFAULT_UPCOMING_TRIPS;
+  const months =
+    Array.isArray(stored.months) && stored.months.length > 0
+      ? stored.months.map((month, mi) => {
+          const fallbackMonth =
+            DEFAULT_UPCOMING_TRIPS.months[mi] || DEFAULT_UPCOMING_TRIPS.months[0];
+          const trips =
+            Array.isArray(month.trips) && month.trips.length > 0
+              ? month.trips.map((trip, ti) => {
+                  const fallbackTrip =
+                    fallbackMonth.trips[ti] || fallbackMonth.trips[0];
+                  return {
+                    ...fallbackTrip,
+                    ...trip,
+                    id: trip.id || `trip-${mi}-${ti}`,
+                    price: Number(trip.price) || 0,
+                    compareAtPrice:
+                      trip.compareAtPrice === null || trip.compareAtPrice === undefined
+                        ? null
+                        : Number(trip.compareAtPrice) || 0,
+                    durationDays: Number(trip.durationDays) || 1,
+                    visible: trip.visible !== false,
+                  };
+                })
+              : fallbackMonth.trips;
+          return {
+            ...fallbackMonth,
+            ...month,
+            id: month.id || fallbackMonth.id,
+            label: month.label?.trim() || fallbackMonth.label,
+            trips,
+          };
+        })
+      : DEFAULT_UPCOMING_TRIPS.months;
+
+  return {
+    eyebrow: stored.eyebrow?.trim() || DEFAULT_UPCOMING_TRIPS.eyebrow,
+    heading: stored.heading?.trim() || DEFAULT_UPCOMING_TRIPS.heading,
+    noteTitle: stored.noteTitle?.trim() || DEFAULT_UPCOMING_TRIPS.noteTitle,
+    noteBody: stored.noteBody?.trim() || DEFAULT_UPCOMING_TRIPS.noteBody,
+    viewAllLabel: stored.viewAllLabel?.trim() || DEFAULT_UPCOMING_TRIPS.viewAllLabel,
+    viewAllHref: stored.viewAllHref?.trim() || DEFAULT_UPCOMING_TRIPS.viewAllHref,
+    bookLabel: stored.bookLabel?.trim() || DEFAULT_UPCOMING_TRIPS.bookLabel,
+    visible: stored.visible !== false,
+    months,
+  };
+}
+
+export async function getUpcomingTrips(): Promise<UpcomingTripsContent> {
+  try {
+    const raw = await fs.readFile(UPCOMING_TRIPS_FILE, "utf8");
+    return mergeUpcomingTrips(JSON.parse(raw) as Partial<UpcomingTripsContent>);
+  } catch {
+    return DEFAULT_UPCOMING_TRIPS;
+  }
+}
+
+export async function saveUpcomingTrips(content: UpcomingTripsContent): Promise<void> {
+  await ensureDataDir();
+  await fs.writeFile(UPCOMING_TRIPS_FILE, JSON.stringify(content, null, 2), "utf8");
 }
 
 export async function getMediaLibrary(): Promise<MediaItem[]> {

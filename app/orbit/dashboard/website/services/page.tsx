@@ -1,5 +1,7 @@
-import PlaceholderPage from "@/components/orbit/PlaceholderPage";
+import { getWhatWeOffer } from "@/lib/orbit/store";
+import { WhatWeOfferEditor } from "@/components/orbit/WhatWeOfferEditor";
 
-export default function Page() {
-  return <PlaceholderPage title="Services" />;
+export default async function OrbitWhatWeOfferPage() {
+  const content = await getWhatWeOffer();
+  return <WhatWeOfferEditor initial={content} />;
 }

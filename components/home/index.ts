@@ -3,5 +3,6 @@ export { FeaturedAdventureTabs } from "./FeaturedAdventureTabs";
 export { AboutIntro } from "./AboutIntro";
 export { BestSellingPackagesSection } from "./BestSellingPackages";
 export { WhatWeOffer } from "./WhatWeOffer";
+export { UpcomingTripsSection } from "./UpcomingTrips";
 export { TravelerReviews } from "./TravelerReviews";
 export { WhyChooseSummitSeek } from "./WhyChooseSummitSeek";

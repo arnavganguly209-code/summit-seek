@@ -4,6 +4,7 @@ import { FeaturedAdventureTabs } from "@/components/home/FeaturedAdventureTabs";
 import { AboutIntro } from "@/components/home/AboutIntro";
 import { BestSellingPackagesSection } from "@/components/home/BestSellingPackages";
 import { WhatWeOffer } from "@/components/home/WhatWeOffer";
+import { UpcomingTripsSection } from "@/components/home/UpcomingTrips";
 import { TravelerReviews } from "@/components/home/TravelerReviews";
 import { WhyChooseSummitSeek } from "@/components/home/WhyChooseSummitSeek";
 import { SITE } from "@/lib/constants";
@@ -12,6 +13,8 @@ import {
   getBestSellingPackages,
   getFeaturedPackages,
   getHeroContent,
+  getUpcomingTrips,
+  getWhatWeOffer,
 } from "@/lib/orbit/store";
 
 export const dynamic = "force-dynamic";
@@ -26,12 +29,15 @@ export const metadata: Metadata = {
 };
 
 export default async function HomePage() {
-  const [hero, featured, about, bestSelling] = await Promise.all([
-    getHeroContent(),
-    getFeaturedPackages(),
-    getAboutIntro(),
-    getBestSellingPackages(),
-  ]);
+  const [hero, featured, about, bestSelling, whatWeOffer, upcoming] =
+    await Promise.all([
+      getHeroContent(),
+      getFeaturedPackages(),
+      getAboutIntro(),
+      getBestSellingPackages(),
+      getWhatWeOffer(),
+      getUpcomingTrips(),
+    ]);
 
   return (
     <>
@@ -39,7 +45,8 @@ export default async function HomePage() {
       <FeaturedAdventureTabs content={featured} />
       <AboutIntro content={about} />
       <BestSellingPackagesSection content={bestSelling} mode="home" />
-      <WhatWeOffer />
+      <WhatWeOffer content={whatWeOffer} />
+      <UpcomingTripsSection content={upcoming} />
       <TravelerReviews />
       <WhyChooseSummitSeek />
     </>
