@@ -71,34 +71,33 @@ function PaymentRow({
 
 function HimalayanLandscape() {
   return (
-    <div
-      className="relative z-0 mt-3 w-full overflow-hidden leading-none sm:mt-4"
-      aria-hidden
-    >
-      <div className="relative h-[180px] w-full sm:h-[220px] lg:h-[250px]">
+    <div className="relative z-0 mt-3 w-full overflow-hidden leading-none sm:mt-4" aria-hidden>
+      <div className="relative h-[210px] w-full sm:h-[250px] lg:h-[280px]">
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img
           src="/footer-himalayan-premium.png"
           alt=""
-          className="absolute inset-0 h-full w-full object-cover object-[center_62%]"
+          className="absolute inset-0 h-full w-full object-cover object-[center_58%]"
           loading="lazy"
           decoding="async"
         />
-        <div className="pointer-events-none absolute inset-x-0 top-0 z-[3] h-10 bg-gradient-to-b from-white to-transparent sm:h-12" />
-        {/* Navy ground line — trekkers stand on this */}
+        {/* Soft top blend — behind trekkers so heads stay clear */}
+        <div className="pointer-events-none absolute inset-x-0 top-0 z-[1] h-6 bg-gradient-to-b from-white/90 to-transparent sm:h-7" />
+        {/* Navy ground */}
         <div
-          className="pointer-events-none absolute inset-x-0 bottom-0 z-[2] h-[18%] sm:h-[15%]"
+          className="pointer-events-none absolute inset-x-0 bottom-0 z-[2] h-[14%] sm:h-[12%]"
           style={{ background: NAVY }}
         />
         <div
-          className="pointer-events-none absolute inset-x-0 bottom-[15%] z-[2] h-10 sm:bottom-[13%] sm:h-12"
+          className="pointer-events-none absolute inset-x-0 bottom-[12%] z-[2] h-8 sm:bottom-[10%] sm:h-9"
           style={{ background: `linear-gradient(to bottom, transparent, ${NAVY})` }}
         />
+        {/* Full trekkers — height capped so heads never crop */}
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img
           src="/footer-trekkers.png"
           alt=""
-          className="pointer-events-none absolute bottom-0 left-[1.5%] z-[4] h-auto w-[52%] max-w-[540px] translate-y-[1%] object-contain object-left-bottom drop-shadow-[0_6px_14px_rgba(0,0,0,0.4)] sm:left-[2%] sm:w-[44%] lg:w-[38%] lg:max-w-[500px]"
+          className="pointer-events-none absolute bottom-0 left-[1.5%] z-[4] h-[68%] w-auto max-w-[48%] object-contain object-left-bottom drop-shadow-[0_4px_12px_rgba(0,0,0,0.35)] sm:left-[2%] sm:h-[70%] sm:max-w-[42%] lg:h-[72%] lg:max-w-[38%]"
           loading="lazy"
           decoding="async"
         />
