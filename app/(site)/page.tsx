@@ -13,6 +13,7 @@ import {
   getBestSellingPackages,
   getFeaturedPackages,
   getHeroContent,
+  getTravelerReviews,
   getUpcomingTrips,
   getWhatWeOffer,
 } from "@/lib/orbit/store";
@@ -29,7 +30,7 @@ export const metadata: Metadata = {
 };
 
 export default async function HomePage() {
-  const [hero, featured, about, bestSelling, whatWeOffer, upcoming] =
+  const [hero, featured, about, bestSelling, whatWeOffer, upcoming, reviews] =
     await Promise.all([
       getHeroContent(),
       getFeaturedPackages(),
@@ -37,6 +38,7 @@ export default async function HomePage() {
       getBestSellingPackages(),
       getWhatWeOffer(),
       getUpcomingTrips(),
+      getTravelerReviews(),
     ]);
 
   return (
@@ -47,7 +49,7 @@ export default async function HomePage() {
       <BestSellingPackagesSection content={bestSelling} mode="home" />
       <WhatWeOffer content={whatWeOffer} />
       <UpcomingTripsSection content={upcoming} />
-      <TravelerReviews />
+      <TravelerReviews content={reviews} />
       <WhyChooseSummitSeek />
     </>
   );

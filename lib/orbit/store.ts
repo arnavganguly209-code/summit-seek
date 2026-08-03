@@ -6,12 +6,14 @@ import type { AboutIntroContent } from "@/types/about-intro";
 import type { BestSellingPackagesContent } from "@/types/best-selling-packages";
 import type { WhatWeOfferContent } from "@/types/what-we-offer";
 import type { UpcomingTripsContent } from "@/types/upcoming-trips";
+import type { TravelerReviewsContent } from "@/types/traveler-reviews";
 import { DEFAULT_HERO } from "@/lib/orbit/defaults";
 import { DEFAULT_FEATURED_PACKAGES } from "@/lib/orbit/featured-packages-defaults";
 import { DEFAULT_ABOUT_INTRO } from "@/lib/orbit/about-intro-defaults";
 import { DEFAULT_BEST_SELLING } from "@/lib/orbit/best-selling-defaults";
 import { DEFAULT_WHAT_WE_OFFER } from "@/lib/orbit/what-we-offer-defaults";
 import { DEFAULT_UPCOMING_TRIPS } from "@/lib/orbit/upcoming-trips-defaults";
+import { DEFAULT_TRAVELER_REVIEWS } from "@/lib/orbit/traveler-reviews-defaults";
 
 const DATA_DIR = path.join(process.cwd(), "data");
 const HERO_FILE = path.join(DATA_DIR, "hero.json");
@@ -20,6 +22,7 @@ const ABOUT_INTRO_FILE = path.join(DATA_DIR, "about-intro.json");
 const BEST_SELLING_FILE = path.join(DATA_DIR, "best-selling-packages.json");
 const WHAT_WE_OFFER_FILE = path.join(DATA_DIR, "what-we-offer.json");
 const UPCOMING_TRIPS_FILE = path.join(DATA_DIR, "upcoming-trips.json");
+const TRAVELER_REVIEWS_FILE = path.join(DATA_DIR, "traveler-reviews.json");
 const MEDIA_FILE = path.join(DATA_DIR, "media-library.json");
 
 /** Durable upload root — survives `git reset --hard` (unlike public/). */
@@ -299,6 +302,63 @@ export async function getUpcomingTrips(): Promise<UpcomingTripsContent> {
 export async function saveUpcomingTrips(content: UpcomingTripsContent): Promise<void> {
   await ensureDataDir();
   await fs.writeFile(UPCOMING_TRIPS_FILE, JSON.stringify(content, null, 2), "utf8");
+}
+
+function mergeTravelerReviews(
+  stored: Partial<TravelerReviewsContent> | null,
+): TravelerReviewsContent {
+  if (!stored) return DEFAULT_TRAVELER_REVIEWS;
+  const reviews =
+    Array.isArray(stored.reviews) && stored.reviews.length > 0
+      ? stored.reviews.map((r, i) => {
+          const fallback =
+            DEFAULT_TRAVELER_REVIEWS.reviews[i] || DEFAULT_TRAVELER_REVIEWS.reviews[0];
+          return {
+            ...fallback,
+            ...r,
+            id: r.id || `tr-${i + 1}`,
+            rating: Number(r.rating) || 5,
+            initial: (r.initial || r.author || "S").trim().charAt(0).toUpperCase(),
+            visible: r.visible !== false,
+          };
+        })
+      : DEFAULT_TRAVELER_REVIEWS.reviews;
+
+  const platforms =
+    Array.isArray(stored.platforms) && stored.platforms.length > 0
+      ? stored.platforms.map((p, i) => ({
+          ...DEFAULT_TRAVELER_REVIEWS.platforms[i],
+          ...p,
+          id: p.id || `platform-${i + 1}`,
+          name: p.name?.trim() || `Platform ${i + 1}`,
+          href: p.href?.trim() || "#",
+        }))
+      : DEFAULT_TRAVELER_REVIEWS.platforms;
+
+  return {
+    ...DEFAULT_TRAVELER_REVIEWS,
+    ...stored,
+    platforms,
+    reviews,
+    visible: stored.visible !== false,
+    promoVisible: stored.promoVisible !== false,
+  };
+}
+
+export async function getTravelerReviews(): Promise<TravelerReviewsContent> {
+  try {
+    const raw = await fs.readFile(TRAVELER_REVIEWS_FILE, "utf8");
+    return mergeTravelerReviews(JSON.parse(raw) as Partial<TravelerReviewsContent>);
+  } catch {
+    return DEFAULT_TRAVELER_REVIEWS;
+  }
+}
+
+export async function saveTravelerReviews(
+  content: TravelerReviewsContent,
+): Promise<void> {
+  await ensureDataDir();
+  await fs.writeFile(TRAVELER_REVIEWS_FILE, JSON.stringify(content, null, 2), "utf8");
 }
 
 export async function getMediaLibrary(): Promise<MediaItem[]> {

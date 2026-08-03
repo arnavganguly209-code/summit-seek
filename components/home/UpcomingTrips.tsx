@@ -61,11 +61,12 @@ export function UpcomingTripsSection({ content }: Props) {
         </div>
 
         <div className="mt-6 overflow-hidden rounded-[18px] border border-white/40 bg-white/70 shadow-[0_18px_50px_rgba(11,21,36,0.08)] backdrop-blur-xl">
-          <div className="hidden grid-cols-[1.4fr_1fr_0.85fr_1.15fr] gap-4 border-b border-white/10 bg-[rgba(11,21,36,0.92)] px-5 py-3.5 text-[11px] font-bold uppercase tracking-[0.14em] text-[#93c5fd] backdrop-blur-xl md:grid lg:px-6">
+          <div className="hidden grid-cols-[minmax(0,1.35fr)_minmax(0,1fr)_minmax(0,0.85fr)_minmax(0,1fr)_7.5rem] gap-4 border-b border-white/10 bg-[rgba(11,21,36,0.92)] px-5 py-3.5 text-[11px] font-bold uppercase tracking-[0.14em] text-[#93c5fd] backdrop-blur-xl md:grid lg:px-6">
             <span>Trip and Days</span>
             <span>Departure Date</span>
             <span>Status</span>
             <span>Price</span>
+            <span className="text-right">Book</span>
           </div>
 
           <div className="divide-y divide-[#e8edf3]">
@@ -77,9 +78,9 @@ export function UpcomingTripsSection({ content }: Props) {
               return (
                 <div
                   key={trip.id}
-                  className="grid grid-cols-1 gap-4 px-5 py-5 md:grid-cols-[1.4fr_1fr_0.85fr_1.15fr] md:items-center lg:px-6"
+                  className="grid grid-cols-1 gap-4 px-5 py-5 md:grid-cols-[minmax(0,1.35fr)_minmax(0,1fr)_minmax(0,0.85fr)_minmax(0,1fr)_7.5rem] md:items-center lg:px-6"
                 >
-                  <div>
+                  <div className="min-w-0">
                     <p className="text-[15px] font-bold leading-snug text-[#0b1524] sm:text-[16px]">
                       {trip.title}
                     </p>
@@ -102,27 +103,28 @@ export function UpcomingTripsSection({ content }: Props) {
                     ) : null}
                   </div>
 
-                  <div className="flex flex-wrap items-center justify-between gap-3 md:justify-start md:gap-4">
-                    <div>
-                      <p className="flex flex-wrap items-baseline gap-x-2">
-                        <span className="text-[18px] font-extrabold tracking-[-0.02em] text-[#F58220]">
-                          {formatUsd(trip.price)}
-                        </span>
-                        {trip.compareAtPrice && trip.compareAtPrice > trip.price ? (
-                          <span className="text-[13px] font-medium text-[#9aa3b2] line-through">
-                            {formatUsd(trip.compareAtPrice)}
-                          </span>
-                        ) : null}
-                      </p>
-                      {save > 0 ? (
-                        <span className="mt-1.5 inline-flex rounded-[4px] bg-[#F58220] px-2 py-0.5 text-[11px] font-bold text-white">
-                          Save {formatUsd(save)}
+                  <div className="min-w-0">
+                    <p className="flex flex-wrap items-baseline gap-x-2">
+                      <span className="text-[18px] font-extrabold tracking-[-0.02em] text-[#F58220]">
+                        {formatUsd(trip.price)}
+                      </span>
+                      {trip.compareAtPrice && trip.compareAtPrice > trip.price ? (
+                        <span className="text-[13px] font-medium text-[#9aa3b2] line-through">
+                          {formatUsd(trip.compareAtPrice)}
                         </span>
                       ) : null}
-                    </div>
+                    </p>
+                    {save > 0 ? (
+                      <span className="mt-1.5 inline-flex rounded-[4px] bg-[#F58220] px-2 py-0.5 text-[11px] font-bold text-white">
+                        Save {formatUsd(save)}
+                      </span>
+                    ) : null}
+                  </div>
+
+                  <div className="flex md:justify-end">
                     <Link
                       href={trip.bookHref}
-                      className="inline-flex h-10 shrink-0 items-center justify-center rounded-lg bg-[#2f9e44] px-4 text-[13px] font-bold text-white shadow-[0_8px_20px_rgba(47,158,68,0.28)] transition hover:brightness-110"
+                      className="inline-flex h-10 w-full items-center justify-center rounded-lg bg-[#2f9e44] px-3 text-[13px] font-bold text-white shadow-[0_8px_20px_rgba(47,158,68,0.28)] transition hover:brightness-110 md:w-[7.5rem]"
                     >
                       {content.bookLabel || "Book Now"}
                     </Link>
