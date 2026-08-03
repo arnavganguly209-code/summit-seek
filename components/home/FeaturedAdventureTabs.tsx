@@ -13,7 +13,6 @@ import {
   Medal,
   Mountain,
   Star,
-  Landmark,
 } from "lucide-react";
 import type {
   FeaturedCategory,
@@ -22,11 +21,32 @@ import type {
   FeaturedTabIcon,
 } from "@/types/featured-packages";
 import { cn } from "@/lib/utils";
+import type { SVGProps } from "react";
 
-const iconMap: Record<FeaturedTabIcon, typeof Medal> = {
+/** Monochrome Nepal flag — uses currentColor to match tab text */
+function NepalFlagIcon({ className, ...props }: SVGProps<SVGSVGElement>) {
+  return (
+    <svg
+      viewBox="0 0 24 24"
+      fill="currentColor"
+      className={className}
+      aria-hidden
+      {...props}
+    >
+      {/* Double-pennant Nepal flag silhouette */}
+      <path d="M3.5 2.5v19h2.1v-8.2L19 13.3 8.8 8.2h9.5L5.6 2.5H3.5z" />
+      {/* Moon + sun dots (lighter via cutout holes using evenodd) */}
+      <circle cx="8.1" cy="5.8" r="1.05" fill="#f5f7fb" />
+      <circle cx="8.1" cy="5.35" r="0.85" fill="currentColor" />
+      <circle cx="9" cy="10.4" r="1.15" fill="#f5f7fb" />
+    </svg>
+  );
+}
+
+const iconMap: Record<FeaturedTabIcon, typeof Medal | typeof NepalFlagIcon> = {
   medal: Medal,
   mountain: Mountain,
-  stupa: Landmark,
+  stupa: NepalFlagIcon,
   diamond: Gem,
 };
 
@@ -209,7 +229,13 @@ export function FeaturedAdventureTabs({ content }: Props) {
                 <Icon
                   className={cn(
                     "size-[1.15rem] transition-colors sm:size-5",
-                    selected ? "text-[#1d4ed8]" : "text-[#9aa3b2]",
+                    cat.icon === "stupa"
+                      ? selected
+                        ? "text-[#0b1524]"
+                        : "text-[#6b7587]"
+                      : selected
+                        ? "text-[#1d4ed8]"
+                        : "text-[#9aa3b2]",
                   )}
                   strokeWidth={2.4}
                 />

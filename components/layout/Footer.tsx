@@ -209,7 +209,7 @@ export function Footer({ content }: { content: FooterContent }) {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.5, ease }}
-            className="col-span-2 min-w-0 sm:col-span-1"
+            className="min-w-0"
           >
             <Link href="/" aria-label="Summit Seek — Home" className="inline-block bg-transparent leading-none">
               <Image
@@ -218,15 +218,15 @@ export function Footer({ content }: { content: FooterContent }) {
                 width={480}
                 height={180}
                 unoptimized
-                className="h-auto w-[160px] bg-transparent object-contain object-left sm:w-[176px]"
-                sizes="176px"
+                className="h-auto w-[150px] bg-transparent object-contain object-left sm:w-[168px]"
+                sizes="168px"
               />
             </Link>
-            <p className="mt-2.5 max-w-[240px] text-[12.5px] font-medium leading-[1.55] sm:text-[13px]" style={{ color: TEXT }}>
+            <p className="mt-2 max-w-[220px] text-[12px] font-medium leading-[1.5] sm:text-[12.5px]" style={{ color: TEXT }}>
               {content.brandTagline}
             </p>
 
-            <ul className="mt-4 space-y-2 text-[12.5px] font-semibold sm:text-[13px]" style={{ color: TEXT }}>
+            <ul className="mt-3 space-y-1.5 text-[12.5px] font-semibold sm:text-[13px]" style={{ color: TEXT }}>
               <li className="flex items-start gap-2.5">
                 <MapPin className="mt-0.5 size-4 shrink-0" style={{ color: ORANGE }} />
                 <span className="leading-6">{SITE.address}</span>
