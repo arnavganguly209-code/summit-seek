@@ -69,188 +69,31 @@ function PaymentRow({
   );
 }
 
-function NepalFlag({ x, y, scale = 1 }: { x: number; y: number; scale?: number }) {
-  const w = 34 * scale;
-  const h = 42 * scale;
-  return (
-    <g transform={`translate(${x} ${y})`}>
-      {/* pole */}
-      <rect x={-2} y={-2} width={3.2} height={h + 18} rx={1} fill={NAVY} />
-      {/* double-pennant Nepal flag */}
-      <g transform="translate(2 0)">
-        <path
-          fill="#003893"
-          d={`M0 0 L${w} ${h * 0.42} L${w * 0.38} ${h * 0.42} L${w} ${h} L0 ${h} Z`}
-        />
-        <path
-          fill="#DC143C"
-          d={`M1.6 1.8 L${w * 0.88} ${h * 0.4} L${w * 0.34} ${h * 0.4} L${w * 0.88} ${h * 0.94} L1.6 ${h * 0.94} Z`}
-        />
-        {/* moon */}
-        <circle cx={w * 0.22} cy={h * 0.22} r={3.1 * scale} fill="#fff" />
-        <circle cx={w * 0.22} cy={h * 0.2} r={2.4 * scale} fill="#DC143C" />
-        {/* sun */}
-        <circle cx={w * 0.28} cy={h * 0.68} r={3.4 * scale} fill="#fff" />
-      </g>
-    </g>
-  );
-}
-
 function HimalayanLandscape() {
   return (
-    <div className="relative z-0 mt-4 w-full overflow-hidden leading-none sm:mt-5" aria-hidden>
-      <svg
-        viewBox="0 20 1440 340"
-        preserveAspectRatio="xMidYMax slice"
-        className="block h-[170px] w-full sm:h-[210px] lg:h-[240px]"
-      >
-        <defs>
-          <linearGradient id="skyFade" x1="0" y1="0" x2="0" y2="1">
-            <stop offset="0%" stopColor="#F4F8FC" />
-            <stop offset="45%" stopColor="#E8F0F8" />
-            <stop offset="100%" stopColor="#D5E4F0" />
-          </linearGradient>
-          <linearGradient id="farPeak" x1="0" y1="0" x2="0" y2="1">
-            <stop offset="0%" stopColor="#DCE8F2" />
-            <stop offset="55%" stopColor="#B7CBDD" />
-            <stop offset="100%" stopColor="#8FAABC" />
-          </linearGradient>
-          <linearGradient id="ebcPeak" x1="0" y1="0" x2="0" y2="1">
-            <stop offset="0%" stopColor="#F7FBFF" />
-            <stop offset="18%" stopColor="#D7E6F2" />
-            <stop offset="55%" stopColor="#8FB0C8" />
-            <stop offset="100%" stopColor="#5E849E" />
-          </linearGradient>
-          <linearGradient id="midPeak" x1="0" y1="0" x2="0" y2="1">
-            <stop offset="0%" stopColor="#B7D0E4" />
-            <stop offset="35%" stopColor="#8FB4D0" />
-            <stop offset="100%" stopColor="#6A98B8" />
-          </linearGradient>
-          <linearGradient id="greenHill" x1="0" y1="0" x2="0" y2="1">
-            <stop offset="0%" stopColor="#8BBB82" />
-            <stop offset="45%" stopColor="#5F9A62" />
-            <stop offset="100%" stopColor="#42784C" />
-          </linearGradient>
-          <linearGradient id="greenHillFront" x1="0" y1="0" x2="0" y2="1">
-            <stop offset="0%" stopColor="#74A870" />
-            <stop offset="50%" stopColor="#508955" />
-            <stop offset="100%" stopColor="#356848" />
-          </linearGradient>
-          <linearGradient id="navyRidge" x1="0" y1="0" x2="0" y2="1">
-            <stop offset="0%" stopColor="#0D243C" />
-            <stop offset="100%" stopColor={NAVY} />
-          </linearGradient>
-        </defs>
-
-        <rect width="1440" height="380" fill="url(#skyFade)" />
-
-        {/* Distant Everest / EBC massif — tall, dominant sky peaks */}
-        <path
-          fill="url(#farPeak)"
-          d="M0 210
-             C80 190 140 150 210 170
-             C280 110 360 55 450 115
-             C520 40 610 8 720 70
-             C800 15 880 5 970 65
-             C1060 20 1160 45 1260 110
-             C1340 75 1400 95 1440 120
-             L1440 380 L0 380 Z"
+    <div
+      className="relative z-0 mt-3 w-full overflow-hidden leading-none sm:mt-4"
+      aria-hidden
+    >
+      <div className="relative h-[200px] w-full sm:h-[260px] lg:h-[300px]">
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img
+          src="/footer-himalayan-premium.png"
+          alt=""
+          className="absolute inset-0 h-full w-full object-cover object-[center_62%]"
+          loading="lazy"
+          decoding="async"
         />
-
-        {/* Main Everest pyramid — sharp professional silhouette */}
-        <path
-          fill="url(#ebcPeak)"
-          d="M520 220
-             L640 28
-             L700 95
-             L760 18
-             L900 210
-             L860 230
-             L760 140
-             L700 170
-             L640 120
-             L580 230 Z"
+        {/* Soft white fade from partners section */}
+        <div className="pointer-events-none absolute inset-x-0 top-0 h-10 bg-gradient-to-b from-white to-transparent sm:h-12" />
+        {/* Navy blend into footer panel */}
+        <div
+          className="pointer-events-none absolute inset-x-0 bottom-0 h-16 sm:h-20"
+          style={{
+            background: `linear-gradient(to bottom, transparent 0%, ${NAVY} 92%)`,
+          }}
         />
-        {/* Snow face / glacier highlights */}
-        <path fill="#FFFFFF" opacity="0.92" d="M640 28 L700 95 L675 108 L640 55 Z" />
-        <path fill="#FFFFFF" opacity="0.88" d="M760 18 L820 110 L790 120 L745 70 Z" />
-        <path fill="#F3F8FC" opacity="0.75" d="M700 95 L760 140 L730 150 L700 120 Z" />
-        <path fill="#EAF2F8" opacity="0.55" d="M640 120 L700 170 L670 180 L620 145 Z" />
-
-        {/* Secondary high peaks flanking Everest */}
-        <path
-          fill="url(#midPeak)"
-          d="M0 245
-             C100 220 180 165 270 195
-             C350 140 440 120 530 175
-             C600 145 680 155 760 185
-             C860 140 980 145 1100 190
-             C1200 155 1320 170 1440 200
-             L1440 380 L0 380 Z"
-        />
-        <path fill="#F8FCFF" opacity="0.7" d="M300 175 C330 125 365 132 390 185 C360 170 325 168 300 175 Z" />
-        <path fill="#F8FCFF" opacity="0.65" d="M1020 175 C1050 125 1090 132 1120 185 C1090 170 1045 168 1020 175 Z" />
-
-        {/* Soft birds */}
-        <g fill="none" stroke="#7A93AB" strokeWidth="1.35" strokeLinecap="round" opacity="0.55">
-          <path d="M1080 52 Q1085 46 1090 52 Q1095 46 1100 52" />
-          <path d="M1120 66 Q1124 61 1128 66 Q1132 61 1136 66" />
-          <path d="M1155 44 Q1159 39 1163 44 Q1167 39 1171 44" />
-        </g>
-
-        <path
-          fill="url(#greenHill)"
-          opacity="0.92"
-          d="M0 285
-             C140 265 250 258 380 275
-             C520 255 660 262 820 278
-             C980 262 1140 268 1280 282
-             C1360 275 1410 278 1440 285
-             L1440 380 L0 380 Z"
-        />
-
-        <path
-          fill="url(#greenHillFront)"
-          d="M0 310
-             C110 295 200 288 310 302
-             C440 282 580 290 720 305
-             C860 288 1010 295 1160 308
-             C1280 298 1380 302 1440 310
-             L1440 380 L0 380 Z"
-        />
-
-        <path
-          fill="#2A5538"
-          opacity="0.16"
-          d="M0 330 C160 318 320 322 480 332 C700 318 920 325 1140 338 C1300 328 1400 330 1440 332 L1440 380 L0 380 Z"
-        />
-
-        <path
-          fill="url(#navyRidge)"
-          d="M0 338
-             C85 326 165 320 255 332
-             C370 318 490 324 610 336
-             C760 320 920 328 1070 340
-             C1200 328 1330 332 1440 344
-             L1440 380 L0 380 Z"
-        />
-        <rect x="0" y="358" width="1440" height="22" fill={NAVY} />
-
-        <image
-          href="/footer-trekkers.png"
-          x="40"
-          y="185"
-          width="480"
-          height="175"
-          preserveAspectRatio="xMidYMax meet"
-        />
-
-        {/* Nepal flag on right ridge */}
-        <NepalFlag x={1295} y={268} scale={1.15} />
-        {/* small stone cairn under pole */}
-        <ellipse cx="1296" cy="348" rx="14" ry="5" fill={NAVY} opacity="0.85" />
-        <rect x="1286" y="336" width="20" height="12" rx="2" fill={NAVY} />
-      </svg>
+      </div>
     </div>
   );
 }
