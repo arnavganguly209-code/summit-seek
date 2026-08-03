@@ -4,7 +4,7 @@ import { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { motion } from "framer-motion";
-import { Mail, Phone, MapPin, MessageCircle, ChevronRight } from "lucide-react";
+import { Mail, Phone, MapPin, MessageCircle } from "lucide-react";
 import {
   TikTokIcon,
   FacebookIcon,
@@ -76,7 +76,6 @@ function HimalayanLandscape() {
       aria-hidden
     >
       <div className="relative h-[200px] w-full sm:h-[260px] lg:h-[300px]">
-        {/* Premium mountains — do not alter this artwork */}
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img
           src="/footer-himalayan-premium.png"
@@ -85,23 +84,23 @@ function HimalayanLandscape() {
           loading="lazy"
           decoding="async"
         />
-        {/* Original 3 trekkers — same left size/position as before */}
+        <div className="pointer-events-none absolute inset-x-0 top-0 z-[3] h-10 bg-gradient-to-b from-white to-transparent sm:h-12" />
+        {/* Navy ground line — trekkers stand on this */}
+        <div
+          className="pointer-events-none absolute inset-x-0 bottom-0 z-[2] h-[18%] sm:h-[15%]"
+          style={{ background: NAVY }}
+        />
+        <div
+          className="pointer-events-none absolute inset-x-0 bottom-[15%] z-[2] h-10 sm:bottom-[13%] sm:h-12"
+          style={{ background: `linear-gradient(to bottom, transparent, ${NAVY})` }}
+        />
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img
           src="/footer-trekkers.png"
           alt=""
-          className="pointer-events-none absolute bottom-[4%] left-[1.5%] z-[4] h-auto w-[52%] max-w-[540px] object-contain object-left-bottom drop-shadow-[0_8px_16px_rgba(0,0,0,0.35)] sm:bottom-[5%] sm:left-[2%] sm:w-[44%] lg:w-[38%] lg:max-w-[500px]"
+          className="pointer-events-none absolute bottom-0 left-[1.5%] z-[4] h-auto w-[52%] max-w-[540px] translate-y-[1%] object-contain object-left-bottom drop-shadow-[0_6px_14px_rgba(0,0,0,0.4)] sm:left-[2%] sm:w-[44%] lg:w-[38%] lg:max-w-[500px]"
           loading="lazy"
           decoding="async"
-        />
-        {/* Soft white fade from partners section */}
-        <div className="pointer-events-none absolute inset-x-0 top-0 z-[3] h-10 bg-gradient-to-b from-white to-transparent sm:h-12" />
-        {/* Navy blend into footer panel */}
-        <div
-          className="pointer-events-none absolute inset-x-0 bottom-0 z-[3] h-12 sm:h-14"
-          style={{
-            background: `linear-gradient(to bottom, transparent 0%, ${NAVY} 95%)`,
-          }}
         />
       </div>
     </div>
@@ -112,14 +111,10 @@ function FooterLink({ href, children }: { href: string; children: React.ReactNod
   return (
     <Link
       href={href}
-      className="group inline-flex items-center gap-1.5 text-[14px] font-semibold leading-6 tracking-[0.01em] transition-all duration-300 hover:translate-x-1.5 hover:text-[#F58220] sm:text-[15px]"
+      className="block text-[14px] font-semibold leading-6 tracking-[0.01em] transition-all duration-300 hover:translate-x-1 hover:text-[#F58220] sm:text-[15px]"
       style={{ color: TEXT }}
     >
-      <ChevronRight
-        className="size-3.5 shrink-0 -translate-x-1 opacity-0 transition-all duration-300 group-hover:translate-x-0 group-hover:opacity-100"
-        style={{ color: ORANGE }}
-      />
-      <span className="transition-colors duration-300">{children}</span>
+      {children}
     </Link>
   );
 }
@@ -139,10 +134,10 @@ function FooterCol({
       transition={{ duration: 0.5, ease }}
       className="min-w-0"
     >
-      <h3 className="font-[family-name:var(--font-ui)] text-[12px] font-bold uppercase tracking-[0.2em] text-white sm:text-[13px]">
+      <h3 className="font-[family-name:var(--font-ui)] text-[12px] font-bold uppercase tracking-[0.18em] text-white sm:text-[13px]">
         {title}
       </h3>
-      <div className="mt-2.5 mb-3.5 h-[2px] w-9 rounded-full" style={{ background: ORANGE }} />
+      <div className="mt-2.5 mb-3.5 h-[2px] w-full" style={{ background: ORANGE }} />
       <ul className="space-y-2">
         {links.map((link) => (
           <li key={link.href + link.label} className="leading-none">
@@ -208,7 +203,7 @@ export function Footer({ content }: { content: FooterContent }) {
         className="relative -mt-px px-5 pb-6 pt-8 sm:px-8 sm:pb-7 sm:pt-10 lg:px-10 lg:pt-11"
         style={{ background: NAVY }}
       >
-        <div className="mx-auto grid max-w-[1320px] grid-cols-2 items-start gap-x-5 gap-y-8 sm:grid-cols-3 lg:grid-cols-6 lg:gap-x-6 lg:gap-y-0">
+        <div className="mx-auto grid max-w-[1320px] grid-cols-2 items-start gap-x-5 gap-y-8 sm:grid-cols-3 lg:grid-cols-6 lg:gap-x-5 lg:gap-y-0">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
@@ -216,15 +211,15 @@ export function Footer({ content }: { content: FooterContent }) {
             transition={{ duration: 0.5, ease }}
             className="col-span-2 min-w-0 sm:col-span-1"
           >
-            <Link href="/" aria-label="Summit Seek — Home" className="inline-block bg-transparent">
+            <Link href="/" aria-label="Summit Seek — Home" className="inline-block bg-transparent leading-none">
               <Image
                 src={content.brandLogoUrl}
                 alt="Summit Seek Travels & Tours"
                 width={480}
                 height={180}
                 unoptimized
-                className="h-auto w-[168px] bg-transparent object-contain object-left sm:w-[188px]"
-                sizes="188px"
+                className="h-auto w-[160px] bg-transparent object-contain object-left sm:w-[176px]"
+                sizes="176px"
               />
             </Link>
             <p className="mt-2.5 max-w-[240px] text-[12.5px] font-medium leading-[1.55] sm:text-[13px]" style={{ color: TEXT }}>
@@ -267,19 +262,64 @@ export function Footer({ content }: { content: FooterContent }) {
               </li>
             </ul>
 
-            <div className="mt-4 flex items-center gap-2">
-              {socials.map(({ href, label, Icon }) => (
+            <div className="mt-4 flex flex-col gap-3 sm:gap-3.5">
+              <div className="flex items-center gap-2">
+                {socials.map(({ href, label, Icon }) => (
+                  <a
+                    key={label}
+                    href={href}
+                    aria-label={label}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex size-10 items-center justify-center rounded-full border border-white/20 bg-white/10 text-white transition-all duration-300 hover:-translate-y-1 hover:rotate-[-6deg] hover:border-[#F58220] hover:text-[#F58220]"
+                  >
+                    <Icon className="size-4" />
+                  </a>
+                ))}
+              </div>
+              {/* Recommended On — transparent strip after socials */}
+              <div className="flex flex-wrap items-center gap-x-3 gap-y-2" aria-label="Recommended on">
+                <span className="text-[12px] font-bold text-white sm:text-[13px]">Recommended On:</span>
                 <a
-                  key={label}
-                  href={href}
-                  aria-label={label}
+                  href="https://www.bookmundi.com/"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="flex size-10 items-center justify-center rounded-full border border-white/20 bg-white/10 text-white transition-all duration-300 hover:-translate-y-1 hover:rotate-[-6deg] hover:border-[#F58220] hover:text-[#F58220]"
+                  className="inline-flex items-center gap-1.5 transition-opacity hover:opacity-85"
+                  aria-label="Bookmundi"
                 >
-                  <Icon className="size-4" />
+                  <span className="flex size-5 items-center justify-center rounded-[3px] bg-[#7CB342] text-[11px] font-black text-white">
+                    B
+                  </span>
+                  <span className="text-[13px] font-bold tracking-tight text-[#7CB342]">bookmundi</span>
                 </a>
-              ))}
+                <a
+                  href={SOCIAL.tripadvisor}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-1.5 transition-opacity hover:opacity-85"
+                  aria-label="Tripadvisor"
+                >
+                  <svg viewBox="0 0 24 24" className="size-5 text-[#34E0A1]" fill="currentColor" aria-hidden>
+                    <circle cx="12" cy="12" r="11" />
+                    <circle cx="8.2" cy="12" r="2.2" fill="#071526" />
+                    <circle cx="15.8" cy="12" r="2.2" fill="#071526" />
+                    <path d="M12 7.2c-1.4 0-2.6.6-3.4 1.5l1.1 1c.5-.6 1.3-1 2.3-1s1.8.4 2.3 1l1.1-1C14.6 7.8 13.4 7.2 12 7.2z" fill="#071526" />
+                  </svg>
+                  <span className="text-[13px] font-semibold text-white">Tripadvisor</span>
+                </a>
+                <a
+                  href="https://www.tourradar.com/"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center transition-opacity hover:opacity-85"
+                  aria-label="Tourradar"
+                >
+                  <span className="text-[13px] font-bold tracking-tight text-[#5EB3E4]">
+                    tourradar
+                    <sup className="ml-0.5 text-[8px]">™</sup>
+                  </span>
+                </a>
+              </div>
             </div>
           </motion.div>
 
@@ -295,10 +335,10 @@ export function Footer({ content }: { content: FooterContent }) {
             transition={{ duration: 0.5, delay: 0.1, ease }}
             className="min-w-0"
           >
-            <h3 className="font-[family-name:var(--font-ui)] text-[12px] font-bold uppercase tracking-[0.2em] text-white sm:text-[13px]">
+            <h3 className="font-[family-name:var(--font-ui)] text-[12px] font-bold uppercase tracking-[0.18em] text-white sm:text-[13px]">
               {content.newsletterHeading}
             </h3>
-            <div className="mt-2.5 mb-4 h-[2px] w-9 rounded-full" style={{ background: ORANGE }} />
+            <div className="mt-2.5 mb-3.5 h-[2px] w-full" style={{ background: ORANGE }} />
             <p className="text-[13px] font-medium leading-relaxed sm:text-[14px]" style={{ color: TEXT }}>
               {content.newsletterDescription}
             </p>
