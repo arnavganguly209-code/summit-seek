@@ -76,6 +76,7 @@ function HimalayanLandscape() {
       aria-hidden
     >
       <div className="relative h-[200px] w-full sm:h-[260px] lg:h-[300px]">
+        {/* Premium mountains — do not alter this artwork */}
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img
           src="/footer-himalayan-premium.png"
@@ -84,13 +85,22 @@ function HimalayanLandscape() {
           loading="lazy"
           decoding="async"
         />
+        {/* Original 3 trekkers — same left size/position as before */}
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img
+          src="/footer-trekkers.png"
+          alt=""
+          className="pointer-events-none absolute bottom-[4%] left-[1.5%] z-[4] h-auto w-[52%] max-w-[540px] object-contain object-left-bottom drop-shadow-[0_8px_16px_rgba(0,0,0,0.35)] sm:bottom-[5%] sm:left-[2%] sm:w-[44%] lg:w-[38%] lg:max-w-[500px]"
+          loading="lazy"
+          decoding="async"
+        />
         {/* Soft white fade from partners section */}
-        <div className="pointer-events-none absolute inset-x-0 top-0 h-10 bg-gradient-to-b from-white to-transparent sm:h-12" />
+        <div className="pointer-events-none absolute inset-x-0 top-0 z-[3] h-10 bg-gradient-to-b from-white to-transparent sm:h-12" />
         {/* Navy blend into footer panel */}
         <div
-          className="pointer-events-none absolute inset-x-0 bottom-0 h-16 sm:h-20"
+          className="pointer-events-none absolute inset-x-0 bottom-0 z-[3] h-12 sm:h-14"
           style={{
-            background: `linear-gradient(to bottom, transparent 0%, ${NAVY} 92%)`,
+            background: `linear-gradient(to bottom, transparent 0%, ${NAVY} 95%)`,
           }}
         />
       </div>
