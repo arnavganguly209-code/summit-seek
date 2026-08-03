@@ -131,15 +131,19 @@ const paymentMethods = [
 
 function PaymentBadges() {
   return (
-    <div className="flex flex-wrap items-center gap-2.5 sm:gap-3" role="list" aria-label="Accepted payment methods">
+    <div
+      className="flex flex-nowrap items-center gap-1.5 overflow-x-auto pb-0.5 sm:gap-2"
+      role="list"
+      aria-label="Accepted payment methods"
+    >
       {paymentMethods.map(({ id, label, Icon }) => (
         <div
           key={id}
           role="listitem"
           title={label}
-          className="rounded-[6px] shadow-[0_4px_14px_rgba(0,0,0,0.28)] ring-1 ring-white/15 transition-transform duration-300 hover:-translate-y-0.5 hover:ring-[#F58220]/70"
+          className="shrink-0 rounded-[5px] shadow-[0_3px_10px_rgba(0,0,0,0.25)] ring-1 ring-white/15 transition-transform duration-300 hover:-translate-y-0.5 hover:ring-[#F58220]/70"
         >
-          <Icon className="h-10 w-[60px] sm:h-11 sm:w-[66px]" />
+          <Icon className="h-8 w-[48px] sm:h-9 sm:w-[54px]" />
           <span className="sr-only">{label}</span>
         </div>
       ))}
@@ -176,11 +180,11 @@ function NepalFlag({ x, y, scale = 1 }: { x: number; y: number; scale?: number }
 
 function HimalayanLandscape() {
   return (
-    <div className="relative z-0 mt-6 w-full overflow-hidden leading-none sm:mt-8" aria-hidden>
+    <div className="relative z-0 mt-4 w-full overflow-hidden leading-none sm:mt-5" aria-hidden>
       <svg
         viewBox="0 20 1440 340"
         preserveAspectRatio="xMidYMax slice"
-        className="block h-[220px] w-full sm:h-[280px] lg:h-[320px]"
+        className="block h-[170px] w-full sm:h-[210px] lg:h-[240px]"
       >
         <defs>
           <linearGradient id="skyFade" x1="0" y1="0" x2="0" y2="1">
@@ -367,8 +371,8 @@ function FooterCol({
       <h3 className="font-[family-name:var(--font-ui)] text-[12px] font-bold uppercase tracking-[0.2em] text-white sm:text-[13px]">
         {title}
       </h3>
-      <div className="mt-2.5 mb-4 h-[2px] w-9 rounded-full" style={{ background: ORANGE }} />
-      <ul className="space-y-2.5">
+      <div className="mt-2.5 mb-3.5 h-[2px] w-9 rounded-full" style={{ background: ORANGE }} />
+      <ul className="space-y-2">
         {links.map((link) => (
           <li key={link.href + link.label} className="leading-none">
             <FooterLink href={link.href}>{link.label}</FooterLink>
@@ -384,7 +388,7 @@ export function Footer() {
 
   return (
     <footer className="relative w-full bg-white">
-      <div className="relative z-20 bg-white px-5 pb-10 pt-6 sm:px-8 sm:pb-12 sm:pt-8 lg:px-10 lg:pb-14 lg:pt-10">
+      <div className="relative z-20 bg-white px-5 pb-6 pt-5 sm:px-8 sm:pb-7 sm:pt-6 lg:px-10 lg:pb-8 lg:pt-7">
         <div className="mx-auto flex max-w-[1320px] flex-col items-center">
           <Link href="/" aria-label="Summit Seek — Home" className="bg-transparent">
             <Image
@@ -393,12 +397,12 @@ export function Footer() {
               width={1024}
               height={576}
               unoptimized
-              className="h-auto w-[260px] bg-transparent object-contain sm:w-[320px] lg:w-[360px]"
-              sizes="(max-width: 640px) 260px, (max-width: 1024px) 320px, 360px"
+              className="h-auto w-[220px] bg-transparent object-contain sm:w-[260px] lg:w-[290px]"
+              sizes="(max-width: 640px) 220px, (max-width: 1024px) 260px, 290px"
             />
           </Link>
 
-          <div className="relative z-20 mt-2 flex flex-wrap items-center justify-center gap-3 sm:mt-3 sm:gap-4 lg:gap-5">
+          <div className="relative z-20 mt-1.5 flex flex-wrap items-center justify-center gap-2.5 sm:mt-2 sm:gap-3.5 lg:gap-4">
             {footerPartners.map((partner, i) => (
               <motion.a
                 key={partner.id}
@@ -410,7 +414,7 @@ export function Footer() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ duration: 0.4, delay: i * 0.06, ease }}
-                className="box-border flex h-[108px] w-[108px] shrink-0 items-center justify-center rounded-[14px] border border-[#e8ebf0] bg-white p-2.5 shadow-[0_10px_28px_rgba(8,18,30,0.08)] transition-all duration-300 hover:-translate-y-1.5 hover:shadow-[0_14px_32px_rgba(8,18,30,0.12)] sm:h-[120px] sm:w-[120px] sm:p-3"
+                className="box-border flex h-[88px] w-[88px] shrink-0 items-center justify-center rounded-[12px] border border-[#e8ebf0] bg-white p-2 shadow-[0_8px_22px_rgba(8,18,30,0.07)] transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_12px_28px_rgba(8,18,30,0.11)] sm:h-[100px] sm:w-[100px] sm:p-2.5"
               >
                 <Image
                   src={partner.logo}
@@ -429,16 +433,16 @@ export function Footer() {
       <HimalayanLandscape />
 
       <div
-        className="relative -mt-px px-5 pb-8 pt-12 sm:px-8 sm:pb-10 sm:pt-14 lg:px-10 lg:pt-16"
+        className="relative -mt-px px-5 pb-6 pt-8 sm:px-8 sm:pb-7 sm:pt-10 lg:px-10 lg:pt-11"
         style={{ background: NAVY }}
       >
-        <div className="mx-auto grid max-w-[1320px] grid-cols-1 items-start gap-x-8 gap-y-10 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6">
+        <div className="mx-auto grid max-w-[1320px] grid-cols-2 items-start gap-x-5 gap-y-8 sm:grid-cols-3 lg:grid-cols-6 lg:gap-x-6 lg:gap-y-0">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.5, ease }}
-            className="min-w-0 sm:col-span-2 xl:col-span-1"
+            className="col-span-2 min-w-0 sm:col-span-1"
           >
             <Link href="/" aria-label="Summit Seek — Home" className="inline-block bg-transparent">
               <Image
@@ -451,12 +455,11 @@ export function Footer() {
                 sizes="188px"
               />
             </Link>
-            <p className="mt-3 max-w-[260px] text-[13px] font-medium leading-[1.65] sm:text-[14px]" style={{ color: TEXT }}>
-              Unforgettable Himalayan adventures with expert local guides, personalized
-              itineraries, and trusted care across Nepal.
+            <p className="mt-2.5 max-w-[240px] text-[12.5px] font-medium leading-[1.55] sm:text-[13px]" style={{ color: TEXT }}>
+              Unforgettable Himalayan adventures with expert local guides and trusted care across Nepal.
             </p>
 
-            <ul className="mt-5 space-y-2.5 text-[13px] font-semibold sm:text-[14px]" style={{ color: TEXT }}>
+            <ul className="mt-4 space-y-2 text-[12.5px] font-semibold sm:text-[13px]" style={{ color: TEXT }}>
               <li className="flex items-start gap-2.5">
                 <MapPin className="mt-0.5 size-4 shrink-0" style={{ color: ORANGE }} />
                 <span className="leading-6">{SITE.address}</span>
@@ -492,7 +495,7 @@ export function Footer() {
               </li>
             </ul>
 
-            <div className="mt-5 flex items-center gap-2.5">
+            <div className="mt-4 flex items-center gap-2">
               {socials.map(({ href, label, Icon }) => (
                 <a
                   key={label}
@@ -558,30 +561,19 @@ export function Footer() {
 
             <TravelersChoiceBadges />
 
-            <div className="mt-6">
+            <div className="mt-5">
               <h3 className="font-[family-name:var(--font-ui)] text-[12px] font-bold uppercase tracking-[0.2em] text-white sm:text-[13px]">
                 We Accept
               </h3>
-              <div className="mt-2.5 mb-4 h-[2px] w-9 rounded-full" style={{ background: ORANGE }} />
+              <div className="mt-2.5 mb-3 h-[2px] w-9 rounded-full" style={{ background: ORANGE }} />
               <PaymentBadges />
-              <p className="mt-5 text-[12px] font-medium leading-relaxed sm:text-[13px]" style={{ color: TEXT }}>
-                Developed By{" "}
-                <a
-                  href="https://theglobalorbit.com/"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="font-bold text-white underline-offset-4 transition-all duration-300 hover:text-[#F58220] hover:underline"
-                >
-                  The Global Orbit
-                </a>
-              </p>
             </div>
           </motion.div>
         </div>
 
         {/* Bottom copyright bar */}
-        <div className="mx-auto mt-10 max-w-[1320px] border-t border-white/10 pt-6 sm:mt-12">
-          <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+        <div className="mx-auto mt-7 max-w-[1320px] border-t border-white/10 pt-4 sm:mt-8 sm:pt-5">
+          <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
             <p className="text-[12px] font-semibold tracking-[0.02em] sm:text-[13px]" style={{ color: TEXT }}>
               © 2026 Summit Seek Travel. All rights reserved.
             </p>

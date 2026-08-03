@@ -8,7 +8,7 @@ export function TravelersChoiceBadges() {
       href={SOCIAL.tripadvisor}
       target="_blank"
       rel="noopener noreferrer"
-      className="mt-6 block bg-transparent transition-opacity hover:opacity-90"
+      className="mt-4 block bg-transparent transition-opacity hover:opacity-90"
       aria-label="Tripadvisor Travelers' Choice Awards"
     >
       <Image
@@ -17,7 +17,7 @@ export function TravelersChoiceBadges() {
         width={823}
         height={471}
         unoptimized
-        className="mx-auto h-auto w-full max-w-[300px] bg-transparent object-contain"
+        className="mx-auto h-auto w-full max-w-[220px] bg-transparent object-contain lg:mx-0"
       />
     </a>
   );
