@@ -19,10 +19,19 @@ type Props = {
   content: AboutIntroContent;
 };
 
+function splitHeading(heading: string) {
+  const match = heading.trim().match(/^(.*?)\s+in Nepal\.?$/i);
+  if (match?.[1]) {
+    return { main: match[1].trim(), accent: "in Nepal" as const };
+  }
+  return { main: heading.trim(), accent: null };
+}
+
 export function AboutIntro({ content }: Props) {
   if (!content.visible) return null;
 
   const isLocal = (url: string) => url.startsWith("/");
+  const { main, accent } = splitHeading(content.heading);
 
   return (
     <section
@@ -116,7 +125,7 @@ export function AboutIntro({ content }: Props) {
         <div className="text-center lg:text-left">
           <motion.p
             {...fadeUp(0.06)}
-            className="font-[family-name:var(--font-ui)] text-[12px] font-bold uppercase tracking-[0.2em] text-[#0b1524]"
+            className="font-[family-name:var(--font-ui)] text-[12px] font-bold uppercase tracking-[0.22em] text-[#F58220]"
           >
             {content.eyebrow}
           </motion.p>
@@ -124,14 +133,24 @@ export function AboutIntro({ content }: Props) {
           <motion.h2
             id="about-intro-heading"
             {...fadeUp(0.12)}
-            className="mt-3 font-[family-name:var(--font-ui)] text-[1.9rem] font-extrabold leading-[1.2] tracking-[-0.025em] text-[#0b1524] sm:mt-4 sm:text-[2.35rem] md:text-[2.55rem] lg:text-[2.75rem]"
+            className="mt-3 max-w-[15ch] font-[family-name:var(--font-display)] text-[2.05rem] font-bold leading-[1.18] tracking-[-0.02em] text-[#0b1524] sm:mt-4 sm:text-[2.55rem] md:text-[2.85rem] lg:mx-0 lg:text-[3.05rem]"
           >
-            {content.heading}
+            {main}
+            {accent ? (
+              <span className="mt-1.5 block font-[family-name:var(--font-ui)] text-[0.38em] font-bold uppercase tracking-[0.2em] text-[#F58220]">
+                {accent}
+              </span>
+            ) : null}
           </motion.h2>
+
+          <div
+            className="mx-auto mt-5 h-[3px] w-14 rounded-full bg-[#F58220] lg:mx-0"
+            aria-hidden
+          />
 
           <motion.p
             {...fadeUp(0.2)}
-            className="mx-auto mt-5 max-w-[640px] font-[family-name:var(--font-ui)] text-[14.5px] font-medium leading-[1.85] text-[#5a6577] sm:mt-6 sm:text-[15.5px] lg:mx-0"
+            className="mx-auto mt-5 max-w-[560px] font-[family-name:var(--font-ui)] text-[14.5px] font-medium leading-[1.85] text-[#5a6577] sm:mt-6 sm:text-[15.5px] lg:mx-0"
           >
             {content.description}
           </motion.p>

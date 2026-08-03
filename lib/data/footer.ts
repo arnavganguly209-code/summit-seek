@@ -14,11 +14,11 @@ export const footerPartners = [
     logo: "/partners/ntb.png",
   },
   {
-    id: "taan",
-    label: "Trekking Agencies' Association of Nepal",
-    abbr: "TAAN",
-    href: "https://www.taan.org.np/",
-    logo: "/partners/taan.png",
+    id: "nepal-flag",
+    label: "Flag of Nepal",
+    abbr: "NP",
+    href: "https://www.nepal.gov.np/",
+    logo: "/partners/nepal-flag.svg",
   },
   {
     id: "nma",

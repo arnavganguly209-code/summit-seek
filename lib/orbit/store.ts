@@ -140,7 +140,21 @@ export async function getAboutIntro(): Promise<AboutIntroContent> {
           stored.highlights[2] || DEFAULT_ABOUT_INTRO.highlights[2],
         ] as AboutIntroContent["highlights"])
       : DEFAULT_ABOUT_INTRO.highlights;
-    return { ...DEFAULT_ABOUT_INTRO, ...stored, highlights };
+    return {
+      ...DEFAULT_ABOUT_INTRO,
+      ...stored,
+      highlights,
+      heading:
+        !stored.heading ||
+        /tibet|bhutan|tailored tours/i.test(stored.heading)
+          ? DEFAULT_ABOUT_INTRO.heading
+          : stored.heading,
+      description:
+        !stored.description ||
+        /tibet|bhutan/i.test(stored.description)
+          ? DEFAULT_ABOUT_INTRO.description
+          : stored.description,
+    };
   } catch {
     return DEFAULT_ABOUT_INTRO;
   }
