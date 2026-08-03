@@ -66,8 +66,8 @@ function HimalayanLandscape() {
             <stop offset="100%" stopColor="#356848" />
           </linearGradient>
           <linearGradient id="navyRidge" x1="0" y1="0" x2="0" y2="1">
-            <stop offset="0%" stopColor="#163454" />
-            <stop offset="100%" stopColor="#0d243c" />
+            <stop offset="0%" stopColor="#0D243C" />
+            <stop offset="100%" stopColor={NAVY} />
           </linearGradient>
         </defs>
 
@@ -151,7 +151,7 @@ function HimalayanLandscape() {
              C1200 318 1330 322 1440 334
              L1440 360 L0 360 Z"
         />
-        <rect x="0" y="348" width="1440" height="12" fill="#0d243c" />
+        <rect x="0" y="348" width="1440" height="12" fill={NAVY} />
 
         <image
           href="/footer-trekkers.png"
@@ -270,15 +270,10 @@ export function Footer() {
 
       <HimalayanLandscape />
 
-      {/* Glass footer panel — ~50% lighter navy + frosted transparency */}
+      {/* Dark navy footer panel */}
       <div
-        className="relative -mt-px border-t border-white/15 px-5 pb-14 pt-12 sm:px-8 sm:pb-16 sm:pt-14 lg:px-10 lg:pt-16"
-        style={{
-          background: "linear-gradient(180deg, rgba(13, 36, 60, 0.52) 0%, rgba(8, 24, 42, 0.48) 100%)",
-          backdropFilter: "blur(22px) saturate(145%)",
-          WebkitBackdropFilter: "blur(22px) saturate(145%)",
-          boxShadow: "inset 0 1px 0 rgba(255,255,255,0.08)",
-        }}
+        className="relative -mt-px px-5 pb-14 pt-12 sm:px-8 sm:pb-16 sm:pt-14 lg:px-10 lg:pt-16"
+        style={{ background: NAVY }}
       >
         <div className="mx-auto grid max-w-[1320px] grid-cols-1 items-start gap-x-8 gap-y-10 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6">
           {/* Brand + contact + socials */}
@@ -379,7 +374,7 @@ export function Footer() {
             </p>
 
             <form
-              className="mt-4 flex overflow-hidden rounded-full border border-white/20 bg-white/10 backdrop-blur-md"
+              className="mt-4 flex overflow-hidden rounded-full border border-white/15 bg-[#0a1a2c]"
               onSubmit={(e) => {
                 e.preventDefault();
                 setEmail("");
