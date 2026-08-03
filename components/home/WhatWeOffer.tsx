@@ -46,7 +46,7 @@ export function WhatWeOffer() {
   return (
     <section
       id="what-we-offer"
-      className="relative overflow-hidden bg-white py-[80px] sm:py-[100px] lg:py-[120px]"
+      className="relative overflow-hidden bg-white py-10 sm:py-[50px] lg:py-[60px]"
       aria-labelledby="what-we-offer-heading"
     >
       <div

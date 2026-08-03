@@ -171,7 +171,7 @@ export function FeaturedAdventureTabs({ content }: Props) {
   return (
     <section
       id="featured-adventures"
-      className="relative overflow-hidden bg-[#f5f7fb] py-14 sm:py-16 lg:py-[72px]"
+      className="relative overflow-hidden bg-[#f5f7fb] py-7 sm:py-8 lg:py-9"
       aria-labelledby="featured-adventures-heading"
     >
       <div

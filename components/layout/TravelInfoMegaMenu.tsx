@@ -14,7 +14,7 @@ interface TravelInfoMegaMenuProps {
 
 /** Same dark glass language as Destinations */
 const panelDark =
-  "overflow-hidden rounded-[14px] border border-white/15 bg-[rgba(4,13,24,0.92)] shadow-[0_22px_55px_rgba(0,0,0,0.35)] backdrop-blur-[18px]";
+  "overflow-hidden rounded-[14px] border border-white/25 bg-[rgba(8,18,30,0.32)] shadow-[0_22px_55px_rgba(0,0,0,0.18)] backdrop-blur-[28px] supports-[backdrop-filter]:bg-[rgba(8,18,30,0.28)]";
 
 function TravelInfoList({ onClose }: { onClose: () => void }) {
   const pathname = usePathname();

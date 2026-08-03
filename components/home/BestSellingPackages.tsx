@@ -123,7 +123,7 @@ export function BestSellingPackagesSection({
   return (
     <section
       id="best-selling-packages"
-      className="relative overflow-hidden bg-[#f7f8fb] py-14 sm:py-16 lg:py-[88px]"
+      className="relative overflow-hidden bg-[#f7f8fb] py-7 sm:py-8 lg:py-11"
       aria-labelledby="best-selling-heading"
     >
       <div className="relative mx-auto w-full max-w-[1200px] px-5 sm:px-8 lg:px-10">

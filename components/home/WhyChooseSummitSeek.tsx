@@ -57,7 +57,7 @@ export function WhyChooseSummitSeek() {
   return (
     <section
       id="why-choose"
-      className="relative overflow-hidden bg-white py-[80px] sm:py-[100px] lg:py-[120px]"
+      className="relative overflow-hidden bg-white py-10 sm:py-[50px] lg:py-[60px]"
       aria-labelledby="why-choose-heading"
     >
       <div

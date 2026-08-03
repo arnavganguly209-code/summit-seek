@@ -27,7 +27,7 @@ export function AboutIntro({ content }: Props) {
   return (
     <section
       id="about-intro"
-      className="relative overflow-hidden bg-white py-16 sm:py-20 lg:py-[100px]"
+      className="relative overflow-hidden bg-white py-8 sm:py-10 lg:py-[50px]"
       aria-labelledby="about-intro-heading"
     >
       <div className="relative mx-auto grid w-full max-w-[1320px] items-center gap-12 px-5 sm:px-8 lg:grid-cols-[0.95fr_1.05fr] lg:gap-14 lg:px-10 xl:gap-20">

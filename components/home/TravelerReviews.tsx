@@ -502,7 +502,7 @@ export function TravelerReviews() {
   return (
     <section
       id="traveler-reviews"
-      className="relative overflow-hidden bg-white py-[80px] sm:py-[100px] lg:py-[120px]"
+      className="relative overflow-hidden bg-white py-10 sm:py-[50px] lg:py-[60px]"
       aria-labelledby="traveler-reviews-heading"
       onMouseEnter={() => setPaused(true)}
       onMouseLeave={() => setPaused(false)}
