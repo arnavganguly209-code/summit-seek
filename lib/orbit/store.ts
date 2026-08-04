@@ -461,7 +461,11 @@ function mergeFooter(stored: Partial<FooterContent> | null): FooterContent {
   };
 
   return {
-    topLogoUrl: stored.topLogoUrl?.trim() || DEFAULT_FOOTER.topLogoUrl,
+    topLogoUrl:
+      !stored.topLogoUrl?.trim() ||
+      stored.topLogoUrl.includes("logo-summit-seek-transparent")
+        ? DEFAULT_FOOTER.topLogoUrl
+        : stored.topLogoUrl.trim(),
     brandLogoUrl: stored.brandLogoUrl?.trim() || DEFAULT_FOOTER.brandLogoUrl,
     brandTagline: stored.brandTagline?.trim() || DEFAULT_FOOTER.brandTagline,
     newsletterHeading: stored.newsletterHeading?.trim() || DEFAULT_FOOTER.newsletterHeading,

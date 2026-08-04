@@ -9,7 +9,7 @@ import {
 import { SOCIAL } from "@/lib/constants";
 
 export const DEFAULT_FOOTER: FooterContent = {
-  topLogoUrl: "/logo-summit-seek-transparent.png",
+  topLogoUrl: "/logo-summit-seek-footer-top.png",
   brandLogoUrl: "/logo-summit-seek-white.png",
   brandTagline:
     "Unforgettable Himalayan adventures with expert local guides and trusted care across Nepal.",
