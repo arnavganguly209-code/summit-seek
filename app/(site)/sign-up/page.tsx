@@ -15,6 +15,7 @@ export default function SignUpPage() {
   const [email, setEmail] = useState("");
   const [mobileCode, setMobileCode] = useState("+977");
   const [mobile, setMobile] = useState("");
+  const [waSame, setWaSame] = useState(true);
   const [waCode, setWaCode] = useState("+977");
   const [whatsapp, setWhatsapp] = useState("");
   const [trekDetails, setTrekDetails] = useState("");
@@ -49,35 +50,37 @@ export default function SignUpPage() {
 
   return (
     <AuthShell
+      wide
       title="Create your account"
-      subtitle="Join Summit Seek to plan treks, save wishlists, and manage bookings with our team."
+      subtitle="Plan treks, save wishlists, and manage bookings with Summit Seek."
     >
-      <form onSubmit={onSubmit} className="space-y-3.5">
-        <AuthField label="Full Name">
-          <input
-            required
-            value={fullName}
-            onChange={(e) => setFullName(e.target.value)}
-            className={authInputClass}
-            placeholder="Your full name"
-            autoComplete="name"
-          />
-        </AuthField>
-
-        <AuthField label="Email ID">
-          <input
-            type="email"
-            required
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            className={authInputClass}
-            placeholder="you@email.com"
-            autoComplete="email"
-          />
-        </AuthField>
+      <form onSubmit={onSubmit} className="space-y-2.5">
+        <div className="grid gap-2.5 sm:grid-cols-2">
+          <AuthField label="Full Name">
+            <input
+              required
+              value={fullName}
+              onChange={(e) => setFullName(e.target.value)}
+              className={authInputClass}
+              placeholder="Your full name"
+              autoComplete="name"
+            />
+          </AuthField>
+          <AuthField label="Email ID">
+            <input
+              type="email"
+              required
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              className={authInputClass}
+              placeholder="you@email.com"
+              autoComplete="email"
+            />
+          </AuthField>
+        </div>
 
         <AuthField label="Mobile Number">
-          <div className="grid grid-cols-[120px_1fr] gap-2">
+          <div className="grid grid-cols-[96px_1fr] gap-2">
             <select
               value={mobileCode}
               onChange={(e) => setMobileCode(e.target.value)}
@@ -102,97 +105,109 @@ export default function SignUpPage() {
           </div>
         </AuthField>
 
-        <AuthField label="WhatsApp Number">
-          <div className="grid grid-cols-[120px_1fr] gap-2">
-            <select
-              value={waCode}
-              onChange={(e) => setWaCode(e.target.value)}
+        <label className="inline-flex items-center gap-2 text-[12px] text-white/60">
+          <input
+            type="checkbox"
+            checked={waSame}
+            onChange={(e) => setWaSame(e.target.checked)}
+            className="rounded border-white/30"
+          />
+          WhatsApp same as mobile
+        </label>
+
+        {!waSame ? (
+          <AuthField label="WhatsApp Number">
+            <div className="grid grid-cols-[96px_1fr] gap-2">
+              <select
+                value={waCode}
+                onChange={(e) => setWaCode(e.target.value)}
+                className={authInputClass}
+                aria-label="WhatsApp country code"
+              >
+                {COUNTRY_CODES.map((c) => (
+                  <option key={`wa-${c.code}`} value={c.code} className="bg-[#0b1524] text-white">
+                    {c.code}
+                  </option>
+                ))}
+              </select>
+              <input
+                required
+                inputMode="tel"
+                value={whatsapp}
+                onChange={(e) => setWhatsapp(e.target.value)}
+                className={authInputClass}
+                placeholder="WhatsApp number"
+              />
+            </div>
+          </AuthField>
+        ) : null}
+
+        <div className="grid gap-2.5 sm:grid-cols-[1fr_120px]">
+          <AuthField label="Trekking interest">
+            <input
+              required
+              value={trekDetails}
+              onChange={(e) => setTrekDetails(e.target.value)}
               className={authInputClass}
-              aria-label="WhatsApp country code"
+              placeholder="e.g. Everest Base Camp, Annapurna…"
+            />
+          </AuthField>
+          <AuthField label="People">
+            <select
+              value={people}
+              onChange={(e) => setPeople(e.target.value)}
+              className={authInputClass}
             >
-              {COUNTRY_CODES.map((c) => (
-                <option key={`wa-${c.code}`} value={c.code} className="bg-[#0b1524] text-white">
-                  {c.code}
+              {["1", "2", "3", "4", "5", "6", "7", "8", "9", "10+"].map((n) => (
+                <option key={n} value={n} className="bg-[#0b1524] text-white">
+                  {n}
                 </option>
               ))}
             </select>
-            <input
-              required
-              inputMode="tel"
-              value={whatsapp}
-              onChange={(e) => setWhatsapp(e.target.value)}
-              className={authInputClass}
-              placeholder="WhatsApp number"
-            />
-          </div>
-        </AuthField>
+          </AuthField>
+        </div>
 
-        <AuthField label="Trekking Details">
-          <textarea
-            required
-            rows={3}
-            value={trekDetails}
-            onChange={(e) => setTrekDetails(e.target.value)}
-            className={`${authInputClass} resize-y`}
-            placeholder="Which trek or destination are you interested in?"
-          />
-        </AuthField>
-
-        <AuthField label="How many people?">
-          <select
-            value={people}
-            onChange={(e) => setPeople(e.target.value)}
-            className={authInputClass}
-          >
-            {["1", "2", "3", "4", "5", "6", "7", "8", "9", "10+"].map((n) => (
-              <option key={n} value={n} className="bg-[#0b1524] text-white">
-                {n} {n === "1" ? "person" : "people"}
-              </option>
-            ))}
-          </select>
-        </AuthField>
-
-        <AuthField label="Special Request">
-          <textarea
-            rows={2}
+        <AuthField label="Special request (optional)">
+          <input
             value={specialRequest}
             onChange={(e) => setSpecialRequest(e.target.value)}
-            className={`${authInputClass} resize-y`}
-            placeholder="Dietary needs, dates, luxury lodges, private guide…"
+            className={authInputClass}
+            placeholder="Dates, diet, private guide…"
           />
         </AuthField>
 
-        <AuthField label="Password">
-          <input
-            type="password"
-            required
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            className={authInputClass}
-            placeholder="Create a password"
-            autoComplete="new-password"
-          />
-        </AuthField>
-
-        <AuthField label="Confirm Password">
-          <input
-            type="password"
-            required
-            value={confirmPassword}
-            onChange={(e) => setConfirmPassword(e.target.value)}
-            className={authInputClass}
-            placeholder="Confirm password"
-            autoComplete="new-password"
-          />
-        </AuthField>
+        <div className="grid gap-2.5 sm:grid-cols-2">
+          <AuthField label="Password">
+            <input
+              type="password"
+              required
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              className={authInputClass}
+              placeholder="Min. 8 characters"
+              autoComplete="new-password"
+            />
+          </AuthField>
+          <AuthField label="Confirm Password">
+            <input
+              type="password"
+              required
+              value={confirmPassword}
+              onChange={(e) => setConfirmPassword(e.target.value)}
+              className={authInputClass}
+              placeholder="Confirm password"
+              autoComplete="new-password"
+            />
+          </AuthField>
+        </div>
 
         {error ? (
-          <p className="rounded-lg border border-red-400/30 bg-red-500/10 px-3 py-2 text-[13px] text-red-200">
+          <p className="rounded-lg border border-red-400/30 bg-red-500/10 px-3 py-2 text-[12.5px] text-red-200">
             {error}
           </p>
         ) : null}
         {message ? (
-          <p className="rounded-lg border border-emerald-400/25 bg-emerald-500/10 px-3 py-2 text-[13px] text-emerald-100">
+          <p className="rounded-lg border border-emerald-400/25 bg-emerald-500/10 px-3 py-2 text-[12.5px] text-emerald-100">
             {message}
           </p>
         ) : null}
@@ -200,13 +215,13 @@ export default function SignUpPage() {
         <button
           type="submit"
           disabled={loading}
-          className="inline-flex w-full items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-[#1d4ed8] to-[#0ea5e9] px-4 py-3.5 text-[14px] font-bold text-white shadow-[0_14px_34px_rgba(14,165,233,0.28)] transition hover:brightness-110 disabled:opacity-70"
+          className="inline-flex w-full items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-[#1d4ed8] to-[#0ea5e9] px-4 py-3 text-[13.5px] font-bold text-white shadow-[0_12px_28px_rgba(14,165,233,0.28)] transition hover:brightness-110 disabled:opacity-70"
         >
           {loading ? <Loader2 className="size-4 animate-spin" /> : null}
           {loading ? "Creating account…" : "Sign Up"}
         </button>
 
-        <p className="text-center text-[13px] text-white/60">
+        <p className="pt-0.5 text-center text-[12.5px] text-white/55">
           Already have an account?{" "}
           <Link href="/sign-in" className="font-semibold text-[#7dd3fc] hover:underline">
             Sign In
