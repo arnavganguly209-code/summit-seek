@@ -59,29 +59,38 @@ function PackageCard({ pkg }: { pkg: FeaturedPackage }) {
   const samePlace =
     pkg.startLocation.trim().toLowerCase() ===
     pkg.endLocation.trim().toLowerCase();
-  const imageSrc = pkg.imageUrl.split("?")[0];
+  const imageSrc = (pkg.imageUrl || "").split("?")[0];
   const isLocal = imageSrc.startsWith("/");
+  const hasImage = Boolean(imageSrc);
 
   return (
     <article className="group flex h-full flex-col overflow-hidden rounded-[16px] border border-[#e6ebf2] bg-white shadow-[0_8px_28px_rgba(11,21,36,0.06)] transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_18px_40px_rgba(11,21,36,0.11)]">
       <div className="relative aspect-[16/11] overflow-hidden bg-[#0b1524]/5">
-        {isLocal ? (
-          // eslint-disable-next-line @next/next/no-img-element
-          <img
-            src={pkg.imageUrl}
-            alt={pkg.title}
-            className="absolute inset-0 h-full w-full object-cover transition-transform duration-500 ease-out group-hover:scale-[1.03]"
-            loading="lazy"
-            decoding="async"
-          />
+        {hasImage ? (
+          isLocal ? (
+            // eslint-disable-next-line @next/next/no-img-element
+            <img
+              src={pkg.imageUrl}
+              alt={pkg.title}
+              className="absolute inset-0 h-full w-full object-cover transition-transform duration-500 ease-out group-hover:scale-[1.03]"
+              loading="lazy"
+              decoding="async"
+            />
+          ) : (
+            <Image
+              src={pkg.imageUrl}
+              alt={pkg.title}
+              fill
+              className="object-cover transition-transform duration-500 ease-out group-hover:scale-[1.03]"
+              sizes="(max-width: 768px) 100vw, (max-width: 1280px) 50vw, 25vw"
+            />
+          )
         ) : (
-          <Image
-            src={pkg.imageUrl}
-            alt={pkg.title}
-            fill
-            className="object-cover transition-transform duration-500 ease-out group-hover:scale-[1.03]"
-            sizes="(max-width: 768px) 100vw, (max-width: 1280px) 50vw, 25vw"
-          />
+          <div className="absolute inset-0 flex items-center justify-center bg-[linear-gradient(145deg,#0b1524,#1a2d4d)] px-4 text-center">
+            <span className="font-[family-name:var(--font-ui)] text-[12px] font-semibold uppercase tracking-[0.14em] text-white/45">
+              Image coming soon
+            </span>
+          </div>
         )}
         <div className="absolute inset-0 bg-gradient-to-t from-[#0b1524]/30 via-transparent to-transparent" />
         <button

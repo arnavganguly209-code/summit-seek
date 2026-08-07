@@ -36,6 +36,7 @@ export type AboutPageContent = {
   ctaHref: string;
   metaTitle: string;
   metaDescription: string;
+  teamCoverImageUrl: string;
   teamCoverTitle: string;
   teamCoverSubtitle: string;
   teamIntro: string;

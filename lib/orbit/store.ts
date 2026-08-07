@@ -23,7 +23,10 @@ import { DEFAULT_TRAVEL_ARTICLES } from "@/lib/orbit/travel-articles-defaults";
 import { DEFAULT_FOOTER } from "@/lib/orbit/footer-defaults";
 import { DEFAULT_CONTACT } from "@/lib/orbit/contact-defaults";
 import { DEFAULT_BLOG } from "@/lib/orbit/blog-defaults";
-import { DEFAULT_ABOUT_PAGE } from "@/lib/orbit/about-page-defaults";
+import {
+  DEFAULT_ABOUT_PAGE,
+  LEGACY_DEFAULT_TEAM_IMAGE_URLS,
+} from "@/lib/orbit/about-page-defaults";
 
 const DATA_DIR = path.join(process.cwd(), "data");
 const HERO_FILE = path.join(DATA_DIR, "hero.json");
@@ -100,7 +103,15 @@ function mergeFeaturedPackages(
       if (!match) return defCat;
       const packages = defCat.packages.map((defPkg, index) => {
         const saved = match.packages?.[index];
-        return saved ? { ...defPkg, ...saved, id: saved.id || defPkg.id } : defPkg;
+        if (!saved) return defPkg;
+        return {
+          ...defPkg,
+          ...saved,
+          id: saved.id || defPkg.id,
+          // Keep intentional clears — do not resurrect default stock photos
+          imageUrl:
+            typeof saved.imageUrl === "string" ? saved.imageUrl.trim() : defPkg.imageUrl,
+        };
       });
       while (packages.length < 4) {
         const i = packages.length;
@@ -646,22 +657,56 @@ function mergeAboutPage(stored: Partial<AboutPageContent> | null): AboutPageCont
         }))
       : DEFAULT_ABOUT_PAGE.values;
 
-  const team =
-    Array.isArray(stored.team) && stored.team.length > 0
-      ? stored.team.map((m, i) => ({
-          ...DEFAULT_ABOUT_PAGE.team[i % DEFAULT_ABOUT_PAGE.team.length],
-          ...m,
-          id: m.id || `t-${i + 1}`,
-          visible: m.visible !== false,
-        }))
-      : DEFAULT_ABOUT_PAGE.team;
+  const rawTeam = Array.isArray(stored.team) ? stored.team : null;
+  let team =
+    rawTeam && rawTeam.length > 0
+      ? rawTeam.map((m, i) => {
+          const imageUrl = typeof m.imageUrl === "string" ? m.imageUrl.trim() : "";
+          const cleaned =
+            !imageUrl || LEGACY_DEFAULT_TEAM_IMAGE_URLS.has(imageUrl.split("?")[0])
+              ? ""
+              : imageUrl;
+          return {
+            id: m.id || `t-${i + 1}`,
+            name: (m.name || "").trim() || `Team Member ${i + 1}`,
+            role: (m.role || "").trim() || "Designation",
+            bio: typeof m.bio === "string" ? m.bio : "",
+            imageUrl: cleaned,
+            visible: m.visible !== false,
+          };
+        })
+      : DEFAULT_ABOUT_PAGE.team.map((m) => ({ ...m }));
+
+  // Ensure 8 editable slots for the public team grid (keep extras if CMS added more)
+  if (team.length < 8) {
+    const extras = DEFAULT_ABOUT_PAGE.team
+      .slice(team.length)
+      .map((m, i) => ({ ...m, id: m.id || `t-${team.length + i + 1}` }));
+    team = [...team, ...extras];
+  }
+
+  const coverImageUrl =
+    typeof stored.coverImageUrl === "string"
+      ? stored.coverImageUrl.trim()
+      : DEFAULT_ABOUT_PAGE.coverImageUrl;
+  const storyImageUrl =
+    typeof stored.storyImageUrl === "string"
+      ? stored.storyImageUrl.trim()
+      : DEFAULT_ABOUT_PAGE.storyImageUrl;
+  const teamCoverImageUrl =
+    typeof stored.teamCoverImageUrl === "string"
+      ? stored.teamCoverImageUrl.trim()
+      : DEFAULT_ABOUT_PAGE.teamCoverImageUrl;
 
   return {
     ...DEFAULT_ABOUT_PAGE,
     ...stored,
     values,
     team,
-    coverImageUrl: stored.coverImageUrl?.trim() || DEFAULT_ABOUT_PAGE.coverImageUrl,
+    // Respect intentional clears — never resurrect removed images from defaults
+    coverImageUrl,
+    storyImageUrl,
+    teamCoverImageUrl,
     companyName: stored.companyName?.trim() || DEFAULT_ABOUT_PAGE.companyName,
     storyBody: stored.storyBody?.trim() || DEFAULT_ABOUT_PAGE.storyBody,
   };

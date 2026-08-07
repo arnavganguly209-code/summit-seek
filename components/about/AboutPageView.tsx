@@ -55,16 +55,24 @@ export function AboutPageView({ content }: { content: AboutPageContent }) {
               </span>
             </div>
           </div>
-          <div className="relative aspect-[4/3] overflow-hidden rounded-xl sm:aspect-[5/4]">
-            <Image
-              src={content.storyImageUrl}
-              alt={content.companyName}
-              fill
-              unoptimized
-              className="object-cover"
-              sizes="(max-width: 1024px) 100vw, 48vw"
-            />
-          </div>
+          {content.storyImageUrl ? (
+            <div className="relative aspect-[4/3] overflow-hidden rounded-xl sm:aspect-[5/4]">
+              <Image
+                src={content.storyImageUrl}
+                alt={content.companyName}
+                fill
+                unoptimized
+                className="object-cover"
+                sizes="(max-width: 1024px) 100vw, 48vw"
+              />
+            </div>
+          ) : (
+            <div className="relative flex aspect-[4/3] items-center justify-center overflow-hidden rounded-xl bg-[linear-gradient(145deg,#0b1524,#1d4ed8)] sm:aspect-[5/4]">
+              <p className="px-6 text-center font-[family-name:var(--font-display)] text-[1.35rem] font-bold text-white/85">
+                {content.companyName}
+              </p>
+            </div>
+          )}
         </div>
 
         <div className="mt-6 grid gap-6 md:grid-cols-2">

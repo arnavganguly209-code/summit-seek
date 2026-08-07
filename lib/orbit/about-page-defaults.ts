@@ -1,5 +1,17 @@
-import type { AboutPageContent } from "@/types/about-page-cms";
+import type { AboutPageContent, AboutTeamMember } from "@/types/about-page-cms";
 import { SITE } from "@/lib/constants";
+
+function emptyTeamSlot(index: number): AboutTeamMember {
+  const n = index + 1;
+  return {
+    id: `t${n}`,
+    name: `Team Member ${n}`,
+    role: "Designation",
+    bio: "Add a short bio for this team member in Orbit.",
+    imageUrl: "",
+    visible: true,
+  };
+}
 
 export const DEFAULT_ABOUT_PAGE: AboutPageContent = {
   coverImageUrl:
@@ -12,8 +24,7 @@ export const DEFAULT_ABOUT_PAGE: AboutPageContent = {
   storyHeading: "The pioneers of thoughtful Himalayan travel",
   storyBody:
     "Summit Seek Travels & Tours is a Kathmandu-based trekking and adventure company dedicated to safe, meaningful journeys across Nepal’s Himalaya. From Everest Base Camp and Annapurna trails to remote circuits, peak climbs, and cultural tours, we design every itinerary with local expertise, careful pacing, and genuine hospitality.\n\nBased in Thamel, our licensed team handles permits, logistics, guides, and on-trail support so guests can focus on the mountains — not the paperwork. We believe great travel balances adventure with respect for communities, culture, and the natural environment we walk through.",
-  storyImageUrl:
-    "https://images.unsplash.com/photo-1544735716-392fe2489ffa?auto=format&fit=crop&w=1200&q=80",
+  storyImageUrl: "",
   missionHeading: "Our Mission",
   missionBody:
     "To craft Himalayan journeys that feel personal, safe, and unforgettable — connecting travelers with Nepal’s landscapes and people while delivering world-class service from the first briefing to the final farewell.",
@@ -58,49 +69,14 @@ export const DEFAULT_ABOUT_PAGE: AboutPageContent = {
   metaTitle: "About Summit Seek Travels & Tours",
   metaDescription:
     "Learn about Summit Seek Travels & Tours — a Kathmandu-based Himalayan trekking company focused on safety, local expertise, and responsible adventure in Nepal.",
+  teamCoverImageUrl:
+    "https://images.unsplash.com/photo-1551632811-561732d1e306?auto=format&fit=crop&w=2000&q=80",
   teamCoverTitle: "Our Team",
   teamCoverSubtitle:
-    "Guides, planners, and mountain professionals behind every Summit Seek journey.",
+    "The guides, planners, and mountain professionals behind every Summit Seek journey.",
   teamIntro:
-    "Summit Seek is powered by a tight Kathmandu team and trusted trail partners across Nepal. Meet the people who plan, guide, and support your adventure.",
-  team: [
-    {
-      id: "t1",
-      name: "Arnav Ganguly",
-      role: "Founder & Operations",
-      bio: "Leads trip design, guest relations, and day-to-day operations from Kathmandu.",
-      imageUrl:
-        "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=600&q=80",
-      visible: true,
-    },
-    {
-      id: "t2",
-      name: "Pasang Sherpa",
-      role: "Senior Trek Leader",
-      bio: "Everest and Annapurna specialist with deep knowledge of pacing and high-altitude care.",
-      imageUrl:
-        "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?auto=format&fit=crop&w=600&q=80",
-      visible: true,
-    },
-    {
-      id: "t3",
-      name: "Sita Gurung",
-      role: "Guest Experience",
-      bio: "Coordinates briefings, lodge bookings, and personalized support before and after treks.",
-      imageUrl:
-        "https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&w=600&q=80",
-      visible: true,
-    },
-    {
-      id: "t4",
-      name: "Tenzing Lama",
-      role: "Expedition Coordinator",
-      bio: "Manages peak climbs, permits, and logistics for technical Himalayan objectives.",
-      imageUrl:
-        "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=600&q=80",
-      visible: true,
-    },
-  ],
+    "Summit Seek is powered by a Kathmandu-based operations team and trusted trail partners across Nepal. Meet the people who plan, guide, and support your Himalayan adventure — from first briefing to safe return.",
+  team: Array.from({ length: 8 }, (_, i) => emptyTeamSlot(i)),
   teamMetaTitle: "Our Team | Summit Seek",
   teamMetaDescription:
     "Meet the Summit Seek Travels & Tours team — guides, planners, and mountain professionals in Kathmandu.",
@@ -113,3 +89,11 @@ export const DEFAULT_ABOUT_PAGE: AboutPageContent = {
   visionMetaDescription:
     "Discover Summit Seek’s vision for safe, ethical, and unforgettable Himalayan travel in Nepal.",
 };
+
+/** Old placeholder headshots — do not resurrect after CMS clear. */
+export const LEGACY_DEFAULT_TEAM_IMAGE_URLS = new Set([
+  "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=600&q=80",
+  "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?auto=format&fit=crop&w=600&q=80",
+  "https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&w=600&q=80",
+  "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=600&q=80",
+]);

@@ -11,7 +11,6 @@ import {
   Upload,
 } from "lucide-react";
 import type { AboutIntroContent } from "@/types/about-intro";
-import { DEFAULT_ABOUT_INTRO } from "@/lib/orbit/about-intro-defaults";
 import { orbitUploadFile, withCacheBust } from "@/lib/orbit/client-upload";
 import { OrbitMediaPreview } from "@/components/orbit/OrbitMediaPreview";
 
@@ -129,25 +128,11 @@ export function AboutIntroEditor({ initial }: Props) {
   };
 
   const removeSlot = async (slot: "main" | "circle") => {
-    const prev =
-      slot === "main" ? content.mainImageUrl : content.circleImageUrl;
-    if (prev.startsWith("/media/library/")) {
-      try {
-        await fetch(`/api/orbit/media?url=${encodeURIComponent(prev.split("?")[0])}`, {
-          method: "DELETE",
-        });
-      } catch {
-        // continue reset
-      }
-    }
-    const fallback =
-      slot === "main"
-        ? DEFAULT_ABOUT_INTRO.mainImageUrl
-        : DEFAULT_ABOUT_INTRO.circleImageUrl;
+    // Clear CMS reference only — keep file in media library for reuse
     const next =
       slot === "main"
-        ? { ...content, mainImageUrl: fallback }
-        : { ...content, circleImageUrl: fallback };
+        ? { ...content, mainImageUrl: "" }
+        : { ...content, circleImageUrl: "" };
     setContent(next);
     await save(next);
   };

@@ -27,7 +27,7 @@ export default async function AboutTeamPage() {
   return (
     <>
       <PageCover
-        imageUrl={content.coverImageUrl}
+        imageUrl={content.teamCoverImageUrl || content.coverImageUrl}
         title={content.teamCoverTitle}
         subtitle={content.teamCoverSubtitle}
       />

@@ -22,7 +22,8 @@ type Props = {
 };
 
 function emptyImageFallback() {
-  return "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?auto=format&fit=crop&w=900&q=80";
+  // Empty string = intentionally no image. Do not fall back to stock photos.
+  return "";
 }
 
 function coercePackages(content: FeaturedPackagesContent): FeaturedPackagesContent {
@@ -198,16 +199,7 @@ export function FeaturedPackagesEditor({ initial }: Props) {
 
   const removeImage = async (pkg: FeaturedPackage) => {
     if (!category) return;
-    const url = pkg.imageUrl.split("?")[0];
-    if (url.startsWith("/media/library/")) {
-      try {
-        await fetch(`/api/orbit/media?url=${encodeURIComponent(url)}`, {
-          method: "DELETE",
-        });
-      } catch {
-        // still clear from package
-      }
-    }
+    // Clear package slot only — keep file in media library for reuse
     const imageUrl = emptyImageFallback();
     const next: FeaturedPackagesContent = {
       ...content,
@@ -224,7 +216,7 @@ export function FeaturedPackagesEditor({ initial }: Props) {
     };
     setContent(next);
     await save(next);
-    setToast("Image removed and saved.");
+    setToast("Image removed from package. File stays in Media library.");
   };
 
   return (
