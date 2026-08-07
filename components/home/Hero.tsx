@@ -136,7 +136,7 @@ export function Hero({ content, preview = false }: Props) {
           </form>
         </div>
 
-        <div className="absolute inset-x-0 bottom-0 z-10">
+        <div className="absolute inset-x-0 bottom-0 z-10 hidden sm:block">
           <div className="border-t border-white/15 bg-white/[0.08] backdrop-blur-xl">
             <div className="mx-auto grid max-w-[1280px] grid-cols-1 divide-y divide-white/15 sm:grid-cols-2 sm:divide-x sm:divide-y-0 lg:grid-cols-4">
               {content.features.map((feature) => {

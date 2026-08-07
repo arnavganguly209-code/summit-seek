@@ -13,7 +13,7 @@ interface CompanyDropdownProps {
 }
 
 const panelDark =
-  "overflow-hidden rounded-[14px] border border-white/25 bg-[rgba(8,18,30,0.32)] shadow-[0_22px_55px_rgba(0,0,0,0.18)] backdrop-blur-[28px] supports-[backdrop-filter]:bg-[rgba(8,18,30,0.28)]";
+  "overflow-hidden rounded-[14px] border border-white/25 bg-[rgba(8,18,30,0.47)] shadow-[0_22px_55px_rgba(0,0,0,0.22)] backdrop-blur-[28px] supports-[backdrop-filter]:bg-[rgba(8,18,30,0.43)]";
 
 function CompanyList({ onClose }: { onClose: () => void }) {
   const pathname = usePathname();
