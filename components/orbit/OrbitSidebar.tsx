@@ -18,6 +18,7 @@ import {
   BookOpen,
   PhoneCall,
   Building2,
+  Image as LogoImage,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -33,6 +34,7 @@ const nav = [
         label: "Hero",
         icon: PanelsTopLeft,
       },
+      { href: "/orbit/dashboard/website/header", label: "Header Logos", icon: LogoImage },
       { href: "/orbit/dashboard/website/packages", label: "Featured Packages", icon: Package },
       { href: "/orbit/dashboard/website/best-selling", label: "Best Selling Packages", icon: Package },
       { href: "/orbit/dashboard/website/services", label: "What We Offer", icon: BriefcaseBusiness },

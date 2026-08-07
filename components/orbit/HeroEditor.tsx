@@ -334,15 +334,21 @@ export function HeroEditor({ initial }: Props) {
             onChange={(v) => update("searchButtonLabel", v)}
           />
           <Field
-            label="Logo (scrolled / light bg)"
+            label="Logo (scrolled / light bg) — prefer Orbit → Header Logos"
             value={content.logoUrl}
             onChange={(v) => update("logoUrl", v)}
           />
           <Field
-            label="Logo (transparent header)"
+            label="Logo (transparent header) — prefer Orbit → Header Logos"
             value={content.logoUrlLight}
             onChange={(v) => update("logoUrlLight", v)}
           />
+          <a
+            href="/orbit/dashboard/website/header"
+            className="inline-flex text-[12px] font-semibold text-[#7dd3fc] hover:underline"
+          >
+            Open Header Logos uploader →
+          </a>
 
           <label className="block">
             <span className="mb-1.5 block text-[12px] font-medium text-white/55">

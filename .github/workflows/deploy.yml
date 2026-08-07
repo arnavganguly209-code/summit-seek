@@ -44,15 +44,15 @@ jobs:
         run: |
           set +e
           echo "Checking TCP connectivity to ${VPS_HOST}:22 ..."
-          for i in 1 2 3 4 5; do
-            if timeout 8 bash -c "echo >/dev/tcp/${VPS_HOST}/22" 2>/dev/null; then
+          for i in $(seq 1 12); do
+            if timeout 12 bash -c "echo >/dev/tcp/${VPS_HOST}/22" 2>/dev/null; then
               echo "Port 22 is reachable (attempt $i)."
               exit 0
             fi
             echo "Attempt $i failed — waiting..."
-            sleep $((i * 3))
+            sleep $((i * 4))
           done
-          echo "::error::Cannot reach ${VPS_HOST}:22 from GitHub Actions. VPS may be down, SSH blocked, or firewall/fail2ban is rejecting GitHub IPs."
+          echo "::error::Cannot reach ${VPS_HOST}:22 from GitHub Actions. VPS may be down, SSH blocked, or firewall/fail2ban is rejecting GitHub IPs. Retry the workflow once the host is reachable."
           exit 1
 
       - name: Deploy via OpenSSH
@@ -76,22 +76,29 @@ jobs:
           chmod 600 ~/.ssh/deploy_key
 
           # Known hosts — retry keyscan
-          for i in 1 2 3 4 5; do
-            if ssh-keyscan -T 10 -H "$VPS_HOST" >> ~/.ssh/known_hosts 2>/dev/null; then
+          for i in $(seq 1 10); do
+            if ssh-keyscan -T 15 -H "$VPS_HOST" >> ~/.ssh/known_hosts 2>/dev/null; then
               echo "Host key captured (attempt $i)."
               break
             fi
             echo "ssh-keyscan attempt $i failed..."
-            sleep $((i * 2))
-            if [ "$i" = "5" ]; then
+            sleep $((i * 3))
+            if [ "$i" = "10" ]; then
               echo "::error::ssh-keyscan failed for $VPS_HOST. Host unreachable or SSH not responding."
               exit 1
             fi
           done
 
-          SSH=(ssh -i ~/.ssh/deploy_key -o IdentitiesOnly=yes -o StrictHostKeyChecking=yes -o ConnectTimeout=30 -o ServerAliveInterval=15 -o ServerAliveCountMax=6)
+          SSH=(ssh -i ~/.ssh/deploy_key -o IdentitiesOnly=yes -o StrictHostKeyChecking=yes -o ConnectTimeout=45 -o ServerAliveInterval=15 -o ServerAliveCountMax=8)
 
           echo "Connecting as ${VPS_USER}@${VPS_HOST} ..."
+          # One soft retry if first SSH attempt fails (transient network)
+          if ! "${SSH[@]}" "${VPS_USER}@${VPS_HOST}" "echo ssh-ok"; then
+            echo "First SSH probe failed — retrying in 20s..."
+            sleep 20
+            "${SSH[@]}" "${VPS_USER}@${VPS_HOST}" "echo ssh-ok"
+          fi
+
           "${SSH[@]}" "${VPS_USER}@${VPS_HOST}" bash -s <<EOF
           set -euo pipefail
           echo "Deploying in: ${PROJECT_PATH}"

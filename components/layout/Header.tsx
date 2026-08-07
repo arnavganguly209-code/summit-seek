@@ -56,6 +56,15 @@ export function Header({
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
+  // Preload both logos so scroll swap never flashes a missing/old asset
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    const a = new window.Image();
+    a.src = logoUrl;
+    const b = new window.Image();
+    b.src = logoUrlLight;
+  }, [logoUrl, logoUrlLight]);
+
   useEffect(() => {
     document.body.style.overflow = mobileOpen ? "hidden" : "";
     return () => {
@@ -88,6 +97,7 @@ export function Header({
           className="relative z-10 flex h-full shrink-0 items-center bg-transparent"
         >
           <Image
+            key={activeLogo}
             src={activeLogo}
             alt="Summit Seek Travels & Tours"
             width={980}
