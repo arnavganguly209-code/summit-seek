@@ -11,6 +11,7 @@ import type { TravelArticlesContent } from "@/types/travel-articles";
 import type { FooterContent } from "@/types/footer-cms";
 import type { ContactPageContent } from "@/types/contact-cms";
 import type { BlogPageContent, BlogPost } from "@/types/blog-cms";
+import type { AboutPageContent } from "@/types/about-page-cms";
 import { DEFAULT_HERO } from "@/lib/orbit/defaults";
 import { DEFAULT_FEATURED_PACKAGES } from "@/lib/orbit/featured-packages-defaults";
 import { DEFAULT_ABOUT_INTRO } from "@/lib/orbit/about-intro-defaults";
@@ -22,6 +23,7 @@ import { DEFAULT_TRAVEL_ARTICLES } from "@/lib/orbit/travel-articles-defaults";
 import { DEFAULT_FOOTER } from "@/lib/orbit/footer-defaults";
 import { DEFAULT_CONTACT } from "@/lib/orbit/contact-defaults";
 import { DEFAULT_BLOG } from "@/lib/orbit/blog-defaults";
+import { DEFAULT_ABOUT_PAGE } from "@/lib/orbit/about-page-defaults";
 
 const DATA_DIR = path.join(process.cwd(), "data");
 const HERO_FILE = path.join(DATA_DIR, "hero.json");
@@ -35,6 +37,7 @@ const TRAVEL_ARTICLES_FILE = path.join(DATA_DIR, "travel-articles.json");
 const FOOTER_FILE = path.join(DATA_DIR, "footer.json");
 const CONTACT_FILE = path.join(DATA_DIR, "contact.json");
 const BLOG_FILE = path.join(DATA_DIR, "blog.json");
+const ABOUT_PAGE_FILE = path.join(DATA_DIR, "about-page.json");
 const MEDIA_FILE = path.join(DATA_DIR, "media-library.json");
 
 /** Durable upload root — survives `git reset --hard` (unlike public/). */
@@ -460,10 +463,15 @@ function mergeFooter(stored: Partial<FooterContent> | null): FooterContent {
     fallback: FooterContent["destinations"],
   ) => {
     if (!Array.isArray(items) || items.length === 0) return fallback;
-    return items.map((l, i) => ({
-      label: l.label?.trim() || fallback[i]?.label || "Link",
-      href: l.href?.trim() || fallback[i]?.href || "/",
-    }));
+    return items.map((l, i) => {
+      let href = l.href?.trim() || fallback[i]?.href || "/";
+      if (href === "/about#team") href = "/about/team";
+      if (href === "/about#vision") href = "/about/vision";
+      return {
+        label: l.label?.trim() || fallback[i]?.label || "Link",
+        href,
+      };
+    });
   };
 
   return {
@@ -624,6 +632,53 @@ export async function saveBlogContent(content: BlogPageContent): Promise<void> {
 export async function getBlogPostBySlug(slug: string): Promise<BlogPost | null> {
   const content = await getBlogContent();
   return content.posts.find((p) => p.slug === slug && p.visible !== false) || null;
+}
+
+function mergeAboutPage(stored: Partial<AboutPageContent> | null): AboutPageContent {
+  if (!stored) return DEFAULT_ABOUT_PAGE;
+
+  const values =
+    Array.isArray(stored.values) && stored.values.length > 0
+      ? stored.values.map((v, i) => ({
+          ...DEFAULT_ABOUT_PAGE.values[i % DEFAULT_ABOUT_PAGE.values.length],
+          ...v,
+          id: v.id || `v-${i + 1}`,
+        }))
+      : DEFAULT_ABOUT_PAGE.values;
+
+  const team =
+    Array.isArray(stored.team) && stored.team.length > 0
+      ? stored.team.map((m, i) => ({
+          ...DEFAULT_ABOUT_PAGE.team[i % DEFAULT_ABOUT_PAGE.team.length],
+          ...m,
+          id: m.id || `t-${i + 1}`,
+          visible: m.visible !== false,
+        }))
+      : DEFAULT_ABOUT_PAGE.team;
+
+  return {
+    ...DEFAULT_ABOUT_PAGE,
+    ...stored,
+    values,
+    team,
+    coverImageUrl: stored.coverImageUrl?.trim() || DEFAULT_ABOUT_PAGE.coverImageUrl,
+    companyName: stored.companyName?.trim() || DEFAULT_ABOUT_PAGE.companyName,
+    storyBody: stored.storyBody?.trim() || DEFAULT_ABOUT_PAGE.storyBody,
+  };
+}
+
+export async function getAboutPageContent(): Promise<AboutPageContent> {
+  try {
+    const raw = await fs.readFile(ABOUT_PAGE_FILE, "utf8");
+    return mergeAboutPage(JSON.parse(raw) as Partial<AboutPageContent>);
+  } catch {
+    return DEFAULT_ABOUT_PAGE;
+  }
+}
+
+export async function saveAboutPageContent(content: AboutPageContent): Promise<void> {
+  await ensureDataDir();
+  await fs.writeFile(ABOUT_PAGE_FILE, JSON.stringify(content, null, 2), "utf8");
 }
 
 export async function getMediaLibrary(): Promise<MediaItem[]> {

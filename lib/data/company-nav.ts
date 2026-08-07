@@ -7,8 +7,8 @@ export type CompanyNavItem = {
 /** Company dropdown — Destinations-style dark list */
 export const companyNavItems: CompanyNavItem[] = [
   { id: "about", title: "About Company", href: "/about" },
-  { id: "team", title: "Our Team", href: "/about#team" },
-  { id: "vision", title: "Our Vision", href: "/about#vision" },
+  { id: "team", title: "Our Team", href: "/about/team" },
+  { id: "vision", title: "Our Vision", href: "/about/vision" },
   { id: "legal", title: "Legal Documents", href: "/legal" },
   { id: "why", title: "Why Summit Seek", href: "/why-summit-seek" },
   { id: "responsible", title: "Responsible Travel", href: "/responsible-travel" },

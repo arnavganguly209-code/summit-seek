@@ -60,7 +60,7 @@ export const footerTrekking = [
 
 export const footerCompany = [
   { label: "About", href: "/about" },
-  { label: "Team", href: "/about#team" },
+  { label: "Team", href: "/about/team" },
   { label: "Why Summit Seek", href: "/about" },
   { label: "Travel Blog", href: "/blog" },
   { label: "FAQ", href: "/faqs" },
