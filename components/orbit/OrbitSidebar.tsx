@@ -19,6 +19,7 @@ import {
   PhoneCall,
   Building2,
   Image as LogoImage,
+  Scale,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -49,6 +50,7 @@ const nav = [
       { href: "/orbit/dashboard/website/contact", label: "Contact", icon: PhoneCall },
       { href: "/orbit/dashboard/website/about", label: "Get to Know Us", icon: Info },
       { href: "/orbit/dashboard/website/about-page", label: "About / Team / Vision", icon: Building2 },
+      { href: "/orbit/dashboard/website/legal", label: "Legal Documents", icon: Scale },
       { href: "/orbit/dashboard/website/footer", label: "Footer", icon: PanelBottom },
     ],
   },

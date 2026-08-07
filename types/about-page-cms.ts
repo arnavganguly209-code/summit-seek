@@ -43,9 +43,13 @@ export type AboutPageContent = {
   team: AboutTeamMember[];
   teamMetaTitle: string;
   teamMetaDescription: string;
+  visionCoverImageUrl: string;
   visionPageCoverTitle: string;
   visionPageCoverSubtitle: string;
+  visionPageIntro: string;
   visionPageBody: string;
+  visionPillarsHeading: string;
+  visionPillars: AboutValue[];
   visionMetaTitle: string;
   visionMetaDescription: string;
 };

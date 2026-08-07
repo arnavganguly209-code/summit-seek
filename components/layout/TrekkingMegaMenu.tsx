@@ -67,11 +67,11 @@ function RegionColumn({
         onClick={onClose}
         className="group inline-flex items-center gap-1.5 px-2 pb-1"
       >
-        <span className="text-[13.5px] font-bold tracking-[0.01em] text-[#D8A34A] transition-colors duration-[180ms] group-hover:text-[#E8C06A]">
+        <span className="text-[14px] font-extrabold tracking-[0.02em] text-[#FFC857] drop-shadow-[0_1px_8px_rgba(255,200,87,0.45)] transition-colors duration-[180ms] group-hover:text-[#FFD97A]">
           {heading}
         </span>
       </Link>
-      <div className="mb-1 ml-2 h-px w-7 bg-[#D8A34A]/80" />
+      <div className="mb-1 ml-2 h-[2px] w-8 rounded-full bg-[#FFC857]" />
       <ul className="space-y-0.5">
         {links.map((link) => (
           <li key={link.href}>
@@ -140,13 +140,13 @@ export function TrekkingMobileAccordion({ onClose }: { onClose: () => void }) {
               onClick={() => setOpenId((v) => (v === col.id ? null : col.id))}
               aria-expanded={open}
             >
-              <span className="text-[13.5px] font-bold text-[#D8A34A]">
+              <span className="text-[14.5px] font-extrabold tracking-[0.02em] text-[#FFC857] drop-shadow-[0_1px_10px_rgba(255,200,87,0.5)]">
                 {col.heading}
               </span>
               <ChevronDown
                 className={cn(
-                  "size-4 text-white/40 transition-transform duration-[180ms]",
-                  open && "rotate-180 text-[#D8A34A]",
+                  "size-4 text-[#FFC857]/70 transition-transform duration-[180ms]",
+                  open && "rotate-180 text-[#FFC857]",
                 )}
               />
             </button>

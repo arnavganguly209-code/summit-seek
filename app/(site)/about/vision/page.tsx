@@ -27,7 +27,7 @@ export default async function AboutVisionPage() {
   return (
     <>
       <PageCover
-        imageUrl={content.coverImageUrl}
+        imageUrl={content.visionCoverImageUrl || content.coverImageUrl}
         title={content.visionPageCoverTitle}
         subtitle={content.visionPageCoverSubtitle}
       />

@@ -394,49 +394,108 @@ export function AboutPageEditor({ initial }: Props) {
       </section>
 
       <section className="rounded-2xl border border-white/10 bg-white/[0.04] p-5">
-        <h2 className="text-[14px] font-bold text-white">Vision page</h2>
-        <div className="mt-3 grid gap-3 sm:grid-cols-2">
-          <label>
-            <span className={label}>Vision page cover title</span>
-            <input
-              className={field}
-              value={content.visionPageCoverTitle}
-              onChange={(e) => update("visionPageCoverTitle", e.target.value)}
-            />
-          </label>
-          <label>
-            <span className={label}>Vision meta title</span>
-            <input
-              className={field}
-              value={content.visionMetaTitle}
-              onChange={(e) => update("visionMetaTitle", e.target.value)}
-            />
-          </label>
-          <label className="sm:col-span-2">
-            <span className={label}>Vision page cover subtitle</span>
-            <input
-              className={field}
-              value={content.visionPageCoverSubtitle}
-              onChange={(e) => update("visionPageCoverSubtitle", e.target.value)}
-            />
-          </label>
-          <label className="sm:col-span-2">
-            <span className={label}>Vision page body</span>
-            <textarea
-              rows={6}
-              className={field}
-              value={content.visionPageBody}
-              onChange={(e) => update("visionPageBody", e.target.value)}
-            />
-          </label>
-          <label className="sm:col-span-2">
-            <span className={label}>Vision meta description</span>
-            <input
-              className={field}
-              value={content.visionMetaDescription}
-              onChange={(e) => update("visionMetaDescription", e.target.value)}
-            />
-          </label>
+        <h2 className="text-[14px] font-bold text-white">Vision page (`/about/vision`)</h2>
+        <div className="mt-4 space-y-4">
+          <OrbitImageField
+            label="Vision page cover"
+            value={content.visionCoverImageUrl}
+            aspectClassName="aspect-[21/7]"
+            onChange={(url) => update("visionCoverImageUrl", url)}
+            onAfterChange={(url) => setImageAndSave({ visionCoverImageUrl: url })}
+          />
+          <div className="grid gap-3 sm:grid-cols-2">
+            <label>
+              <span className={label}>Vision page cover title</span>
+              <input
+                className={field}
+                value={content.visionPageCoverTitle}
+                onChange={(e) => update("visionPageCoverTitle", e.target.value)}
+              />
+            </label>
+            <label>
+              <span className={label}>Vision meta title</span>
+              <input
+                className={field}
+                value={content.visionMetaTitle}
+                onChange={(e) => update("visionMetaTitle", e.target.value)}
+              />
+            </label>
+            <label className="sm:col-span-2">
+              <span className={label}>Vision page cover subtitle</span>
+              <input
+                className={field}
+                value={content.visionPageCoverSubtitle}
+                onChange={(e) => update("visionPageCoverSubtitle", e.target.value)}
+              />
+            </label>
+            <label className="sm:col-span-2">
+              <span className={label}>Vision intro</span>
+              <textarea
+                rows={2}
+                className={field}
+                value={content.visionPageIntro}
+                onChange={(e) => update("visionPageIntro", e.target.value)}
+              />
+            </label>
+            <label className="sm:col-span-2">
+              <span className={label}>Vision page body</span>
+              <textarea
+                rows={8}
+                className={field}
+                value={content.visionPageBody}
+                onChange={(e) => update("visionPageBody", e.target.value)}
+              />
+            </label>
+            <label className="sm:col-span-2">
+              <span className={label}>Vision pillars heading</span>
+              <input
+                className={field}
+                value={content.visionPillarsHeading}
+                onChange={(e) => update("visionPillarsHeading", e.target.value)}
+              />
+            </label>
+            <label className="sm:col-span-2">
+              <span className={label}>Vision meta description</span>
+              <input
+                className={field}
+                value={content.visionMetaDescription}
+                onChange={(e) => update("visionMetaDescription", e.target.value)}
+              />
+            </label>
+          </div>
+          <div className="space-y-3">
+            <p className="text-[12px] font-semibold text-white/55">Vision pillars</p>
+            {(content.visionPillars || []).map((v) => (
+              <div key={v.id} className="grid gap-2 rounded-xl border border-white/10 p-3 sm:grid-cols-2">
+                <input
+                  className={field}
+                  value={v.title}
+                  onChange={(e) =>
+                    setContent((prev) => ({
+                      ...prev,
+                      visionPillars: prev.visionPillars.map((p) =>
+                        p.id === v.id ? { ...p, title: e.target.value } : p,
+                      ),
+                    }))
+                  }
+                  placeholder="Title"
+                />
+                <input
+                  className={field}
+                  value={v.description}
+                  onChange={(e) =>
+                    setContent((prev) => ({
+                      ...prev,
+                      visionPillars: prev.visionPillars.map((p) =>
+                        p.id === v.id ? { ...p, description: e.target.value } : p,
+                      ),
+                    }))
+                  }
+                  placeholder="Description"
+                />
+              </div>
+            ))}
+          </div>
         </div>
       </section>
     </div>

@@ -80,11 +80,42 @@ export const DEFAULT_ABOUT_PAGE: AboutPageContent = {
   teamMetaTitle: "Our Team | Summit Seek",
   teamMetaDescription:
     "Meet the Summit Seek Travels & Tours team — guides, planners, and mountain professionals in Kathmandu.",
+  visionCoverImageUrl:
+    "https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?auto=format&fit=crop&w=2000&q=80",
   visionPageCoverTitle: "Our Vision",
   visionPageCoverSubtitle:
-    "Exploring new frontiers with safety, culture, and purpose at the center.",
+    "Exploring new frontiers with safety, culture, and purpose at the center of every Himalayan journey.",
+  visionPageIntro:
+    "Summit Seek Travels & Tours exists to open the Himalaya with clarity, care, and lasting respect — for travelers, for trail communities, and for the mountains themselves.",
   visionPageBody:
-    "Our vision is to show travelers the real Himalayan world — not only famous viewpoints, but also the living cultures, quiet valleys, and carefully planned routes that make Nepal unforgettable.\n\nSafety is always the priority. Detailed preparation, trained guides, and honest communication shape every Summit Seek itinerary. Alongside adventure, we seek balance: meaningful contact with local communities, respect for heritage, and journeys that protect the trails we love.\n\nWhen you travel with Summit Seek Travels & Tours, you join a team committed to excellence on the path and responsibility beyond it.",
+    "Our vision is to show travelers the real Himalayan world — not only famous viewpoints, but also the living cultures, quiet valleys, and carefully planned routes that make Nepal unforgettable.\n\nSafety is always the priority. Detailed preparation, trained guides, and honest communication shape every Summit Seek itinerary. Alongside adventure, we seek balance: meaningful contact with local communities, respect for heritage, and journeys that protect the trails we love.\n\nWe design every trek and expedition so guests feel supported from the first briefing in Kathmandu to the final farewell. Logistics stay invisible; hospitality stays personal. That is how premium Himalayan travel should feel.\n\nWhen you travel with Summit Seek Travels & Tours, you join a team committed to excellence on the path and responsibility beyond it — building journeys that are memorable today and sustainable for tomorrow.",
+  visionPillarsHeading: "What our vision looks like on every trek",
+  visionPillars: [
+    {
+      id: "vp1",
+      title: "Safety with foresight",
+      description:
+        "Acclimatization-aware pacing, trained leadership, and clear decision-making when weather or altitude changes the plan.",
+    },
+    {
+      id: "vp2",
+      title: "Culture with respect",
+      description:
+        "Routes and briefings that honor local communities, lodge life, and the living heritage of the Himalaya.",
+    },
+    {
+      id: "vp3",
+      title: "Adventure with purpose",
+      description:
+        "From Everest trails to remote circuits, every itinerary balances challenge, comfort, and meaningful mountain experience.",
+    },
+    {
+      id: "vp4",
+      title: "Service without noise",
+      description:
+        "Permits, logistics, and on-trail support handled quietly and professionally so guests can stay present.",
+    },
+  ],
   visionMetaTitle: "Our Vision | Summit Seek",
   visionMetaDescription:
     "Discover Summit Seek’s vision for safe, ethical, and unforgettable Himalayan travel in Nepal.",

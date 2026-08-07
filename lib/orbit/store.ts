@@ -12,6 +12,7 @@ import type { FooterContent } from "@/types/footer-cms";
 import type { ContactPageContent } from "@/types/contact-cms";
 import type { BlogPageContent, BlogPost } from "@/types/blog-cms";
 import type { AboutPageContent } from "@/types/about-page-cms";
+import type { LegalPageContent } from "@/types/legal-cms";
 import { DEFAULT_HERO } from "@/lib/orbit/defaults";
 import { DEFAULT_FEATURED_PACKAGES } from "@/lib/orbit/featured-packages-defaults";
 import { DEFAULT_ABOUT_INTRO } from "@/lib/orbit/about-intro-defaults";
@@ -27,6 +28,7 @@ import {
   DEFAULT_ABOUT_PAGE,
   LEGACY_DEFAULT_TEAM_IMAGE_URLS,
 } from "@/lib/orbit/about-page-defaults";
+import { DEFAULT_LEGAL_PAGE } from "@/lib/orbit/legal-defaults";
 
 const DATA_DIR = path.join(process.cwd(), "data");
 const HERO_FILE = path.join(DATA_DIR, "hero.json");
@@ -41,6 +43,7 @@ const FOOTER_FILE = path.join(DATA_DIR, "footer.json");
 const CONTACT_FILE = path.join(DATA_DIR, "contact.json");
 const BLOG_FILE = path.join(DATA_DIR, "blog.json");
 const ABOUT_PAGE_FILE = path.join(DATA_DIR, "about-page.json");
+const LEGAL_FILE = path.join(DATA_DIR, "legal.json");
 const MEDIA_FILE = path.join(DATA_DIR, "media-library.json");
 
 /** Durable upload root — survives `git reset --hard` (unlike public/). */
@@ -697,18 +700,37 @@ function mergeAboutPage(stored: Partial<AboutPageContent> | null): AboutPageCont
     typeof stored.teamCoverImageUrl === "string"
       ? stored.teamCoverImageUrl.trim()
       : DEFAULT_ABOUT_PAGE.teamCoverImageUrl;
+  const visionCoverImageUrl =
+    typeof stored.visionCoverImageUrl === "string"
+      ? stored.visionCoverImageUrl.trim()
+      : DEFAULT_ABOUT_PAGE.visionCoverImageUrl;
+
+  const visionPillars =
+    Array.isArray(stored.visionPillars) && stored.visionPillars.length > 0
+      ? stored.visionPillars.map((v, i) => ({
+          ...DEFAULT_ABOUT_PAGE.visionPillars[i % DEFAULT_ABOUT_PAGE.visionPillars.length],
+          ...v,
+          id: v.id || `vp-${i + 1}`,
+        }))
+      : DEFAULT_ABOUT_PAGE.visionPillars;
 
   return {
     ...DEFAULT_ABOUT_PAGE,
     ...stored,
     values,
     team,
+    visionPillars,
     // Respect intentional clears — never resurrect removed images from defaults
     coverImageUrl,
     storyImageUrl,
     teamCoverImageUrl,
+    visionCoverImageUrl,
     companyName: stored.companyName?.trim() || DEFAULT_ABOUT_PAGE.companyName,
     storyBody: stored.storyBody?.trim() || DEFAULT_ABOUT_PAGE.storyBody,
+    visionPageIntro:
+      stored.visionPageIntro?.trim() || DEFAULT_ABOUT_PAGE.visionPageIntro,
+    visionPillarsHeading:
+      stored.visionPillarsHeading?.trim() || DEFAULT_ABOUT_PAGE.visionPillarsHeading,
   };
 }
 
@@ -724,6 +746,47 @@ export async function getAboutPageContent(): Promise<AboutPageContent> {
 export async function saveAboutPageContent(content: AboutPageContent): Promise<void> {
   await ensureDataDir();
   await fs.writeFile(ABOUT_PAGE_FILE, JSON.stringify(content, null, 2), "utf8");
+}
+
+function mergeLegalPage(stored: Partial<LegalPageContent> | null): LegalPageContent {
+  if (!stored) return DEFAULT_LEGAL_PAGE;
+
+  const documents =
+    Array.isArray(stored.documents) && stored.documents.length > 0
+      ? stored.documents.map((d, i) => ({
+          id: d.id || `doc-${i + 1}`,
+          title: (d.title || "").trim() || `Document ${i + 1}`,
+          description: typeof d.description === "string" ? d.description : "",
+          imageUrl: typeof d.imageUrl === "string" ? d.imageUrl.trim() : "",
+          visible: d.visible !== false,
+        }))
+      : DEFAULT_LEGAL_PAGE.documents.map((d) => ({ ...d }));
+
+  return {
+    ...DEFAULT_LEGAL_PAGE,
+    ...stored,
+    documents,
+    coverImageUrl:
+      typeof stored.coverImageUrl === "string"
+        ? stored.coverImageUrl.trim()
+        : DEFAULT_LEGAL_PAGE.coverImageUrl,
+    coverTitle: stored.coverTitle?.trim() || DEFAULT_LEGAL_PAGE.coverTitle,
+    intro: stored.intro?.trim() || DEFAULT_LEGAL_PAGE.intro,
+  };
+}
+
+export async function getLegalContent(): Promise<LegalPageContent> {
+  try {
+    const raw = await fs.readFile(LEGAL_FILE, "utf8");
+    return mergeLegalPage(JSON.parse(raw) as Partial<LegalPageContent>);
+  } catch {
+    return DEFAULT_LEGAL_PAGE;
+  }
+}
+
+export async function saveLegalContent(content: LegalPageContent): Promise<void> {
+  await ensureDataDir();
+  await fs.writeFile(LEGAL_FILE, JSON.stringify(content, null, 2), "utf8");
 }
 
 export async function getMediaLibrary(): Promise<MediaItem[]> {

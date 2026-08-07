@@ -63,6 +63,7 @@ export const footerCompany = [
   { label: "Team", href: "/about/team" },
   { label: "Why Summit Seek", href: "/about" },
   { label: "Travel Blog", href: "/blog" },
+  { label: "Legal Documents", href: "/legal" },
   { label: "FAQ", href: "/faqs" },
   { label: "Privacy Policy", href: "/privacy" },
   { label: "Terms", href: "/terms" },
