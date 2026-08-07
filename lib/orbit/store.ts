@@ -9,6 +9,8 @@ import type { UpcomingTripsContent } from "@/types/upcoming-trips";
 import type { TravelerReviewsContent } from "@/types/traveler-reviews";
 import type { TravelArticlesContent } from "@/types/travel-articles";
 import type { FooterContent } from "@/types/footer-cms";
+import type { ContactPageContent } from "@/types/contact-cms";
+import type { BlogPageContent, BlogPost } from "@/types/blog-cms";
 import { DEFAULT_HERO } from "@/lib/orbit/defaults";
 import { DEFAULT_FEATURED_PACKAGES } from "@/lib/orbit/featured-packages-defaults";
 import { DEFAULT_ABOUT_INTRO } from "@/lib/orbit/about-intro-defaults";
@@ -18,6 +20,8 @@ import { DEFAULT_UPCOMING_TRIPS } from "@/lib/orbit/upcoming-trips-defaults";
 import { DEFAULT_TRAVELER_REVIEWS } from "@/lib/orbit/traveler-reviews-defaults";
 import { DEFAULT_TRAVEL_ARTICLES } from "@/lib/orbit/travel-articles-defaults";
 import { DEFAULT_FOOTER } from "@/lib/orbit/footer-defaults";
+import { DEFAULT_CONTACT } from "@/lib/orbit/contact-defaults";
+import { DEFAULT_BLOG } from "@/lib/orbit/blog-defaults";
 
 const DATA_DIR = path.join(process.cwd(), "data");
 const HERO_FILE = path.join(DATA_DIR, "hero.json");
@@ -29,6 +33,8 @@ const UPCOMING_TRIPS_FILE = path.join(DATA_DIR, "upcoming-trips.json");
 const TRAVELER_REVIEWS_FILE = path.join(DATA_DIR, "traveler-reviews.json");
 const TRAVEL_ARTICLES_FILE = path.join(DATA_DIR, "travel-articles.json");
 const FOOTER_FILE = path.join(DATA_DIR, "footer.json");
+const CONTACT_FILE = path.join(DATA_DIR, "contact.json");
+const BLOG_FILE = path.join(DATA_DIR, "blog.json");
 const MEDIA_FILE = path.join(DATA_DIR, "media-library.json");
 
 /** Durable upload root — survives `git reset --hard` (unlike public/). */
@@ -501,6 +507,123 @@ export async function getFooterContent(): Promise<FooterContent> {
 export async function saveFooterContent(content: FooterContent): Promise<void> {
   await ensureDataDir();
   await fs.writeFile(FOOTER_FILE, JSON.stringify(content, null, 2), "utf8");
+}
+
+function mergeContact(stored: Partial<ContactPageContent> | null): ContactPageContent {
+  if (!stored) return DEFAULT_CONTACT;
+  const socials =
+    Array.isArray(stored.socials) && stored.socials.length > 0
+      ? stored.socials.map((s, i) => ({
+          ...DEFAULT_CONTACT.socials[i % DEFAULT_CONTACT.socials.length],
+          ...s,
+          id: s.id || `social-${i + 1}`,
+          visible: s.visible !== false,
+        }))
+      : DEFAULT_CONTACT.socials;
+
+  return {
+    ...DEFAULT_CONTACT,
+    ...stored,
+    socials,
+    coverImageUrl: stored.coverImageUrl?.trim() || DEFAULT_CONTACT.coverImageUrl,
+    coverTitle: stored.coverTitle?.trim() || DEFAULT_CONTACT.coverTitle,
+    phone: stored.phone?.trim() || DEFAULT_CONTACT.phone,
+    phoneDisplay: stored.phoneDisplay?.trim() || DEFAULT_CONTACT.phoneDisplay,
+    email: stored.email?.trim() || DEFAULT_CONTACT.email,
+    mapEmbedUrl: stored.mapEmbedUrl?.trim() || DEFAULT_CONTACT.mapEmbedUrl,
+  };
+}
+
+export async function getContactContent(): Promise<ContactPageContent> {
+  try {
+    const raw = await fs.readFile(CONTACT_FILE, "utf8");
+    return mergeContact(JSON.parse(raw) as Partial<ContactPageContent>);
+  } catch {
+    return DEFAULT_CONTACT;
+  }
+}
+
+export async function saveContactContent(content: ContactPageContent): Promise<void> {
+  await ensureDataDir();
+  await fs.writeFile(CONTACT_FILE, JSON.stringify(content, null, 2), "utf8");
+}
+
+function mergeBlogPost(stored: Partial<BlogPost>, fallback: BlogPost, index: number): BlogPost {
+  const tags = Array.isArray(stored.tags)
+    ? stored.tags.map((t) => String(t).trim()).filter(Boolean)
+    : fallback.tags;
+  const slug =
+    stored.slug?.trim() ||
+    fallback.slug ||
+    `post-${index + 1}`;
+  return {
+    ...fallback,
+    ...stored,
+    id: stored.id || fallback.id || `blog-${index + 1}`,
+    slug,
+    title: stored.title?.trim() || fallback.title,
+    excerpt: stored.excerpt?.trim() || fallback.excerpt,
+    content: stored.content?.trim() || fallback.content,
+    coverImageUrl: stored.coverImageUrl?.trim() || fallback.coverImageUrl,
+    author: stored.author?.trim() || fallback.author,
+    category: stored.category?.trim() || fallback.category,
+    tags,
+    keywords: stored.keywords?.trim() || fallback.keywords,
+    metaTitle: stored.metaTitle?.trim() || stored.title?.trim() || fallback.metaTitle,
+    metaDescription:
+      stored.metaDescription?.trim() || stored.excerpt?.trim() || fallback.metaDescription,
+    dateLabel: stored.dateLabel?.trim() || fallback.dateLabel,
+    publishedAt: stored.publishedAt?.trim() || fallback.publishedAt,
+    visible: stored.visible !== false,
+  };
+}
+
+function mergeBlog(stored: Partial<BlogPageContent> | null): BlogPageContent {
+  if (!stored) return DEFAULT_BLOG;
+
+  const categories =
+    Array.isArray(stored.categories) && stored.categories.length > 0
+      ? stored.categories.map((c) => String(c).trim()).filter(Boolean)
+      : DEFAULT_BLOG.categories;
+
+  const posts =
+    Array.isArray(stored.posts) && stored.posts.length > 0
+      ? stored.posts.map((p, i) =>
+          mergeBlogPost(p, DEFAULT_BLOG.posts[i] || DEFAULT_BLOG.posts[0], i),
+        )
+      : DEFAULT_BLOG.posts;
+
+  return {
+    ...DEFAULT_BLOG,
+    ...stored,
+    categories,
+    posts,
+    coverImageUrl: stored.coverImageUrl?.trim() || DEFAULT_BLOG.coverImageUrl,
+    coverTitle: stored.coverTitle?.trim() || DEFAULT_BLOG.coverTitle,
+    intro: stored.intro?.trim() || DEFAULT_BLOG.intro,
+    latestHeading: stored.latestHeading?.trim() || DEFAULT_BLOG.latestHeading,
+    metaTitle: stored.metaTitle?.trim() || DEFAULT_BLOG.metaTitle,
+    metaDescription: stored.metaDescription?.trim() || DEFAULT_BLOG.metaDescription,
+  };
+}
+
+export async function getBlogContent(): Promise<BlogPageContent> {
+  try {
+    const raw = await fs.readFile(BLOG_FILE, "utf8");
+    return mergeBlog(JSON.parse(raw) as Partial<BlogPageContent>);
+  } catch {
+    return DEFAULT_BLOG;
+  }
+}
+
+export async function saveBlogContent(content: BlogPageContent): Promise<void> {
+  await ensureDataDir();
+  await fs.writeFile(BLOG_FILE, JSON.stringify(content, null, 2), "utf8");
+}
+
+export async function getBlogPostBySlug(slug: string): Promise<BlogPost | null> {
+  const content = await getBlogContent();
+  return content.posts.find((p) => p.slug === slug && p.visible !== false) || null;
 }
 
 export async function getMediaLibrary(): Promise<MediaItem[]> {

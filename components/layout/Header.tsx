@@ -4,15 +4,8 @@ import { useEffect, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { AnimatePresence, motion } from "framer-motion";
-import {
-  Menu,
-  X,
-  ChevronDown,
-  Search,
-  Heart,
-  UserRound,
-  Sparkles,
-} from "lucide-react";
+import { Menu, X, ChevronDown, Search } from "lucide-react";
+import { SITE } from "@/lib/constants";
 import {
   DestinationsDropdown,
   DestinationsMobilePanel,
@@ -105,7 +98,6 @@ export function Header({
           />
         </Link>
 
-        {/* Nav shifted slightly left so Contact Us never touches wishlist */}
         <nav
           className="absolute left-[46%] hidden -translate-x-1/2 items-center gap-0.5 xl:flex"
           aria-label="Primary"
@@ -171,61 +163,40 @@ export function Header({
           })}
         </nav>
 
-        {/* Actions — right, with clear breathing room from nav */}
-        <div className="ml-auto hidden items-center gap-2 pl-6 lg:flex xl:pl-10">
-          <button
-            type="button"
-            className={cn(
-              "inline-flex size-9 items-center justify-center rounded-full border transition",
-              scrolled
-                ? "border-[#2563eb]/35 text-[#2563eb] hover:bg-[#2563eb]/8"
-                : "border-white/35 text-white hover:bg-white/10",
-            )}
-            aria-label="Search"
-          >
-            <Search className="size-4" />
-          </button>
-          <button
-            type="button"
-            className={cn(
-              "inline-flex size-9 items-center justify-center rounded-full transition",
-              scrolled ? "text-[#0b1524] hover:bg-black/5" : "text-white hover:bg-white/10",
-            )}
-            aria-label="Wishlist"
-          >
-            <Heart className="size-4" />
-          </button>
-          <span
-            className={cn("mx-1.5 h-4 w-px", scrolled ? "bg-black/15" : "bg-white/30")}
-            aria-hidden
-          />
+        {/* Need Help? Call Us — replaces search/heart/sign-in/sign-up */}
+        <div className="ml-auto hidden items-center gap-2.5 pl-4 lg:flex xl:gap-3 xl:pl-8">
           <Link
-            href="/sign-in"
+            href="/blog"
             className={cn(
-              "inline-flex items-center gap-1.5 whitespace-nowrap rounded-md px-2.5 py-2 text-[13px] font-semibold transition",
-              navText,
+              "inline-flex size-9 shrink-0 items-center justify-center transition",
+              scrolled ? "text-[#0b1524] hover:text-[#1d4ed8]" : "text-white hover:text-[#93c5fd]",
             )}
+            aria-label="Search travel blogs"
           >
-            <UserRound className="size-4" />
-            Sign In
+            <Search className="size-[18px] stroke-[1.75]" />
           </Link>
-          <span
-            className={cn("mx-0.5 h-4 w-px", scrolled ? "bg-black/15" : "bg-white/30")}
-            aria-hidden
-          />
-          <Link
-            href="/sign-up"
-            className={cn(
-              "inline-flex items-center gap-1.5 whitespace-nowrap rounded-md px-2.5 py-2 text-[13px] font-semibold transition",
-              navText,
-            )}
+          <a
+            href={`tel:${SITE.phone}`}
+            className="group flex min-w-0 flex-col leading-tight"
+            aria-label={`Call us at ${SITE.phoneDisplay}`}
           >
-            <span className="relative">
-              <UserRound className="size-4" />
-              <Sparkles className="absolute -right-1.5 -top-1 size-2.5 text-[#F58220]" />
+            <span
+              className={cn(
+                "font-[family-name:var(--font-ui)] text-[11px] font-medium sm:text-[12px]",
+                scrolled ? "text-[#5a9a3a]" : "text-[#9dcc7a]",
+              )}
+            >
+              Need Help? Call Us
             </span>
-            Sign Up
-          </Link>
+            <span
+              className={cn(
+                "font-[family-name:var(--font-ui)] text-[14px] font-bold tracking-tight sm:text-[15px]",
+                scrolled ? "text-[#0b1524]" : "text-white",
+              )}
+            >
+              {SITE.phoneDisplay}
+            </span>
+          </a>
         </div>
 
         <button
@@ -315,21 +286,20 @@ export function Header({
                   </Link>
                 );
               })}
-              <div className="mt-3 grid grid-cols-2 gap-2 border-t border-black/10 pt-3">
-                <Link
-                  href="/sign-in"
-                  className="rounded-lg bg-[#0b1524] px-3 py-3 text-center text-[13px] font-semibold text-white"
+              <div className="mt-3 flex items-center gap-3 border-t border-black/10 pt-4">
+                <Search className="size-5 shrink-0 text-[#0b1524]" strokeWidth={1.75} />
+                <a
+                  href={`tel:${SITE.phone}`}
+                  className="flex min-w-0 flex-col leading-tight"
                   onClick={() => setMobileOpen(false)}
                 >
-                  Sign In
-                </Link>
-                <Link
-                  href="/sign-up"
-                  className="rounded-lg border border-[#0b1524]/20 px-3 py-3 text-center text-[13px] font-semibold text-[#0b1524]"
-                  onClick={() => setMobileOpen(false)}
-                >
-                  Sign Up
-                </Link>
+                  <span className="text-[12px] font-medium text-[#5a9a3a]">
+                    Need Help? Call Us
+                  </span>
+                  <span className="text-[15px] font-bold text-[#0b1524]">
+                    {SITE.phoneDisplay}
+                  </span>
+                </a>
               </div>
             </div>
           </motion.div>

@@ -12,7 +12,7 @@ export const DEFAULT_TRAVEL_ARTICLES: TravelArticlesContent = {
       title:
         "Hidden Lake Trek – 11 Days: Complete Trek Itinerary & Package Cost in Nepal",
       dateLabel: "JULY 30, 2026",
-      href: "/blog/hidden-lake-trek-11-days",
+      href: "/blog/best-lake-treks-in-nepal",
       imageUrl:
         "https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?auto=format&fit=crop&w=900&q=85",
       visible: true,
@@ -31,7 +31,7 @@ export const DEFAULT_TRAVEL_ARTICLES: TravelArticlesContent = {
       id: "ta-3",
       title: "Top 10 Hardest Mountains to Climb for Professional Mountaineers",
       dateLabel: "JULY 22, 2026",
-      href: "/blog/hardest-mountains-to-climb",
+      href: "/blog/how-trekking-in-everest-region-started",
       imageUrl:
         "https://images.unsplash.com/photo-1486870591958-9b9d0d1dda99?auto=format&fit=crop&w=900&q=85",
       visible: true,
@@ -41,7 +41,7 @@ export const DEFAULT_TRAVEL_ARTICLES: TravelArticlesContent = {
       title:
         "Everest Base Camp Trek Cost Guide 2026: Permits, Flights & Best Season Tips",
       dateLabel: "JULY 18, 2026",
-      href: "/blog/everest-base-camp-cost-guide-2026",
+      href: "/blog/complete-guide-everest-base-camp-trek",
       imageUrl:
         "https://images.unsplash.com/photo-1544735716-392fe2489ffa?auto=format&fit=crop&w=900&q=85",
       visible: true,

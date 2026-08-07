@@ -15,6 +15,8 @@ import {
   Images,
   Users,
   Settings,
+  BookOpen,
+  PhoneCall,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -40,6 +42,8 @@ const nav = [
       },
       { href: "/orbit/dashboard/website/reviews", label: "Reviews", icon: MessageSquareQuote },
       { href: "/orbit/dashboard/website/articles", label: "Travel Articles", icon: MessageSquareQuote },
+      { href: "/orbit/dashboard/website/blog", label: "Blog", icon: BookOpen },
+      { href: "/orbit/dashboard/website/contact", label: "Contact", icon: PhoneCall },
       { href: "/orbit/dashboard/website/about", label: "Get to Know Us", icon: Info },
       { href: "/orbit/dashboard/website/footer", label: "Footer", icon: PanelBottom },
     ],
