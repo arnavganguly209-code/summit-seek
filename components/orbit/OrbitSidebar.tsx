@@ -24,6 +24,8 @@ import {
   Leaf,
   Handshake,
   FileText,
+  CreditCard,
+  Shield,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -69,6 +71,16 @@ const nav = [
         href: "/orbit/dashboard/website/terms",
         label: "Terms & Conditions",
         icon: FileText,
+      },
+      {
+        href: "/orbit/dashboard/website/payment",
+        label: "Payment Procedure",
+        icon: CreditCard,
+      },
+      {
+        href: "/orbit/dashboard/website/privacy",
+        label: "Privacy Policy",
+        icon: Shield,
       },
       { href: "/orbit/dashboard/website/legal", label: "Legal Documents", icon: Scale },
       { href: "/orbit/dashboard/website/footer", label: "Footer", icon: PanelBottom },

@@ -17,6 +17,8 @@ import type { WhySummitSeekContent } from "@/types/why-summit-seek-cms";
 import type { ResponsibleTravelContent } from "@/types/responsible-travel-cms";
 import type { AffiliateContent } from "@/types/affiliate-cms";
 import type { TermsContent } from "@/types/terms-cms";
+import type { PaymentContent } from "@/types/payment-cms";
+import type { PrivacyContent } from "@/types/privacy-cms";
 import { DEFAULT_HERO } from "@/lib/orbit/defaults";
 import { DEFAULT_FEATURED_PACKAGES } from "@/lib/orbit/featured-packages-defaults";
 import { DEFAULT_ABOUT_INTRO } from "@/lib/orbit/about-intro-defaults";
@@ -37,6 +39,8 @@ import { DEFAULT_WHY_SUMMIT_SEEK } from "@/lib/orbit/why-summit-seek-defaults";
 import { DEFAULT_RESPONSIBLE_TRAVEL } from "@/lib/orbit/responsible-travel-defaults";
 import { DEFAULT_AFFILIATE } from "@/lib/orbit/affiliate-defaults";
 import { DEFAULT_TERMS } from "@/lib/orbit/terms-defaults";
+import { DEFAULT_PAYMENT } from "@/lib/orbit/payment-defaults";
+import { DEFAULT_PRIVACY } from "@/lib/orbit/privacy-defaults";
 
 const DATA_DIR = path.join(process.cwd(), "data");
 const HERO_FILE = path.join(DATA_DIR, "hero.json");
@@ -56,6 +60,8 @@ const WHY_SUMMIT_SEEK_FILE = path.join(DATA_DIR, "why-summit-seek.json");
 const RESPONSIBLE_TRAVEL_FILE = path.join(DATA_DIR, "responsible-travel.json");
 const AFFILIATE_FILE = path.join(DATA_DIR, "affiliate.json");
 const TERMS_FILE = path.join(DATA_DIR, "terms.json");
+const PAYMENT_FILE = path.join(DATA_DIR, "payment.json");
+const PRIVACY_FILE = path.join(DATA_DIR, "privacy.json");
 const MEDIA_FILE = path.join(DATA_DIR, "media-library.json");
 
 /** Durable upload root — survives `git reset --hard` (unlike public/). */
@@ -1017,6 +1023,113 @@ export async function getTermsContent(): Promise<TermsContent> {
 export async function saveTermsContent(content: TermsContent): Promise<void> {
   await ensureDataDir();
   await fs.writeFile(TERMS_FILE, JSON.stringify(content, null, 2), "utf8");
+}
+
+function mergePaymentMethods(
+  stored: PaymentContent["methods"] | undefined,
+  fallback: PaymentContent["methods"],
+) {
+  if (!Array.isArray(stored) || stored.length === 0) {
+    return fallback.map((item) => ({ ...item }));
+  }
+  return stored.map((item, i) => ({
+    id: item.id || `pm-${i + 1}`,
+    title: (item.title || "").trim() || `Method ${i + 1}`,
+    description: typeof item.description === "string" ? item.description : "",
+    imageUrl: typeof item.imageUrl === "string" ? item.imageUrl.trim() : "",
+    visible: item.visible !== false,
+  }));
+}
+
+function mergePayment(stored: Partial<PaymentContent> | null): PaymentContent {
+  if (!stored) return DEFAULT_PAYMENT;
+
+  const notes = Array.isArray(stored.notes)
+    ? stored.notes.map((n) => (typeof n === "string" ? n : "")).filter(Boolean)
+    : DEFAULT_PAYMENT.notes;
+  const importantNotes = Array.isArray(stored.importantNotes)
+    ? stored.importantNotes.map((n) => (typeof n === "string" ? n : "")).filter(Boolean)
+    : DEFAULT_PAYMENT.importantNotes;
+  const bankFields =
+    Array.isArray(stored.bankFields) && stored.bankFields.length > 0
+      ? stored.bankFields.map((f, i) => ({
+          id: f.id || `bf-${i + 1}`,
+          label: (f.label || "").trim() || `Field ${i + 1}`,
+          value: typeof f.value === "string" ? f.value : "",
+        }))
+      : DEFAULT_PAYMENT.bankFields.map((f) => ({ ...f }));
+
+  return {
+    ...DEFAULT_PAYMENT,
+    ...stored,
+    methods: mergePaymentMethods(stored.methods, DEFAULT_PAYMENT.methods),
+    notes: notes.length > 0 ? notes : DEFAULT_PAYMENT.notes,
+    importantNotes:
+      importantNotes.length > 0 ? importantNotes : DEFAULT_PAYMENT.importantNotes,
+    bankFields,
+    coverImageUrl:
+      typeof stored.coverImageUrl === "string"
+        ? stored.coverImageUrl.trim()
+        : DEFAULT_PAYMENT.coverImageUrl,
+    coverTitle: stored.coverTitle?.trim() || DEFAULT_PAYMENT.coverTitle,
+    introHeading: stored.introHeading?.trim() || DEFAULT_PAYMENT.introHeading,
+    introBody: stored.introBody?.trim() || DEFAULT_PAYMENT.introBody,
+  };
+}
+
+export async function getPaymentContent(): Promise<PaymentContent> {
+  try {
+    const raw = await fs.readFile(PAYMENT_FILE, "utf8");
+    return mergePayment(JSON.parse(raw) as Partial<PaymentContent>);
+  } catch {
+    return DEFAULT_PAYMENT;
+  }
+}
+
+export async function savePaymentContent(content: PaymentContent): Promise<void> {
+  await ensureDataDir();
+  await fs.writeFile(PAYMENT_FILE, JSON.stringify(content, null, 2), "utf8");
+}
+
+function mergePrivacy(stored: Partial<PrivacyContent> | null): PrivacyContent {
+  if (!stored) return DEFAULT_PRIVACY;
+
+  const sections =
+    Array.isArray(stored.sections) && stored.sections.length > 0
+      ? stored.sections.map((item, i) => ({
+          id: item.id || `priv-${i + 1}`,
+          title: (item.title || "").trim() || `Section ${i + 1}`,
+          body: typeof item.body === "string" ? item.body : "",
+          visible: item.visible !== false,
+        }))
+      : DEFAULT_PRIVACY.sections.map((s) => ({ ...s }));
+
+  return {
+    ...DEFAULT_PRIVACY,
+    ...stored,
+    sections,
+    coverImageUrl:
+      typeof stored.coverImageUrl === "string"
+        ? stored.coverImageUrl.trim()
+        : DEFAULT_PRIVACY.coverImageUrl,
+    coverTitle: stored.coverTitle?.trim() || DEFAULT_PRIVACY.coverTitle,
+    introHeading: stored.introHeading?.trim() || DEFAULT_PRIVACY.introHeading,
+    introBody: stored.introBody?.trim() || DEFAULT_PRIVACY.introBody,
+  };
+}
+
+export async function getPrivacyContent(): Promise<PrivacyContent> {
+  try {
+    const raw = await fs.readFile(PRIVACY_FILE, "utf8");
+    return mergePrivacy(JSON.parse(raw) as Partial<PrivacyContent>);
+  } catch {
+    return DEFAULT_PRIVACY;
+  }
+}
+
+export async function savePrivacyContent(content: PrivacyContent): Promise<void> {
+  await ensureDataDir();
+  await fs.writeFile(PRIVACY_FILE, JSON.stringify(content, null, 2), "utf8");
 }
 
 export async function getMediaLibrary(): Promise<MediaItem[]> {

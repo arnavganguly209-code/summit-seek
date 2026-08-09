@@ -69,6 +69,7 @@ export const footerCompany = [
   { label: "FAQ", href: "/faqs" },
   { label: "Privacy Policy", href: "/privacy" },
   { label: "Terms", href: "/terms" },
+  { label: "Payment Procedure", href: "/payment" },
   { label: "Booking Policy", href: "/booking-policy" },
 ] as const;
 
