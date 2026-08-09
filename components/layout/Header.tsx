@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { AnimatePresence, motion } from "framer-motion";
 import { Menu, X, ChevronDown, Search } from "lucide-react";
 import { SITE } from "@/lib/constants";
@@ -44,17 +45,24 @@ export function Header({
   logoUrl = "/logo-summit-seek-blue.png",
   logoUrlLight = "/logo-summit-seek-white.png",
 }: Props) {
+  const pathname = usePathname();
+  // Home keeps transparent-over-hero; packages & inner pages use solid bar like scrolled home.
+  const isHome = pathname === "/";
   const [scrolled, setScrolled] = useState(false);
   const [megaKind, setMegaKind] = useState<MegaKind | null>(null);
   const [mobileOpen, setMobileOpen] = useState(false);
   const [mobileMega, setMobileMega] = useState<string | null>(null);
 
   useEffect(() => {
+    if (!isHome) {
+      setScrolled(true);
+      return;
+    }
     const onScroll = () => setScrolled(window.scrollY > 16);
     onScroll();
     window.addEventListener("scroll", onScroll, { passive: true });
     return () => window.removeEventListener("scroll", onScroll);
-  }, []);
+  }, [isHome]);
 
   // Preload both logos so scroll swap never flashes a missing/old asset
   useEffect(() => {
@@ -72,19 +80,22 @@ export function Header({
     };
   }, [mobileOpen]);
 
-  const navText = scrolled
+  const solid = !isHome || scrolled;
+
+  const navText = solid
     ? "text-[#0b1524] hover:text-[#1d4ed8]"
     : "text-white hover:text-[#93c5fd]";
 
-  // Transparent header → white logo; scrolled glass header → blue logo
-  const activeLogo = scrolled ? logoUrl : logoUrlLight;
+  // Transparent header → white logo; solid / scrolled → blue logo
+  const activeLogo = solid ? logoUrl : logoUrlLight;
 
   return (
+    <>
     <header
       className={cn(
         "fixed inset-x-0 top-0 z-50 transition-[background-color,box-shadow,backdrop-filter,border-color] duration-300",
-        scrolled
-          ? "border-b border-black/[0.06] bg-white/90 shadow-[0_8px_28px_rgba(8,18,30,0.08)] backdrop-blur-xl"
+        solid
+          ? "border-b border-black/[0.06] bg-white/95 shadow-[0_8px_28px_rgba(8,18,30,0.08)] backdrop-blur-xl"
           : "border-b border-transparent bg-transparent shadow-none",
       )}
       style={{ height: HEADER_H }}
@@ -179,7 +190,7 @@ export function Header({
             href="/blog"
             className={cn(
               "inline-flex size-9 shrink-0 items-center justify-center transition",
-              scrolled ? "text-[#0b1524] hover:text-[#1d4ed8]" : "text-white hover:text-[#93c5fd]",
+              solid ? "text-[#0b1524] hover:text-[#1d4ed8]" : "text-white hover:text-[#93c5fd]",
             )}
             aria-label="Search travel blogs"
           >
@@ -193,7 +204,7 @@ export function Header({
             <span
               className={cn(
                 "font-[family-name:var(--font-ui)] text-[11px] font-medium sm:text-[12px]",
-                scrolled ? "text-[#5a9a3a]" : "text-[#9dcc7a]",
+                solid ? "text-[#5a9a3a]" : "text-[#9dcc7a]",
               )}
             >
               Need Help? Call Us
@@ -201,7 +212,7 @@ export function Header({
             <span
               className={cn(
                 "font-[family-name:var(--font-ui)] text-[14px] font-bold tracking-tight sm:text-[15px]",
-                scrolled ? "text-[#0b1524]" : "text-white",
+                solid ? "text-[#0b1524]" : "text-white",
               )}
             >
               {SITE.phoneDisplay}
@@ -213,7 +224,7 @@ export function Header({
           type="button"
           className={cn(
             "ml-auto inline-flex size-10 items-center justify-center rounded-md xl:hidden",
-            scrolled ? "text-[#0b1524]" : "text-white",
+            solid ? "text-[#0b1524]" : "text-white",
           )}
           aria-label={mobileOpen ? "Close menu" : "Open menu"}
           onClick={() => setMobileOpen((v) => !v)}
@@ -316,5 +327,8 @@ export function Header({
         ) : null}
       </AnimatePresence>
     </header>
+    {/* Push page content below fixed bar on packages / inner pages */}
+    {!isHome ? <div style={{ height: HEADER_H }} aria-hidden /> : null}
+    </>
   );
 }

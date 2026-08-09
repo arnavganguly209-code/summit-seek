@@ -387,7 +387,7 @@ export function TrekPageView({ content }: { content: TrekPageContent }) {
         ) : null}
       </div>
 
-      <div className="sticky top-0 z-30 mt-6 border-y border-[#e4eaf3] bg-white/95 backdrop-blur">
+      <div className="sticky top-[72px] z-30 mt-6 border-y border-[#e4eaf3] bg-white/95 backdrop-blur">
         <div className="mx-auto flex max-w-[1180px] gap-1 overflow-x-auto px-4 py-2 [-ms-overflow-style:none] [scrollbar-width:none] sm:px-6 lg:px-8 [&::-webkit-scrollbar]:hidden">
           {TABS.map((tab) => (
             <button
@@ -856,7 +856,7 @@ export function TrekPageView({ content }: { content: TrekPageContent }) {
           </section>
         </div>
 
-        <div className="lg:sticky lg:top-24 lg:self-start">
+        <div className="lg:sticky lg:top-[96px] lg:self-start">
           {BookingCard}
         </div>
       </div>
