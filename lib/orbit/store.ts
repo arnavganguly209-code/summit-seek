@@ -19,6 +19,8 @@ import type { AffiliateContent } from "@/types/affiliate-cms";
 import type { TermsContent } from "@/types/terms-cms";
 import type { PaymentContent } from "@/types/payment-cms";
 import type { PrivacyContent } from "@/types/privacy-cms";
+import type { NepalVisaContent } from "@/types/nepal-visa-cms";
+import type { PermitsTimsContent } from "@/types/permits-tims-cms";
 import { DEFAULT_HERO } from "@/lib/orbit/defaults";
 import { DEFAULT_FEATURED_PACKAGES } from "@/lib/orbit/featured-packages-defaults";
 import { DEFAULT_ABOUT_INTRO } from "@/lib/orbit/about-intro-defaults";
@@ -41,6 +43,8 @@ import { DEFAULT_AFFILIATE } from "@/lib/orbit/affiliate-defaults";
 import { DEFAULT_TERMS } from "@/lib/orbit/terms-defaults";
 import { DEFAULT_PAYMENT } from "@/lib/orbit/payment-defaults";
 import { DEFAULT_PRIVACY } from "@/lib/orbit/privacy-defaults";
+import { DEFAULT_NEPAL_VISA } from "@/lib/orbit/nepal-visa-defaults";
+import { DEFAULT_PERMITS_TIMS } from "@/lib/orbit/permits-tims-defaults";
 
 const DATA_DIR = path.join(process.cwd(), "data");
 const HERO_FILE = path.join(DATA_DIR, "hero.json");
@@ -62,6 +66,8 @@ const AFFILIATE_FILE = path.join(DATA_DIR, "affiliate.json");
 const TERMS_FILE = path.join(DATA_DIR, "terms.json");
 const PAYMENT_FILE = path.join(DATA_DIR, "payment.json");
 const PRIVACY_FILE = path.join(DATA_DIR, "privacy.json");
+const NEPAL_VISA_FILE = path.join(DATA_DIR, "nepal-visa.json");
+const PERMITS_TIMS_FILE = path.join(DATA_DIR, "permits-tims.json");
 const MEDIA_FILE = path.join(DATA_DIR, "media-library.json");
 
 /** Durable upload root — survives `git reset --hard` (unlike public/). */
@@ -1130,6 +1136,129 @@ export async function getPrivacyContent(): Promise<PrivacyContent> {
 export async function savePrivacyContent(content: PrivacyContent): Promise<void> {
   await ensureDataDir();
   await fs.writeFile(PRIVACY_FILE, JSON.stringify(content, null, 2), "utf8");
+}
+
+function mergeNepalVisa(stored: Partial<NepalVisaContent> | null): NepalVisaContent {
+  if (!stored) return DEFAULT_NEPAL_VISA;
+
+  const requirements =
+    Array.isArray(stored.requirements) && stored.requirements.length > 0
+      ? stored.requirements.map((item, i) => ({
+          id: item.id || `req-${i + 1}`,
+          title: (item.title || "").trim() || `Item ${i + 1}`,
+          description: typeof item.description === "string" ? item.description : "",
+          visible: item.visible !== false,
+        }))
+      : DEFAULT_NEPAL_VISA.requirements.map((r) => ({ ...r }));
+
+  const fees =
+    Array.isArray(stored.fees) && stored.fees.length > 0
+      ? stored.fees.map((item, i) => ({
+          id: item.id || `fee-${i + 1}`,
+          label: (item.label || "").trim() || `Fee ${i + 1}`,
+          price: typeof item.price === "string" ? item.price : "",
+          note: typeof item.note === "string" ? item.note : "",
+          visible: item.visible !== false,
+        }))
+      : DEFAULT_NEPAL_VISA.fees.map((f) => ({ ...f }));
+
+  const entryPoints = Array.isArray(stored.entryPoints)
+    ? stored.entryPoints.map((p) => (typeof p === "string" ? p : "")).filter(Boolean)
+    : DEFAULT_NEPAL_VISA.entryPoints;
+  const notes = Array.isArray(stored.notes)
+    ? stored.notes.map((n) => (typeof n === "string" ? n : "")).filter(Boolean)
+    : DEFAULT_NEPAL_VISA.notes;
+
+  return {
+    ...DEFAULT_NEPAL_VISA,
+    ...stored,
+    requirements,
+    fees,
+    entryPoints: entryPoints.length > 0 ? entryPoints : DEFAULT_NEPAL_VISA.entryPoints,
+    notes: notes.length > 0 ? notes : DEFAULT_NEPAL_VISA.notes,
+    coverImageUrl:
+      typeof stored.coverImageUrl === "string"
+        ? stored.coverImageUrl.trim()
+        : DEFAULT_NEPAL_VISA.coverImageUrl,
+    coverTitle: stored.coverTitle?.trim() || DEFAULT_NEPAL_VISA.coverTitle,
+    introHeading: stored.introHeading?.trim() || DEFAULT_NEPAL_VISA.introHeading,
+    introBody: stored.introBody?.trim() || DEFAULT_NEPAL_VISA.introBody,
+  };
+}
+
+export async function getNepalVisaContent(): Promise<NepalVisaContent> {
+  try {
+    const raw = await fs.readFile(NEPAL_VISA_FILE, "utf8");
+    return mergeNepalVisa(JSON.parse(raw) as Partial<NepalVisaContent>);
+  } catch {
+    return DEFAULT_NEPAL_VISA;
+  }
+}
+
+export async function saveNepalVisaContent(content: NepalVisaContent): Promise<void> {
+  await ensureDataDir();
+  await fs.writeFile(NEPAL_VISA_FILE, JSON.stringify(content, null, 2), "utf8");
+}
+
+function mergePermitsTims(stored: Partial<PermitsTimsContent> | null): PermitsTimsContent {
+  if (!stored) return DEFAULT_PERMITS_TIMS;
+
+  const restrictedPermits =
+    Array.isArray(stored.restrictedPermits) && stored.restrictedPermits.length > 0
+      ? stored.restrictedPermits.map((item, i) => ({
+          id: item.id || `rp-${i + 1}`,
+          region: (item.region || "").trim() || `Region ${i + 1}`,
+          fee: typeof item.fee === "string" ? item.fee : "",
+          visible: item.visible !== false,
+        }))
+      : DEFAULT_PERMITS_TIMS.restrictedPermits.map((r) => ({ ...r }));
+
+  const parkEntries =
+    Array.isArray(stored.parkEntries) && stored.parkEntries.length > 0
+      ? stored.parkEntries.map((item, i) => ({
+          id: item.id || `pk-${i + 1}`,
+          name: (item.name || "").trim() || `Park ${i + 1}`,
+          nepali: typeof item.nepali === "string" ? item.nepali : "",
+          saarc: typeof item.saarc === "string" ? item.saarc : "",
+          foreigner: typeof item.foreigner === "string" ? item.foreigner : "",
+          childNote: typeof item.childNote === "string" ? item.childNote : "",
+          whereToPay: typeof item.whereToPay === "string" ? item.whereToPay : "",
+          visible: item.visible !== false,
+        }))
+      : DEFAULT_PERMITS_TIMS.parkEntries.map((p) => ({ ...p }));
+
+  const notes = Array.isArray(stored.notes)
+    ? stored.notes.map((n) => (typeof n === "string" ? n : "")).filter(Boolean)
+    : DEFAULT_PERMITS_TIMS.notes;
+
+  return {
+    ...DEFAULT_PERMITS_TIMS,
+    ...stored,
+    restrictedPermits,
+    parkEntries,
+    notes: notes.length > 0 ? notes : DEFAULT_PERMITS_TIMS.notes,
+    coverImageUrl:
+      typeof stored.coverImageUrl === "string"
+        ? stored.coverImageUrl.trim()
+        : DEFAULT_PERMITS_TIMS.coverImageUrl,
+    coverTitle: stored.coverTitle?.trim() || DEFAULT_PERMITS_TIMS.coverTitle,
+    introHeading: stored.introHeading?.trim() || DEFAULT_PERMITS_TIMS.introHeading,
+    introBody: stored.introBody?.trim() || DEFAULT_PERMITS_TIMS.introBody,
+  };
+}
+
+export async function getPermitsTimsContent(): Promise<PermitsTimsContent> {
+  try {
+    const raw = await fs.readFile(PERMITS_TIMS_FILE, "utf8");
+    return mergePermitsTims(JSON.parse(raw) as Partial<PermitsTimsContent>);
+  } catch {
+    return DEFAULT_PERMITS_TIMS;
+  }
+}
+
+export async function savePermitsTimsContent(content: PermitsTimsContent): Promise<void> {
+  await ensureDataDir();
+  await fs.writeFile(PERMITS_TIMS_FILE, JSON.stringify(content, null, 2), "utf8");
 }
 
 export async function getMediaLibrary(): Promise<MediaItem[]> {

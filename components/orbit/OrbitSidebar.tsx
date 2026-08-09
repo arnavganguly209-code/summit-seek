@@ -26,6 +26,8 @@ import {
   FileText,
   CreditCard,
   Shield,
+  Stamp,
+  Map,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -81,6 +83,16 @@ const nav = [
         href: "/orbit/dashboard/website/privacy",
         label: "Privacy Policy",
         icon: Shield,
+      },
+      {
+        href: "/orbit/dashboard/website/nepal-visa",
+        label: "Nepal Visa Guide",
+        icon: Stamp,
+      },
+      {
+        href: "/orbit/dashboard/website/permits-tims",
+        label: "Permits & TIMS",
+        icon: Map,
       },
       { href: "/orbit/dashboard/website/legal", label: "Legal Documents", icon: Scale },
       { href: "/orbit/dashboard/website/footer", label: "Footer", icon: PanelBottom },
