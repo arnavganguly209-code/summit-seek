@@ -30,6 +30,9 @@ import {
   Map,
   CalendarDays,
   ShieldCheck,
+  HeartPulse,
+  Wallet,
+  Backpack,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -105,6 +108,21 @@ const nav = [
         href: "/orbit/dashboard/website/travel-insurance",
         label: "Travel Insurance",
         icon: ShieldCheck,
+      },
+      {
+        href: "/orbit/dashboard/website/health-safety",
+        label: "Health & Safety",
+        icon: HeartPulse,
+      },
+      {
+        href: "/orbit/dashboard/website/money-currency",
+        label: "Money & Currency",
+        icon: Wallet,
+      },
+      {
+        href: "/orbit/dashboard/website/packing-checklist",
+        label: "Packing Checklist",
+        icon: Backpack,
       },
       { href: "/orbit/dashboard/website/legal", label: "Legal Documents", icon: Scale },
       { href: "/orbit/dashboard/website/footer", label: "Footer", icon: PanelBottom },

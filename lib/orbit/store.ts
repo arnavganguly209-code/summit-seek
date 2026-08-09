@@ -23,6 +23,9 @@ import type { NepalVisaContent } from "@/types/nepal-visa-cms";
 import type { PermitsTimsContent } from "@/types/permits-tims-cms";
 import type { BestTimeContent } from "@/types/best-time-cms";
 import type { TravelInsuranceContent } from "@/types/travel-insurance-cms";
+import type { HealthSafetyContent } from "@/types/health-safety-cms";
+import type { MoneyCurrencyContent } from "@/types/money-currency-cms";
+import type { PackingChecklistContent } from "@/types/packing-checklist-cms";
 import { DEFAULT_HERO } from "@/lib/orbit/defaults";
 import { DEFAULT_FEATURED_PACKAGES } from "@/lib/orbit/featured-packages-defaults";
 import { DEFAULT_ABOUT_INTRO } from "@/lib/orbit/about-intro-defaults";
@@ -49,6 +52,9 @@ import { DEFAULT_NEPAL_VISA } from "@/lib/orbit/nepal-visa-defaults";
 import { DEFAULT_PERMITS_TIMS } from "@/lib/orbit/permits-tims-defaults";
 import { DEFAULT_BEST_TIME } from "@/lib/orbit/best-time-defaults";
 import { DEFAULT_TRAVEL_INSURANCE } from "@/lib/orbit/travel-insurance-defaults";
+import { DEFAULT_HEALTH_SAFETY } from "@/lib/orbit/health-safety-defaults";
+import { DEFAULT_MONEY_CURRENCY } from "@/lib/orbit/money-currency-defaults";
+import { DEFAULT_PACKING_CHECKLIST } from "@/lib/orbit/packing-checklist-defaults";
 
 const DATA_DIR = path.join(process.cwd(), "data");
 const HERO_FILE = path.join(DATA_DIR, "hero.json");
@@ -74,6 +80,9 @@ const NEPAL_VISA_FILE = path.join(DATA_DIR, "nepal-visa.json");
 const PERMITS_TIMS_FILE = path.join(DATA_DIR, "permits-tims.json");
 const BEST_TIME_FILE = path.join(DATA_DIR, "best-time.json");
 const TRAVEL_INSURANCE_FILE = path.join(DATA_DIR, "travel-insurance.json");
+const HEALTH_SAFETY_FILE = path.join(DATA_DIR, "health-safety.json");
+const MONEY_CURRENCY_FILE = path.join(DATA_DIR, "money-currency.json");
+const PACKING_CHECKLIST_FILE = path.join(DATA_DIR, "packing-checklist.json");
 const MEDIA_FILE = path.join(DATA_DIR, "media-library.json");
 
 /** Durable upload root — survives `git reset --hard` (unlike public/). */
@@ -1379,6 +1388,168 @@ export async function saveTravelInsuranceContent(
 ): Promise<void> {
   await ensureDataDir();
   await fs.writeFile(TRAVEL_INSURANCE_FILE, JSON.stringify(content, null, 2), "utf8");
+}
+
+function mergeHealthSafety(stored: Partial<HealthSafetyContent> | null): HealthSafetyContent {
+  if (!stored) return DEFAULT_HEALTH_SAFETY;
+
+  const topics =
+    Array.isArray(stored.topics) && stored.topics.length > 0
+      ? stored.topics.map((item, i) => ({
+          id: item.id || `hs-${i + 1}`,
+          title: (item.title || "").trim() || `Topic ${i + 1}`,
+          description: typeof item.description === "string" ? item.description : "",
+          points: Array.isArray(item.points)
+            ? item.points.map((p) => (typeof p === "string" ? p : "")).filter(Boolean)
+            : [],
+          visible: item.visible !== false,
+        }))
+      : DEFAULT_HEALTH_SAFETY.topics.map((t) => ({ ...t, points: [...t.points] }));
+
+  const tips = Array.isArray(stored.tips)
+    ? stored.tips.map((n) => (typeof n === "string" ? n : "")).filter(Boolean)
+    : DEFAULT_HEALTH_SAFETY.tips;
+  const notes = Array.isArray(stored.notes)
+    ? stored.notes.map((n) => (typeof n === "string" ? n : "")).filter(Boolean)
+    : DEFAULT_HEALTH_SAFETY.notes;
+
+  return {
+    ...DEFAULT_HEALTH_SAFETY,
+    ...stored,
+    topics,
+    tips: tips.length > 0 ? tips : DEFAULT_HEALTH_SAFETY.tips,
+    notes: notes.length > 0 ? notes : DEFAULT_HEALTH_SAFETY.notes,
+    coverImageUrl:
+      typeof stored.coverImageUrl === "string"
+        ? stored.coverImageUrl.trim()
+        : DEFAULT_HEALTH_SAFETY.coverImageUrl,
+    coverTitle: stored.coverTitle?.trim() || DEFAULT_HEALTH_SAFETY.coverTitle,
+    introHeading: stored.introHeading?.trim() || DEFAULT_HEALTH_SAFETY.introHeading,
+    introBody: stored.introBody?.trim() || DEFAULT_HEALTH_SAFETY.introBody,
+  };
+}
+
+export async function getHealthSafetyContent(): Promise<HealthSafetyContent> {
+  try {
+    const raw = await fs.readFile(HEALTH_SAFETY_FILE, "utf8");
+    return mergeHealthSafety(JSON.parse(raw) as Partial<HealthSafetyContent>);
+  } catch {
+    return DEFAULT_HEALTH_SAFETY;
+  }
+}
+
+export async function saveHealthSafetyContent(content: HealthSafetyContent): Promise<void> {
+  await ensureDataDir();
+  await fs.writeFile(HEALTH_SAFETY_FILE, JSON.stringify(content, null, 2), "utf8");
+}
+
+function mergeMoneyCurrency(
+  stored: Partial<MoneyCurrencyContent> | null,
+): MoneyCurrencyContent {
+  if (!stored) return DEFAULT_MONEY_CURRENCY;
+
+  const cards =
+    Array.isArray(stored.cards) && stored.cards.length > 0
+      ? stored.cards.map((item, i) => ({
+          id: item.id || `mc-${i + 1}`,
+          title: (item.title || "").trim() || `Card ${i + 1}`,
+          description: typeof item.description === "string" ? item.description : "",
+          visible: item.visible !== false,
+        }))
+      : DEFAULT_MONEY_CURRENCY.cards.map((c) => ({ ...c }));
+
+  const tips = Array.isArray(stored.tips)
+    ? stored.tips.map((n) => (typeof n === "string" ? n : "")).filter(Boolean)
+    : DEFAULT_MONEY_CURRENCY.tips;
+  const notes = Array.isArray(stored.notes)
+    ? stored.notes.map((n) => (typeof n === "string" ? n : "")).filter(Boolean)
+    : DEFAULT_MONEY_CURRENCY.notes;
+
+  return {
+    ...DEFAULT_MONEY_CURRENCY,
+    ...stored,
+    cards,
+    tips: tips.length > 0 ? tips : DEFAULT_MONEY_CURRENCY.tips,
+    notes: notes.length > 0 ? notes : DEFAULT_MONEY_CURRENCY.notes,
+    coverImageUrl:
+      typeof stored.coverImageUrl === "string"
+        ? stored.coverImageUrl.trim()
+        : DEFAULT_MONEY_CURRENCY.coverImageUrl,
+    coverTitle: stored.coverTitle?.trim() || DEFAULT_MONEY_CURRENCY.coverTitle,
+    introHeading: stored.introHeading?.trim() || DEFAULT_MONEY_CURRENCY.introHeading,
+    introBody: stored.introBody?.trim() || DEFAULT_MONEY_CURRENCY.introBody,
+  };
+}
+
+export async function getMoneyCurrencyContent(): Promise<MoneyCurrencyContent> {
+  try {
+    const raw = await fs.readFile(MONEY_CURRENCY_FILE, "utf8");
+    return mergeMoneyCurrency(JSON.parse(raw) as Partial<MoneyCurrencyContent>);
+  } catch {
+    return DEFAULT_MONEY_CURRENCY;
+  }
+}
+
+export async function saveMoneyCurrencyContent(content: MoneyCurrencyContent): Promise<void> {
+  await ensureDataDir();
+  await fs.writeFile(MONEY_CURRENCY_FILE, JSON.stringify(content, null, 2), "utf8");
+}
+
+function mergePackingChecklist(
+  stored: Partial<PackingChecklistContent> | null,
+): PackingChecklistContent {
+  if (!stored) return DEFAULT_PACKING_CHECKLIST;
+
+  const categories =
+    Array.isArray(stored.categories) && stored.categories.length > 0
+      ? stored.categories.map((item, i) => ({
+          id: item.id || `pk-${i + 1}`,
+          title: (item.title || "").trim() || `Category ${i + 1}`,
+          description: typeof item.description === "string" ? item.description : "",
+          items: Array.isArray(item.items)
+            ? item.items.map((x) => (typeof x === "string" ? x : "")).filter(Boolean)
+            : [],
+          visible: item.visible !== false,
+        }))
+      : DEFAULT_PACKING_CHECKLIST.categories.map((c) => ({ ...c, items: [...c.items] }));
+
+  const tips = Array.isArray(stored.tips)
+    ? stored.tips.map((n) => (typeof n === "string" ? n : "")).filter(Boolean)
+    : DEFAULT_PACKING_CHECKLIST.tips;
+  const notes = Array.isArray(stored.notes)
+    ? stored.notes.map((n) => (typeof n === "string" ? n : "")).filter(Boolean)
+    : DEFAULT_PACKING_CHECKLIST.notes;
+
+  return {
+    ...DEFAULT_PACKING_CHECKLIST,
+    ...stored,
+    categories,
+    tips: tips.length > 0 ? tips : DEFAULT_PACKING_CHECKLIST.tips,
+    notes: notes.length > 0 ? notes : DEFAULT_PACKING_CHECKLIST.notes,
+    coverImageUrl:
+      typeof stored.coverImageUrl === "string"
+        ? stored.coverImageUrl.trim()
+        : DEFAULT_PACKING_CHECKLIST.coverImageUrl,
+    coverTitle: stored.coverTitle?.trim() || DEFAULT_PACKING_CHECKLIST.coverTitle,
+    introHeading: stored.introHeading?.trim() || DEFAULT_PACKING_CHECKLIST.introHeading,
+    introBody: stored.introBody?.trim() || DEFAULT_PACKING_CHECKLIST.introBody,
+  };
+}
+
+export async function getPackingChecklistContent(): Promise<PackingChecklistContent> {
+  try {
+    const raw = await fs.readFile(PACKING_CHECKLIST_FILE, "utf8");
+    return mergePackingChecklist(JSON.parse(raw) as Partial<PackingChecklistContent>);
+  } catch {
+    return DEFAULT_PACKING_CHECKLIST;
+  }
+}
+
+export async function savePackingChecklistContent(
+  content: PackingChecklistContent,
+): Promise<void> {
+  await ensureDataDir();
+  await fs.writeFile(PACKING_CHECKLIST_FILE, JSON.stringify(content, null, 2), "utf8");
 }
 
 export async function getMediaLibrary(): Promise<MediaItem[]> {
