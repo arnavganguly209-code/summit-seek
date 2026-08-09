@@ -13,6 +13,7 @@ import type { ContactPageContent } from "@/types/contact-cms";
 import type { BlogPageContent, BlogPost } from "@/types/blog-cms";
 import type { AboutPageContent } from "@/types/about-page-cms";
 import type { LegalPageContent } from "@/types/legal-cms";
+import type { WhySummitSeekContent } from "@/types/why-summit-seek-cms";
 import { DEFAULT_HERO } from "@/lib/orbit/defaults";
 import { DEFAULT_FEATURED_PACKAGES } from "@/lib/orbit/featured-packages-defaults";
 import { DEFAULT_ABOUT_INTRO } from "@/lib/orbit/about-intro-defaults";
@@ -29,6 +30,7 @@ import {
   LEGACY_DEFAULT_TEAM_IMAGE_URLS,
 } from "@/lib/orbit/about-page-defaults";
 import { DEFAULT_LEGAL_PAGE } from "@/lib/orbit/legal-defaults";
+import { DEFAULT_WHY_SUMMIT_SEEK } from "@/lib/orbit/why-summit-seek-defaults";
 
 const DATA_DIR = path.join(process.cwd(), "data");
 const HERO_FILE = path.join(DATA_DIR, "hero.json");
@@ -44,6 +46,7 @@ const CONTACT_FILE = path.join(DATA_DIR, "contact.json");
 const BLOG_FILE = path.join(DATA_DIR, "blog.json");
 const ABOUT_PAGE_FILE = path.join(DATA_DIR, "about-page.json");
 const LEGAL_FILE = path.join(DATA_DIR, "legal.json");
+const WHY_SUMMIT_SEEK_FILE = path.join(DATA_DIR, "why-summit-seek.json");
 const MEDIA_FILE = path.join(DATA_DIR, "media-library.json");
 
 /** Durable upload root — survives `git reset --hard` (unlike public/). */
@@ -787,6 +790,61 @@ export async function getLegalContent(): Promise<LegalPageContent> {
 export async function saveLegalContent(content: LegalPageContent): Promise<void> {
   await ensureDataDir();
   await fs.writeFile(LEGAL_FILE, JSON.stringify(content, null, 2), "utf8");
+}
+
+function mergeWhySummitSeek(
+  stored: Partial<WhySummitSeekContent> | null,
+): WhySummitSeekContent {
+  if (!stored) return DEFAULT_WHY_SUMMIT_SEEK;
+
+  const reasons =
+    Array.isArray(stored.reasons) && stored.reasons.length > 0
+      ? stored.reasons.map((r, i) => ({
+          id: r.id || `r-${i + 1}`,
+          title: (r.title || "").trim() || `Reason ${i + 1}`,
+          description: typeof r.description === "string" ? r.description : "",
+          imageUrl: typeof r.imageUrl === "string" ? r.imageUrl.trim() : "",
+          visible: r.visible !== false,
+        }))
+      : DEFAULT_WHY_SUMMIT_SEEK.reasons.map((r) => ({ ...r }));
+
+  const questions = Array.isArray(stored.questions)
+    ? stored.questions.map((q) => String(q || "").trim()).filter(Boolean)
+    : DEFAULT_WHY_SUMMIT_SEEK.questions;
+
+  return {
+    ...DEFAULT_WHY_SUMMIT_SEEK,
+    ...stored,
+    reasons,
+    questions: questions.length > 0 ? questions : DEFAULT_WHY_SUMMIT_SEEK.questions,
+    coverImageUrl:
+      typeof stored.coverImageUrl === "string"
+        ? stored.coverImageUrl.trim()
+        : DEFAULT_WHY_SUMMIT_SEEK.coverImageUrl,
+    highlightImageUrl:
+      typeof stored.highlightImageUrl === "string"
+        ? stored.highlightImageUrl.trim()
+        : DEFAULT_WHY_SUMMIT_SEEK.highlightImageUrl,
+    coverTitle: stored.coverTitle?.trim() || DEFAULT_WHY_SUMMIT_SEEK.coverTitle,
+    introHeading: stored.introHeading?.trim() || DEFAULT_WHY_SUMMIT_SEEK.introHeading,
+    introBody: stored.introBody?.trim() || DEFAULT_WHY_SUMMIT_SEEK.introBody,
+  };
+}
+
+export async function getWhySummitSeekContent(): Promise<WhySummitSeekContent> {
+  try {
+    const raw = await fs.readFile(WHY_SUMMIT_SEEK_FILE, "utf8");
+    return mergeWhySummitSeek(JSON.parse(raw) as Partial<WhySummitSeekContent>);
+  } catch {
+    return DEFAULT_WHY_SUMMIT_SEEK;
+  }
+}
+
+export async function saveWhySummitSeekContent(
+  content: WhySummitSeekContent,
+): Promise<void> {
+  await ensureDataDir();
+  await fs.writeFile(WHY_SUMMIT_SEEK_FILE, JSON.stringify(content, null, 2), "utf8");
 }
 
 export async function getMediaLibrary(): Promise<MediaItem[]> {
