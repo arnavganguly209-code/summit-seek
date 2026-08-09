@@ -26,6 +26,7 @@ import type { TravelInsuranceContent } from "@/types/travel-insurance-cms";
 import type { HealthSafetyContent } from "@/types/health-safety-cms";
 import type { MoneyCurrencyContent } from "@/types/money-currency-cms";
 import type { PackingChecklistContent } from "@/types/packing-checklist-cms";
+import type { TrekPageContent } from "@/types/trek-page-cms";
 import { DEFAULT_HERO } from "@/lib/orbit/defaults";
 import { DEFAULT_FEATURED_PACKAGES } from "@/lib/orbit/featured-packages-defaults";
 import { DEFAULT_ABOUT_INTRO } from "@/lib/orbit/about-intro-defaults";
@@ -55,6 +56,7 @@ import { DEFAULT_TRAVEL_INSURANCE } from "@/lib/orbit/travel-insurance-defaults"
 import { DEFAULT_HEALTH_SAFETY } from "@/lib/orbit/health-safety-defaults";
 import { DEFAULT_MONEY_CURRENCY } from "@/lib/orbit/money-currency-defaults";
 import { DEFAULT_PACKING_CHECKLIST } from "@/lib/orbit/packing-checklist-defaults";
+import { DEFAULT_POON_HILL } from "@/lib/orbit/poon-hill-defaults";
 
 const DATA_DIR = path.join(process.cwd(), "data");
 const HERO_FILE = path.join(DATA_DIR, "hero.json");
@@ -83,6 +85,7 @@ const TRAVEL_INSURANCE_FILE = path.join(DATA_DIR, "travel-insurance.json");
 const HEALTH_SAFETY_FILE = path.join(DATA_DIR, "health-safety.json");
 const MONEY_CURRENCY_FILE = path.join(DATA_DIR, "money-currency.json");
 const PACKING_CHECKLIST_FILE = path.join(DATA_DIR, "packing-checklist.json");
+const POON_HILL_FILE = path.join(DATA_DIR, "poon-hill.json");
 const MEDIA_FILE = path.join(DATA_DIR, "media-library.json");
 
 /** Durable upload root — survives `git reset --hard` (unlike public/). */
@@ -1550,6 +1553,151 @@ export async function savePackingChecklistContent(
 ): Promise<void> {
   await ensureDataDir();
   await fs.writeFile(PACKING_CHECKLIST_FILE, JSON.stringify(content, null, 2), "utf8");
+}
+
+function mergeTrekPage(
+  stored: Partial<TrekPageContent> | null,
+  fallback: TrekPageContent,
+): TrekPageContent {
+  if (!stored) return fallback;
+
+  const strList = (value: unknown, def: string[]) =>
+    Array.isArray(value)
+      ? value.map((n) => (typeof n === "string" ? n : "")).filter(Boolean)
+      : def;
+
+  const facts =
+    Array.isArray(stored.facts) && stored.facts.length > 0
+      ? stored.facts.map((item, i) => ({
+          id: item.id || `f-${i + 1}`,
+          label: (item.label || "").trim() || `Fact ${i + 1}`,
+          value: typeof item.value === "string" ? item.value : "",
+          visible: item.visible !== false,
+        }))
+      : fallback.facts.map((f) => ({ ...f }));
+
+  const days =
+    Array.isArray(stored.days) && stored.days.length > 0
+      ? stored.days.map((item, i) => ({
+          id: item.id || `d-${i + 1}`,
+          dayLabel: typeof item.dayLabel === "string" ? item.dayLabel : `Day ${i + 1}`,
+          title: (item.title || "").trim() || `Day ${i + 1}`,
+          maxAltitude: typeof item.maxAltitude === "string" ? item.maxAltitude : "",
+          meals: typeof item.meals === "string" ? item.meals : "",
+          accommodation: typeof item.accommodation === "string" ? item.accommodation : "",
+          description: typeof item.description === "string" ? item.description : "",
+          imageUrl: typeof item.imageUrl === "string" ? item.imageUrl.trim() : "",
+          visible: item.visible !== false,
+        }))
+      : fallback.days.map((d) => ({ ...d }));
+
+  const addons =
+    Array.isArray(stored.addons) && stored.addons.length > 0
+      ? stored.addons.map((item, i) => ({
+          id: item.id || `a-${i + 1}`,
+          title: (item.title || "").trim() || `Add-on ${i + 1}`,
+          description: typeof item.description === "string" ? item.description : "",
+          priceLabel: typeof item.priceLabel === "string" ? item.priceLabel : "",
+          visible: item.visible !== false,
+        }))
+      : fallback.addons.map((a) => ({ ...a }));
+
+  const gallery =
+    Array.isArray(stored.gallery) && stored.gallery.length > 0
+      ? stored.gallery.map((item, i) => ({
+          id: item.id || `g-${i + 1}`,
+          url: typeof item.url === "string" ? item.url.trim() : "",
+          caption: typeof item.caption === "string" ? item.caption : "",
+          visible: item.visible !== false,
+        }))
+      : fallback.gallery.map((g) => ({ ...g }));
+
+  const essentialBlocks =
+    Array.isArray(stored.essentialBlocks) && stored.essentialBlocks.length > 0
+      ? stored.essentialBlocks.map((item, i) => ({
+          id: item.id || `e-${i + 1}`,
+          title: (item.title || "").trim() || `Block ${i + 1}`,
+          body: typeof item.body === "string" ? item.body : "",
+          imageUrl: typeof item.imageUrl === "string" ? item.imageUrl.trim() : "",
+          visible: item.visible !== false,
+        }))
+      : fallback.essentialBlocks.map((e) => ({ ...e }));
+
+  const equipmentGroups =
+    Array.isArray(stored.equipmentGroups) && stored.equipmentGroups.length > 0
+      ? stored.equipmentGroups.map((item, i) => ({
+          id: item.id || `eq-${i + 1}`,
+          title: (item.title || "").trim() || `Group ${i + 1}`,
+          items: Array.isArray(item.items)
+            ? item.items.map((x) => (typeof x === "string" ? x : "")).filter(Boolean)
+            : [],
+          visible: item.visible !== false,
+        }))
+      : fallback.equipmentGroups.map((g) => ({ ...g, items: [...g.items] }));
+
+  const faqs =
+    Array.isArray(stored.faqs) && stored.faqs.length > 0
+      ? stored.faqs.map((item, i) => ({
+          id: item.id || `q-${i + 1}`,
+          question: (item.question || "").trim() || `Question ${i + 1}`,
+          answer: typeof item.answer === "string" ? item.answer : "",
+          visible: item.visible !== false,
+        }))
+      : fallback.faqs.map((f) => ({ ...f }));
+
+  return {
+    ...fallback,
+    ...stored,
+    facts,
+    days,
+    addons,
+    gallery,
+    essentialBlocks,
+    equipmentGroups,
+    faqs,
+    highlights: strList(stored.highlights, fallback.highlights),
+    advantages: strList(stored.advantages, fallback.advantages),
+    whyPoints: strList(stored.whyPoints, fallback.whyPoints),
+    prepPoints: strList(stored.prepPoints, fallback.prepPoints),
+    availabilityNotes: strList(stored.availabilityNotes, fallback.availabilityNotes),
+    includes: strList(stored.includes, fallback.includes),
+    excludes: strList(stored.excludes, fallback.excludes),
+    companyProvides: strList(stored.companyProvides, fallback.companyProvides),
+    coverImageUrl:
+      typeof stored.coverImageUrl === "string"
+        ? stored.coverImageUrl.trim()
+        : fallback.coverImageUrl,
+    overviewImageUrl:
+      typeof stored.overviewImageUrl === "string"
+        ? stored.overviewImageUrl.trim()
+        : fallback.overviewImageUrl,
+    title: stored.title?.trim() || fallback.title,
+    coverTitle: stored.coverTitle?.trim() || fallback.coverTitle,
+    price: typeof stored.price === "number" ? stored.price : fallback.price,
+    compareAtPrice:
+      stored.compareAtPrice === null
+        ? null
+        : typeof stored.compareAtPrice === "number"
+          ? stored.compareAtPrice
+          : fallback.compareAtPrice,
+    rating: typeof stored.rating === "number" ? stored.rating : fallback.rating,
+    reviewCount:
+      typeof stored.reviewCount === "number" ? stored.reviewCount : fallback.reviewCount,
+  };
+}
+
+export async function getPoonHillContent(): Promise<TrekPageContent> {
+  try {
+    const raw = await fs.readFile(POON_HILL_FILE, "utf8");
+    return mergeTrekPage(JSON.parse(raw) as Partial<TrekPageContent>, DEFAULT_POON_HILL);
+  } catch {
+    return DEFAULT_POON_HILL;
+  }
+}
+
+export async function savePoonHillContent(content: TrekPageContent): Promise<void> {
+  await ensureDataDir();
+  await fs.writeFile(POON_HILL_FILE, JSON.stringify(content, null, 2), "utf8");
 }
 
 export async function getMediaLibrary(): Promise<MediaItem[]> {

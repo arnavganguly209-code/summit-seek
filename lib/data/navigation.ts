@@ -229,7 +229,7 @@ export const trekkingColumns: TrekkingColumn[] = [
       { title: "Annapurna Base Camp", href: "/treks/annapurna-base-camp", duration: "11 Days", difficulty: "Moderate" },
       { title: "Annapurna Circuit", href: "/treks/annapurna-circuit", duration: "16 Days", difficulty: "Challenging" },
       { title: "Mardi Himal", href: "/treks/mardi-himal", duration: "5 Days", difficulty: "Moderate" },
-      { title: "Poon Hill Trek", href: "/treks/poon-hill", duration: "4 Days", difficulty: "Easy" },
+      { title: "Poon Hill Trek", href: "/treks/poon-hill", duration: "5 Days", difficulty: "Easy" },
     ],
   },
   {

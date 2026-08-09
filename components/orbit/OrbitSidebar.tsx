@@ -33,6 +33,7 @@ import {
   HeartPulse,
   Wallet,
   Backpack,
+  Mountain,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -50,6 +51,11 @@ const nav = [
       },
       { href: "/orbit/dashboard/website/header", label: "Header Logos", icon: LogoImage },
       { href: "/orbit/dashboard/website/packages", label: "Featured Packages", icon: Package },
+      {
+        href: "/orbit/dashboard/website/poon-hill",
+        label: "Poon Hill Trek",
+        icon: Mountain,
+      },
       { href: "/orbit/dashboard/website/best-selling", label: "Best Selling Packages", icon: Package },
       { href: "/orbit/dashboard/website/services", label: "What We Offer", icon: BriefcaseBusiness },
       {
