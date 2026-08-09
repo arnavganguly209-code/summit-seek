@@ -1645,6 +1645,19 @@ function mergeTrekPage(
         }))
       : fallback.faqs.map((f) => ({ ...f }));
 
+  const groupDiscounts =
+    Array.isArray(stored.groupDiscounts) && stored.groupDiscounts.length > 0
+      ? stored.groupDiscounts.map((item, i) => ({
+          id: item.id || `gd-${i + 1}`,
+          paxLabel: (item.paxLabel || "").trim() || `${i + 1} pax`,
+          price: typeof item.price === "number" ? item.price : 0,
+          visible: item.visible !== false,
+        }))
+      : fallback.groupDiscounts.map((g) => ({ ...g }));
+
+  const imgOr = (value: unknown, def: string) =>
+    typeof value === "string" ? value.trim() : def;
+
   return {
     ...fallback,
     ...stored,
@@ -1655,6 +1668,7 @@ function mergeTrekPage(
     essentialBlocks,
     equipmentGroups,
     faqs,
+    groupDiscounts,
     highlights: strList(stored.highlights, fallback.highlights),
     advantages: strList(stored.advantages, fallback.advantages),
     whyPoints: strList(stored.whyPoints, fallback.whyPoints),
@@ -1663,16 +1677,22 @@ function mergeTrekPage(
     includes: strList(stored.includes, fallback.includes),
     excludes: strList(stored.excludes, fallback.excludes),
     companyProvides: strList(stored.companyProvides, fallback.companyProvides),
-    coverImageUrl:
-      typeof stored.coverImageUrl === "string"
-        ? stored.coverImageUrl.trim()
-        : fallback.coverImageUrl,
-    overviewImageUrl:
-      typeof stored.overviewImageUrl === "string"
-        ? stored.overviewImageUrl.trim()
-        : fallback.overviewImageUrl,
+    coverImageUrl: imgOr(stored.coverImageUrl, fallback.coverImageUrl),
+    heroMainImageUrl: imgOr(stored.heroMainImageUrl, fallback.heroMainImageUrl),
+    heroSideImage1Url: imgOr(stored.heroSideImage1Url, fallback.heroSideImage1Url),
+    heroSideImage2Url: imgOr(stored.heroSideImage2Url, fallback.heroSideImage2Url),
+    overviewImageUrl: imgOr(stored.overviewImageUrl, fallback.overviewImageUrl),
     title: stored.title?.trim() || fallback.title,
     coverTitle: stored.coverTitle?.trim() || fallback.coverTitle,
+    breadcrumbLabel: stored.breadcrumbLabel?.trim() || fallback.breadcrumbLabel,
+    shortTripBadge: stored.shortTripBadge?.trim() || fallback.shortTripBadge,
+    groupDiscountHeading:
+      stored.groupDiscountHeading?.trim() || fallback.groupDiscountHeading,
+    customizeLabel: stored.customizeLabel?.trim() || fallback.customizeLabel,
+    customizeHref: stored.customizeHref?.trim() || fallback.customizeHref,
+    tripAdvisorRating: stored.tripAdvisorRating?.trim() || fallback.tripAdvisorRating,
+    googleRating: stored.googleRating?.trim() || fallback.googleRating,
+    trustpilotRating: stored.trustpilotRating?.trim() || fallback.trustpilotRating,
     price: typeof stored.price === "number" ? stored.price : fallback.price,
     compareAtPrice:
       stored.compareAtPrice === null

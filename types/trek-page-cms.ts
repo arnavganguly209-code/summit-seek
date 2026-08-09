@@ -54,25 +54,47 @@ export type TrekGalleryImage = {
   visible: boolean;
 };
 
+export type TrekGroupDiscount = {
+  id: string;
+  paxLabel: string;
+  price: number;
+  visible: boolean;
+};
+
 export type TrekPageContent = {
   coverImageUrl: string;
   coverTitle: string;
   coverSubtitle: string;
+  /** Hero mosaic — large left */
+  heroMainImageUrl: string;
+  /** Hero mosaic — top-right */
+  heroSideImage1Url: string;
+  /** Hero mosaic — bottom-right */
+  heroSideImage2Url: string;
+  breadcrumbLabel: string;
   title: string;
   regionLabel: string;
   rating: number;
   reviewCount: number;
+  tripAdvisorRating: string;
+  googleRating: string;
+  trustpilotRating: string;
   price: number;
   compareAtPrice: number | null;
   currencyPrefix: string;
   perPersonLabel: string;
   discountBadge: string;
+  shortTripBadge: string;
   durationLabel: string;
   difficultyLabel: string;
   groupSizeLabel: string;
   bookingNote: string;
+  groupDiscountHeading: string;
+  groupDiscounts: TrekGroupDiscount[];
   bookLabel: string;
   bookHref: string;
+  customizeLabel: string;
+  customizeHref: string;
   enquireLabel: string;
   enquireHref: string;
   whatsappLabel: string;

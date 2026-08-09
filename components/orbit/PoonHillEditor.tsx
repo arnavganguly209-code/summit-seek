@@ -10,6 +10,7 @@ import type {
   TrekFact,
   TrekFaq,
   TrekGalleryImage,
+  TrekGroupDiscount,
   TrekInfoBlock,
   TrekPageContent,
 } from "@/types/trek-page-cms";
@@ -127,7 +128,8 @@ export function PoonHillEditor({ initial }: Props) {
           <p className="text-[11px] font-bold uppercase tracking-[0.2em] text-[#F58220]">Trek Pages</p>
           <h1 className="mt-1 text-2xl font-bold text-white">Poon Hill Trek</h1>
           <p className="mt-1.5 max-w-xl text-[14px] text-white/55">
-            Full control of `/treks/poon-hill` — cover, booking, itinerary, gallery, FAQs & more.
+            Full control of `/treks/poon-hill` — hero mosaic, group discounts, booking, itinerary,
+            gallery, FAQs & more.
           </p>
         </div>
         <button
@@ -153,23 +155,54 @@ export function PoonHillEditor({ initial }: Props) {
       ) : null}
 
       <section className="rounded-2xl border border-white/10 bg-white/[0.04] p-5">
-        <h2 className="mb-3 text-[14px] font-bold text-white">Cover & SEO</h2>
-        <OrbitImageField
-          label="Cover image"
-          value={content.coverImageUrl}
-          aspectClassName="aspect-[21/7]"
-          onChange={(url) => update("coverImageUrl", url)}
-          onAfterChange={(url) => void setImageAndSave({ coverImageUrl: url })}
-        />
+        <h2 className="mb-3 text-[14px] font-bold text-white">Hero mosaic & SEO</h2>
+        <div className="grid gap-4 lg:grid-cols-3">
+          <OrbitImageField
+            label="Main hero (large left)"
+            value={content.heroMainImageUrl}
+            aspectClassName="aspect-[16/10]"
+            onChange={(url) => update("heroMainImageUrl", url)}
+            onAfterChange={(url) =>
+              void setImageAndSave({ heroMainImageUrl: url, coverImageUrl: url || content.coverImageUrl })
+            }
+          />
+          <OrbitImageField
+            label="Side image 1 (top right)"
+            value={content.heroSideImage1Url}
+            aspectClassName="aspect-[4/3]"
+            onChange={(url) => update("heroSideImage1Url", url)}
+            onAfterChange={(url) => void setImageAndSave({ heroSideImage1Url: url })}
+          />
+          <OrbitImageField
+            label="Side image 2 (bottom right)"
+            value={content.heroSideImage2Url}
+            aspectClassName="aspect-[4/3]"
+            onChange={(url) => update("heroSideImage2Url", url)}
+            onAfterChange={(url) => void setImageAndSave({ heroSideImage2Url: url })}
+          />
+        </div>
+        <div className="mt-4">
+          <OrbitImageField
+            label="Fallback / OG cover image"
+            value={content.coverImageUrl}
+            aspectClassName="aspect-[21/7]"
+            onChange={(url) => update("coverImageUrl", url)}
+            onAfterChange={(url) => void setImageAndSave({ coverImageUrl: url })}
+          />
+        </div>
         <div className="mt-4 grid gap-3 sm:grid-cols-2">
           {(
             [
-              ["coverTitle", "Cover title"],
-              ["coverSubtitle", "Cover subtitle"],
               ["title", "Page title"],
+              ["breadcrumbLabel", "Breadcrumb label"],
               ["regionLabel", "Region label"],
+              ["coverTitle", "SEO / cover title"],
+              ["coverSubtitle", "Cover subtitle"],
               ["metaTitle", "Meta title"],
               ["metaDescription", "Meta description"],
+              ["tripAdvisorRating", "TripAdvisor rating"],
+              ["googleRating", "Google rating"],
+              ["trustpilotRating", "Trustpilot rating"],
             ] as const
           ).map(([key, lab]) => (
             <label
@@ -233,14 +266,17 @@ export function PoonHillEditor({ initial }: Props) {
             [
               ["currencyPrefix", "Currency prefix"],
               ["perPersonLabel", "Per person label"],
-              ["discountBadge", "Discount badge"],
+              ["discountBadge", "Discount badge (e.g. 20% OFF)"],
+              ["shortTripBadge", "Short trip badge"],
               ["durationLabel", "Duration"],
               ["difficultyLabel", "Difficulty"],
               ["groupSizeLabel", "Group size"],
               ["bookLabel", "Book button"],
               ["bookHref", "Book link"],
-              ["enquireLabel", "Enquire button"],
-              ["enquireHref", "Enquire link"],
+              ["customizeLabel", "Customize button"],
+              ["customizeHref", "Customize link"],
+              ["enquireLabel", "Inquire button"],
+              ["enquireHref", "Inquire link"],
               ["whatsappLabel", "WhatsApp label"],
               ["whatsappHref", "WhatsApp link"],
             ] as const
@@ -259,6 +295,95 @@ export function PoonHillEditor({ initial }: Props) {
               onChange={(e) => update("bookingNote", e.target.value)}
             />
           </label>
+        </div>
+      </section>
+
+      <section className="rounded-2xl border border-white/10 bg-white/[0.04] p-5">
+        <div className="mb-3 flex items-center justify-between gap-3">
+          <h2 className="text-[14px] font-bold text-white">Group discounts</h2>
+          <button
+            type="button"
+            onClick={() =>
+              update("groupDiscounts", [
+                ...(content.groupDiscounts || []),
+                {
+                  id: `gd-${Date.now()}`,
+                  paxLabel: "New tier",
+                  price: content.price,
+                  visible: true,
+                } satisfies TrekGroupDiscount,
+              ])
+            }
+            className="inline-flex h-9 items-center gap-1.5 rounded-lg border border-white/15 bg-white/5 px-3 text-[12px] font-semibold"
+          >
+            <Plus className="size-3.5" /> Add tier
+          </button>
+        </div>
+        <label className="mb-4 block">
+          <span className={label}>Heading</span>
+          <input
+            className={field}
+            value={content.groupDiscountHeading}
+            onChange={(e) => update("groupDiscountHeading", e.target.value)}
+          />
+        </label>
+        <div className="space-y-3">
+          {(content.groupDiscounts || []).map((row, index) => (
+            <div
+              key={row.id}
+              className="grid gap-2 rounded-xl border border-white/10 bg-black/20 p-3 sm:grid-cols-[1fr_120px_auto_auto]"
+            >
+              <label>
+                <span className={label}>Pax label</span>
+                <input
+                  className={field}
+                  value={row.paxLabel}
+                  onChange={(e) => {
+                    const next = [...content.groupDiscounts];
+                    next[index] = { ...row, paxLabel: e.target.value };
+                    update("groupDiscounts", next);
+                  }}
+                />
+              </label>
+              <label>
+                <span className={label}>Price</span>
+                <input
+                  type="number"
+                  className={field}
+                  value={row.price}
+                  onChange={(e) => {
+                    const next = [...content.groupDiscounts];
+                    next[index] = { ...row, price: Number(e.target.value) || 0 };
+                    update("groupDiscounts", next);
+                  }}
+                />
+              </label>
+              <label className="flex items-end gap-2 pb-2 text-[12px] text-white/70">
+                <input
+                  type="checkbox"
+                  checked={row.visible !== false}
+                  onChange={(e) => {
+                    const next = [...content.groupDiscounts];
+                    next[index] = { ...row, visible: e.target.checked };
+                    update("groupDiscounts", next);
+                  }}
+                />
+                Visible
+              </label>
+              <button
+                type="button"
+                onClick={() =>
+                  update(
+                    "groupDiscounts",
+                    content.groupDiscounts.filter((_, i) => i !== index),
+                  )
+                }
+                className="self-end pb-2 text-red-200"
+              >
+                <Trash2 className="size-3.5" />
+              </button>
+            </div>
+          ))}
         </div>
       </section>
 
