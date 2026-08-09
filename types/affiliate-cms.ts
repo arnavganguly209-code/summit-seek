@@ -1,0 +1,43 @@
+export type AffiliateCard = {
+  id: string;
+  title: string;
+  description: string;
+  imageUrl: string;
+  visible: boolean;
+};
+
+export type AffiliateContent = {
+  coverImageUrl: string;
+  coverTitle: string;
+  coverSubtitle: string;
+  introEyebrow: string;
+  introHeading: string;
+  introBody: string;
+  whatHeading: string;
+  whatBody: string;
+  promoteHeading: string;
+  promoteIntro: string;
+  promoteMethods: AffiliateCard[];
+  stepsHeading: string;
+  stepsIntro: string;
+  steps: AffiliateCard[];
+  eligibilityHeading: string;
+  eligibilityBody: string;
+  commissionHeading: string;
+  commissionBody: string;
+  commissionRateLabel: string;
+  commissionRateNote: string;
+  termsHeading: string;
+  termsPoints: string[];
+  highlightHeading: string;
+  highlightBody: string;
+  highlightImageUrl: string;
+  ctaHeading: string;
+  ctaBody: string;
+  ctaPrimaryLabel: string;
+  ctaPrimaryHref: string;
+  ctaSecondaryLabel: string;
+  ctaSecondaryHref: string;
+  metaTitle: string;
+  metaDescription: string;
+};

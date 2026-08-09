@@ -15,6 +15,8 @@ import type { AboutPageContent } from "@/types/about-page-cms";
 import type { LegalPageContent } from "@/types/legal-cms";
 import type { WhySummitSeekContent } from "@/types/why-summit-seek-cms";
 import type { ResponsibleTravelContent } from "@/types/responsible-travel-cms";
+import type { AffiliateContent } from "@/types/affiliate-cms";
+import type { TermsContent } from "@/types/terms-cms";
 import { DEFAULT_HERO } from "@/lib/orbit/defaults";
 import { DEFAULT_FEATURED_PACKAGES } from "@/lib/orbit/featured-packages-defaults";
 import { DEFAULT_ABOUT_INTRO } from "@/lib/orbit/about-intro-defaults";
@@ -33,6 +35,8 @@ import {
 import { DEFAULT_LEGAL_PAGE } from "@/lib/orbit/legal-defaults";
 import { DEFAULT_WHY_SUMMIT_SEEK } from "@/lib/orbit/why-summit-seek-defaults";
 import { DEFAULT_RESPONSIBLE_TRAVEL } from "@/lib/orbit/responsible-travel-defaults";
+import { DEFAULT_AFFILIATE } from "@/lib/orbit/affiliate-defaults";
+import { DEFAULT_TERMS } from "@/lib/orbit/terms-defaults";
 
 const DATA_DIR = path.join(process.cwd(), "data");
 const HERO_FILE = path.join(DATA_DIR, "hero.json");
@@ -50,6 +54,8 @@ const ABOUT_PAGE_FILE = path.join(DATA_DIR, "about-page.json");
 const LEGAL_FILE = path.join(DATA_DIR, "legal.json");
 const WHY_SUMMIT_SEEK_FILE = path.join(DATA_DIR, "why-summit-seek.json");
 const RESPONSIBLE_TRAVEL_FILE = path.join(DATA_DIR, "responsible-travel.json");
+const AFFILIATE_FILE = path.join(DATA_DIR, "affiliate.json");
+const TERMS_FILE = path.join(DATA_DIR, "terms.json");
 const MEDIA_FILE = path.join(DATA_DIR, "media-library.json");
 
 /** Durable upload root — survives `git reset --hard` (unlike public/). */
@@ -910,6 +916,107 @@ export async function saveResponsibleTravelContent(
 ): Promise<void> {
   await ensureDataDir();
   await fs.writeFile(RESPONSIBLE_TRAVEL_FILE, JSON.stringify(content, null, 2), "utf8");
+}
+
+function mergeAffiliateCards(
+  stored: AffiliateContent["promoteMethods"] | undefined,
+  fallback: AffiliateContent["promoteMethods"],
+) {
+  if (!Array.isArray(stored) || stored.length === 0) {
+    return fallback.map((item) => ({ ...item }));
+  }
+  return stored.map((item, i) => ({
+    id: item.id || `a-${i + 1}`,
+    title: (item.title || "").trim() || `Item ${i + 1}`,
+    description: typeof item.description === "string" ? item.description : "",
+    imageUrl: typeof item.imageUrl === "string" ? item.imageUrl.trim() : "",
+    visible: item.visible !== false,
+  }));
+}
+
+function mergeAffiliate(stored: Partial<AffiliateContent> | null): AffiliateContent {
+  if (!stored) return DEFAULT_AFFILIATE;
+
+  const termsPoints = Array.isArray(stored.termsPoints)
+    ? stored.termsPoints.map((p) => (typeof p === "string" ? p : "")).filter(Boolean)
+    : DEFAULT_AFFILIATE.termsPoints;
+
+  return {
+    ...DEFAULT_AFFILIATE,
+    ...stored,
+    promoteMethods: mergeAffiliateCards(
+      stored.promoteMethods,
+      DEFAULT_AFFILIATE.promoteMethods,
+    ),
+    steps: mergeAffiliateCards(stored.steps, DEFAULT_AFFILIATE.steps),
+    termsPoints: termsPoints.length > 0 ? termsPoints : DEFAULT_AFFILIATE.termsPoints,
+    coverImageUrl:
+      typeof stored.coverImageUrl === "string"
+        ? stored.coverImageUrl.trim()
+        : DEFAULT_AFFILIATE.coverImageUrl,
+    highlightImageUrl:
+      typeof stored.highlightImageUrl === "string"
+        ? stored.highlightImageUrl.trim()
+        : DEFAULT_AFFILIATE.highlightImageUrl,
+    coverTitle: stored.coverTitle?.trim() || DEFAULT_AFFILIATE.coverTitle,
+    introHeading: stored.introHeading?.trim() || DEFAULT_AFFILIATE.introHeading,
+    introBody: stored.introBody?.trim() || DEFAULT_AFFILIATE.introBody,
+  };
+}
+
+export async function getAffiliateContent(): Promise<AffiliateContent> {
+  try {
+    const raw = await fs.readFile(AFFILIATE_FILE, "utf8");
+    return mergeAffiliate(JSON.parse(raw) as Partial<AffiliateContent>);
+  } catch {
+    return DEFAULT_AFFILIATE;
+  }
+}
+
+export async function saveAffiliateContent(content: AffiliateContent): Promise<void> {
+  await ensureDataDir();
+  await fs.writeFile(AFFILIATE_FILE, JSON.stringify(content, null, 2), "utf8");
+}
+
+function mergeTerms(stored: Partial<TermsContent> | null): TermsContent {
+  if (!stored) return DEFAULT_TERMS;
+
+  const sections =
+    Array.isArray(stored.sections) && stored.sections.length > 0
+      ? stored.sections.map((item, i) => ({
+          id: item.id || `term-${i + 1}`,
+          title: (item.title || "").trim() || `Section ${i + 1}`,
+          body: typeof item.body === "string" ? item.body : "",
+          visible: item.visible !== false,
+        }))
+      : DEFAULT_TERMS.sections.map((s) => ({ ...s }));
+
+  return {
+    ...DEFAULT_TERMS,
+    ...stored,
+    sections,
+    coverImageUrl:
+      typeof stored.coverImageUrl === "string"
+        ? stored.coverImageUrl.trim()
+        : DEFAULT_TERMS.coverImageUrl,
+    coverTitle: stored.coverTitle?.trim() || DEFAULT_TERMS.coverTitle,
+    introHeading: stored.introHeading?.trim() || DEFAULT_TERMS.introHeading,
+    introBody: stored.introBody?.trim() || DEFAULT_TERMS.introBody,
+  };
+}
+
+export async function getTermsContent(): Promise<TermsContent> {
+  try {
+    const raw = await fs.readFile(TERMS_FILE, "utf8");
+    return mergeTerms(JSON.parse(raw) as Partial<TermsContent>);
+  } catch {
+    return DEFAULT_TERMS;
+  }
+}
+
+export async function saveTermsContent(content: TermsContent): Promise<void> {
+  await ensureDataDir();
+  await fs.writeFile(TERMS_FILE, JSON.stringify(content, null, 2), "utf8");
 }
 
 export async function getMediaLibrary(): Promise<MediaItem[]> {

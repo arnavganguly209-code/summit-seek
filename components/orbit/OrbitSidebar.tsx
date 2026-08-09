@@ -22,6 +22,8 @@ import {
   Scale,
   Sparkles,
   Leaf,
+  Handshake,
+  FileText,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -57,6 +59,16 @@ const nav = [
         href: "/orbit/dashboard/website/responsible-travel",
         label: "Responsible Travel",
         icon: Leaf,
+      },
+      {
+        href: "/orbit/dashboard/website/affiliate",
+        label: "Affiliate Program",
+        icon: Handshake,
+      },
+      {
+        href: "/orbit/dashboard/website/terms",
+        label: "Terms & Conditions",
+        icon: FileText,
       },
       { href: "/orbit/dashboard/website/legal", label: "Legal Documents", icon: Scale },
       { href: "/orbit/dashboard/website/footer", label: "Footer", icon: PanelBottom },
