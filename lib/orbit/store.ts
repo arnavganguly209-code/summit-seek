@@ -14,6 +14,7 @@ import type { BlogPageContent, BlogPost } from "@/types/blog-cms";
 import type { AboutPageContent } from "@/types/about-page-cms";
 import type { LegalPageContent } from "@/types/legal-cms";
 import type { WhySummitSeekContent } from "@/types/why-summit-seek-cms";
+import type { ResponsibleTravelContent } from "@/types/responsible-travel-cms";
 import { DEFAULT_HERO } from "@/lib/orbit/defaults";
 import { DEFAULT_FEATURED_PACKAGES } from "@/lib/orbit/featured-packages-defaults";
 import { DEFAULT_ABOUT_INTRO } from "@/lib/orbit/about-intro-defaults";
@@ -31,6 +32,7 @@ import {
 } from "@/lib/orbit/about-page-defaults";
 import { DEFAULT_LEGAL_PAGE } from "@/lib/orbit/legal-defaults";
 import { DEFAULT_WHY_SUMMIT_SEEK } from "@/lib/orbit/why-summit-seek-defaults";
+import { DEFAULT_RESPONSIBLE_TRAVEL } from "@/lib/orbit/responsible-travel-defaults";
 
 const DATA_DIR = path.join(process.cwd(), "data");
 const HERO_FILE = path.join(DATA_DIR, "hero.json");
@@ -47,6 +49,7 @@ const BLOG_FILE = path.join(DATA_DIR, "blog.json");
 const ABOUT_PAGE_FILE = path.join(DATA_DIR, "about-page.json");
 const LEGAL_FILE = path.join(DATA_DIR, "legal.json");
 const WHY_SUMMIT_SEEK_FILE = path.join(DATA_DIR, "why-summit-seek.json");
+const RESPONSIBLE_TRAVEL_FILE = path.join(DATA_DIR, "responsible-travel.json");
 const MEDIA_FILE = path.join(DATA_DIR, "media-library.json");
 
 /** Durable upload root — survives `git reset --hard` (unlike public/). */
@@ -845,6 +848,68 @@ export async function saveWhySummitSeekContent(
 ): Promise<void> {
   await ensureDataDir();
   await fs.writeFile(WHY_SUMMIT_SEEK_FILE, JSON.stringify(content, null, 2), "utf8");
+}
+
+function mergePracticeList(
+  stored: ResponsibleTravelContent["travelerPractices"] | undefined,
+  fallback: ResponsibleTravelContent["travelerPractices"],
+) {
+  if (!Array.isArray(stored) || stored.length === 0) {
+    return fallback.map((item) => ({ ...item }));
+  }
+  return stored.map((item, i) => ({
+    id: item.id || `p-${i + 1}`,
+    title: (item.title || "").trim() || `Item ${i + 1}`,
+    description: typeof item.description === "string" ? item.description : "",
+    imageUrl: typeof item.imageUrl === "string" ? item.imageUrl.trim() : "",
+    visible: item.visible !== false,
+  }));
+}
+
+function mergeResponsibleTravel(
+  stored: Partial<ResponsibleTravelContent> | null,
+): ResponsibleTravelContent {
+  if (!stored) return DEFAULT_RESPONSIBLE_TRAVEL;
+
+  return {
+    ...DEFAULT_RESPONSIBLE_TRAVEL,
+    ...stored,
+    travelerPractices: mergePracticeList(
+      stored.travelerPractices,
+      DEFAULT_RESPONSIBLE_TRAVEL.travelerPractices,
+    ),
+    companyCommitments: mergePracticeList(
+      stored.companyCommitments,
+      DEFAULT_RESPONSIBLE_TRAVEL.companyCommitments,
+    ),
+    coverImageUrl:
+      typeof stored.coverImageUrl === "string"
+        ? stored.coverImageUrl.trim()
+        : DEFAULT_RESPONSIBLE_TRAVEL.coverImageUrl,
+    highlightImageUrl:
+      typeof stored.highlightImageUrl === "string"
+        ? stored.highlightImageUrl.trim()
+        : DEFAULT_RESPONSIBLE_TRAVEL.highlightImageUrl,
+    coverTitle: stored.coverTitle?.trim() || DEFAULT_RESPONSIBLE_TRAVEL.coverTitle,
+    introHeading: stored.introHeading?.trim() || DEFAULT_RESPONSIBLE_TRAVEL.introHeading,
+    introBody: stored.introBody?.trim() || DEFAULT_RESPONSIBLE_TRAVEL.introBody,
+  };
+}
+
+export async function getResponsibleTravelContent(): Promise<ResponsibleTravelContent> {
+  try {
+    const raw = await fs.readFile(RESPONSIBLE_TRAVEL_FILE, "utf8");
+    return mergeResponsibleTravel(JSON.parse(raw) as Partial<ResponsibleTravelContent>);
+  } catch {
+    return DEFAULT_RESPONSIBLE_TRAVEL;
+  }
+}
+
+export async function saveResponsibleTravelContent(
+  content: ResponsibleTravelContent,
+): Promise<void> {
+  await ensureDataDir();
+  await fs.writeFile(RESPONSIBLE_TRAVEL_FILE, JSON.stringify(content, null, 2), "utf8");
 }
 
 export async function getMediaLibrary(): Promise<MediaItem[]> {

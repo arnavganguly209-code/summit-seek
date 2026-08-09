@@ -21,6 +21,7 @@ import {
   Image as LogoImage,
   Scale,
   Sparkles,
+  Leaf,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -52,6 +53,11 @@ const nav = [
       { href: "/orbit/dashboard/website/about", label: "Get to Know Us", icon: Info },
       { href: "/orbit/dashboard/website/about-page", label: "About / Team / Vision", icon: Building2 },
       { href: "/orbit/dashboard/website/why-summit-seek", label: "Why Summit Seek", icon: Sparkles },
+      {
+        href: "/orbit/dashboard/website/responsible-travel",
+        label: "Responsible Travel",
+        icon: Leaf,
+      },
       { href: "/orbit/dashboard/website/legal", label: "Legal Documents", icon: Scale },
       { href: "/orbit/dashboard/website/footer", label: "Footer", icon: PanelBottom },
     ],
