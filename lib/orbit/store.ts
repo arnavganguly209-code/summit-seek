@@ -21,6 +21,8 @@ import type { PaymentContent } from "@/types/payment-cms";
 import type { PrivacyContent } from "@/types/privacy-cms";
 import type { NepalVisaContent } from "@/types/nepal-visa-cms";
 import type { PermitsTimsContent } from "@/types/permits-tims-cms";
+import type { BestTimeContent } from "@/types/best-time-cms";
+import type { TravelInsuranceContent } from "@/types/travel-insurance-cms";
 import { DEFAULT_HERO } from "@/lib/orbit/defaults";
 import { DEFAULT_FEATURED_PACKAGES } from "@/lib/orbit/featured-packages-defaults";
 import { DEFAULT_ABOUT_INTRO } from "@/lib/orbit/about-intro-defaults";
@@ -45,6 +47,8 @@ import { DEFAULT_PAYMENT } from "@/lib/orbit/payment-defaults";
 import { DEFAULT_PRIVACY } from "@/lib/orbit/privacy-defaults";
 import { DEFAULT_NEPAL_VISA } from "@/lib/orbit/nepal-visa-defaults";
 import { DEFAULT_PERMITS_TIMS } from "@/lib/orbit/permits-tims-defaults";
+import { DEFAULT_BEST_TIME } from "@/lib/orbit/best-time-defaults";
+import { DEFAULT_TRAVEL_INSURANCE } from "@/lib/orbit/travel-insurance-defaults";
 
 const DATA_DIR = path.join(process.cwd(), "data");
 const HERO_FILE = path.join(DATA_DIR, "hero.json");
@@ -68,6 +72,8 @@ const PAYMENT_FILE = path.join(DATA_DIR, "payment.json");
 const PRIVACY_FILE = path.join(DATA_DIR, "privacy.json");
 const NEPAL_VISA_FILE = path.join(DATA_DIR, "nepal-visa.json");
 const PERMITS_TIMS_FILE = path.join(DATA_DIR, "permits-tims.json");
+const BEST_TIME_FILE = path.join(DATA_DIR, "best-time.json");
+const TRAVEL_INSURANCE_FILE = path.join(DATA_DIR, "travel-insurance.json");
 const MEDIA_FILE = path.join(DATA_DIR, "media-library.json");
 
 /** Durable upload root — survives `git reset --hard` (unlike public/). */
@@ -1259,6 +1265,120 @@ export async function getPermitsTimsContent(): Promise<PermitsTimsContent> {
 export async function savePermitsTimsContent(content: PermitsTimsContent): Promise<void> {
   await ensureDataDir();
   await fs.writeFile(PERMITS_TIMS_FILE, JSON.stringify(content, null, 2), "utf8");
+}
+
+function mergeBestTime(stored: Partial<BestTimeContent> | null): BestTimeContent {
+  if (!stored) return DEFAULT_BEST_TIME;
+
+  const seasons =
+    Array.isArray(stored.seasons) && stored.seasons.length > 0
+      ? stored.seasons.map((item, i) => ({
+          id: item.id || `season-${i + 1}`,
+          name: (item.name || "").trim() || `Season ${i + 1}`,
+          months: typeof item.months === "string" ? item.months : "",
+          tagline: typeof item.tagline === "string" ? item.tagline : "",
+          description: typeof item.description === "string" ? item.description : "",
+          highlights: Array.isArray(item.highlights)
+            ? item.highlights.map((h) => (typeof h === "string" ? h : "")).filter(Boolean)
+            : [],
+          condition: typeof item.condition === "string" ? item.condition : "",
+          imageUrl: typeof item.imageUrl === "string" ? item.imageUrl.trim() : "",
+          visible: item.visible !== false,
+        }))
+      : DEFAULT_BEST_TIME.seasons.map((s) => ({ ...s, highlights: [...s.highlights] }));
+
+  const notes = Array.isArray(stored.notes)
+    ? stored.notes.map((n) => (typeof n === "string" ? n : "")).filter(Boolean)
+    : DEFAULT_BEST_TIME.notes;
+
+  return {
+    ...DEFAULT_BEST_TIME,
+    ...stored,
+    seasons,
+    notes: notes.length > 0 ? notes : DEFAULT_BEST_TIME.notes,
+    coverImageUrl:
+      typeof stored.coverImageUrl === "string"
+        ? stored.coverImageUrl.trim()
+        : DEFAULT_BEST_TIME.coverImageUrl,
+    coverTitle: stored.coverTitle?.trim() || DEFAULT_BEST_TIME.coverTitle,
+    introHeading: stored.introHeading?.trim() || DEFAULT_BEST_TIME.introHeading,
+    introBody: stored.introBody?.trim() || DEFAULT_BEST_TIME.introBody,
+  };
+}
+
+export async function getBestTimeContent(): Promise<BestTimeContent> {
+  try {
+    const raw = await fs.readFile(BEST_TIME_FILE, "utf8");
+    return mergeBestTime(JSON.parse(raw) as Partial<BestTimeContent>);
+  } catch {
+    return DEFAULT_BEST_TIME;
+  }
+}
+
+export async function saveBestTimeContent(content: BestTimeContent): Promise<void> {
+  await ensureDataDir();
+  await fs.writeFile(BEST_TIME_FILE, JSON.stringify(content, null, 2), "utf8");
+}
+
+function mergeTravelInsurance(
+  stored: Partial<TravelInsuranceContent> | null,
+): TravelInsuranceContent {
+  if (!stored) return DEFAULT_TRAVEL_INSURANCE;
+
+  const mustHaveItems =
+    Array.isArray(stored.mustHaveItems) && stored.mustHaveItems.length > 0
+      ? stored.mustHaveItems.map((item, i) => ({
+          id: item.id || `mi-${i + 1}`,
+          title: (item.title || "").trim() || `Item ${i + 1}`,
+          description: typeof item.description === "string" ? item.description : "",
+          visible: item.visible !== false,
+        }))
+      : DEFAULT_TRAVEL_INSURANCE.mustHaveItems.map((m) => ({ ...m }));
+
+  const providerGroups =
+    Array.isArray(stored.providerGroups) && stored.providerGroups.length > 0
+      ? stored.providerGroups.map((item, i) => ({
+          id: item.id || `pg-${i + 1}`,
+          region: (item.region || "").trim() || `Region ${i + 1}`,
+          providers: typeof item.providers === "string" ? item.providers : "",
+          visible: item.visible !== false,
+        }))
+      : DEFAULT_TRAVEL_INSURANCE.providerGroups.map((p) => ({ ...p }));
+
+  const notes = Array.isArray(stored.notes)
+    ? stored.notes.map((n) => (typeof n === "string" ? n : "")).filter(Boolean)
+    : DEFAULT_TRAVEL_INSURANCE.notes;
+
+  return {
+    ...DEFAULT_TRAVEL_INSURANCE,
+    ...stored,
+    mustHaveItems,
+    providerGroups,
+    notes: notes.length > 0 ? notes : DEFAULT_TRAVEL_INSURANCE.notes,
+    coverImageUrl:
+      typeof stored.coverImageUrl === "string"
+        ? stored.coverImageUrl.trim()
+        : DEFAULT_TRAVEL_INSURANCE.coverImageUrl,
+    coverTitle: stored.coverTitle?.trim() || DEFAULT_TRAVEL_INSURANCE.coverTitle,
+    introHeading: stored.introHeading?.trim() || DEFAULT_TRAVEL_INSURANCE.introHeading,
+    introBody: stored.introBody?.trim() || DEFAULT_TRAVEL_INSURANCE.introBody,
+  };
+}
+
+export async function getTravelInsuranceContent(): Promise<TravelInsuranceContent> {
+  try {
+    const raw = await fs.readFile(TRAVEL_INSURANCE_FILE, "utf8");
+    return mergeTravelInsurance(JSON.parse(raw) as Partial<TravelInsuranceContent>);
+  } catch {
+    return DEFAULT_TRAVEL_INSURANCE;
+  }
+}
+
+export async function saveTravelInsuranceContent(
+  content: TravelInsuranceContent,
+): Promise<void> {
+  await ensureDataDir();
+  await fs.writeFile(TRAVEL_INSURANCE_FILE, JSON.stringify(content, null, 2), "utf8");
 }
 
 export async function getMediaLibrary(): Promise<MediaItem[]> {

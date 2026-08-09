@@ -28,6 +28,8 @@ import {
   Shield,
   Stamp,
   Map,
+  CalendarDays,
+  ShieldCheck,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -93,6 +95,16 @@ const nav = [
         href: "/orbit/dashboard/website/permits-tims",
         label: "Permits & TIMS",
         icon: Map,
+      },
+      {
+        href: "/orbit/dashboard/website/best-time",
+        label: "Best Time to Visit",
+        icon: CalendarDays,
+      },
+      {
+        href: "/orbit/dashboard/website/travel-insurance",
+        label: "Travel Insurance",
+        icon: ShieldCheck,
       },
       { href: "/orbit/dashboard/website/legal", label: "Legal Documents", icon: Scale },
       { href: "/orbit/dashboard/website/footer", label: "Footer", icon: PanelBottom },
