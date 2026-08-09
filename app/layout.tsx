@@ -4,7 +4,8 @@ import { SITE } from "@/lib/constants";
 import "./globals.css";
 
 const display = Playfair_Display({
-  variable: "--font-display",
+  /** Raw Playfair face — composed with a plain-& overlay in globals.css */
+  variable: "--font-display-face",
   subsets: ["latin"],
   weight: ["400", "500", "600", "700"],
   style: ["normal", "italic"],
@@ -100,7 +101,10 @@ export default function RootLayout({
   };
 
   return (
-    <html lang="en" className={`${display.variable} ${sans.variable} ${ui.variable} h-full`}>
+    <html
+      lang="en"
+      className={`${display.variable} ${sans.variable} ${ui.variable} h-full`}
+    >
       <body className="min-h-full flex flex-col bg-snow font-sans text-midnight antialiased">
         <script
           type="application/ld+json"

@@ -1,5 +1,27 @@
 @import "tailwindcss";
 
+/*
+  Playfair Display’s calligraphic “&” (ball terminals) is replaced site-wide.
+  Only U+0026 is overridden — all other Playfair glyphs stay the same.
+*/
+@font-face {
+  font-family: "SummitPlainAmp";
+  src: local("Arial"), local("Helvetica Neue"), local("Helvetica"), local("sans-serif");
+  unicode-range: U+0026;
+  font-weight: 100 900;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "SummitPlainAmp";
+  src: local("Arial"), local("Helvetica Neue"), local("Helvetica"), local("sans-serif");
+  unicode-range: U+0026;
+  font-weight: 100 900;
+  font-style: italic;
+  font-display: swap;
+}
+
 :root {
   --midnight: #08121e;
   --midnight-deep: #040d18;
@@ -14,6 +36,8 @@
   --slate-light: #8a93a3;
   --border: #e6eaf0;
   --border-strong: #d0d7e2;
+  /* Plain & first, then Playfair for everything else */
+  --font-display: "SummitPlainAmp", var(--font-display-face), Georgia, "Times New Roman", serif;
 }
 
 @theme inline {
