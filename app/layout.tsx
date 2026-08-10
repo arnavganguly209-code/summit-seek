@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Playfair_Display, Inter, Poppins } from "next/font/google";
+import { Playfair_Display, Inter, Poppins, Bebas_Neue } from "next/font/google";
 import { SITE } from "@/lib/constants";
 import "./globals.css";
 
@@ -24,6 +24,14 @@ const ui = Poppins({
   variable: "--font-ui",
   subsets: ["latin"],
   weight: ["500", "600", "700", "800"],
+  display: "swap",
+});
+
+/** Display sans for destination / package pages */
+const bebas = Bebas_Neue({
+  variable: "--font-bebas",
+  subsets: ["latin"],
+  weight: "400",
   display: "swap",
 });
 
@@ -103,7 +111,7 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`${display.variable} ${sans.variable} ${ui.variable} h-full`}
+      className={`${display.variable} ${sans.variable} ${ui.variable} ${bebas.variable} h-full`}
     >
       <body className="min-h-full flex flex-col bg-snow font-sans text-midnight antialiased">
         <script
