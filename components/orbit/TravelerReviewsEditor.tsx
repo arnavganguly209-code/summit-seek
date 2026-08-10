@@ -2,13 +2,14 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { CheckCircle2, Loader2, Plus, Save, Trash2, Upload } from "lucide-react";
+import { CheckCircle2, FolderOpen, Loader2, Plus, Save, Trash2, Upload } from "lucide-react";
 import type {
   TravelerReviewItem,
   TravelerReviewsContent,
 } from "@/types/traveler-reviews";
 import { orbitUploadFile, withCacheBust } from "@/lib/orbit/client-upload";
 import { OrbitMediaPreview } from "@/components/orbit/OrbitMediaPreview";
+import { OrbitMediaLibraryModal } from "@/components/orbit/OrbitMediaLibraryModal";
 
 type Props = { initial: TravelerReviewsContent };
 
@@ -31,6 +32,7 @@ export function TravelerReviewsEditor({ initial }: Props) {
   const [content, setContent] = useState(initial);
   const [saving, setSaving] = useState(false);
   const [uploading, setUploading] = useState(false);
+  const [libraryOpen, setLibraryOpen] = useState(false);
   const [toast, setToast] = useState("");
   const [error, setError] = useState("");
 
@@ -79,10 +81,7 @@ export function TravelerReviewsEditor({ initial }: Props) {
     setUploading(true);
     setError("");
     try {
-      const replaceUrl = content.promoImageUrl.startsWith("/media/library/")
-        ? content.promoImageUrl.split("?")[0]
-        : undefined;
-      const item = await orbitUploadFile({ file, replaceUrl });
+      const item = await orbitUploadFile({ file });
       const next = { ...content, promoImageUrl: withCacheBust(item.url) };
       setContent(next);
       await save(next);
@@ -147,20 +146,29 @@ export function TravelerReviewsEditor({ initial }: Props) {
             className="h-full w-full object-cover"
           />
         </div>
-        <label className="inline-flex h-9 cursor-pointer items-center gap-1.5 rounded-md border border-white/15 bg-white/5 px-3 text-[12px] font-semibold">
-          <Upload className="size-3.5" />
-          {uploading ? "Uploading…" : "Upload promo image"}
-          <input
-            type="file"
-            accept="image/*"
-            className="hidden"
-            onChange={(e) => {
-              const file = e.target.files?.[0];
-              if (file) void uploadPromoImage(file);
-              e.target.value = "";
-            }}
-          />
-        </label>
+        <div className="flex flex-wrap gap-2">
+          <label className="inline-flex h-9 cursor-pointer items-center gap-1.5 rounded-md border border-white/15 bg-white/5 px-3 text-[12px] font-semibold">
+            <Upload className="size-3.5" />
+            {uploading ? "Uploading…" : "Upload promo image"}
+            <input
+              type="file"
+              accept="image/*"
+              className="hidden"
+              onChange={(e) => {
+                const file = e.target.files?.[0];
+                if (file) void uploadPromoImage(file);
+                e.target.value = "";
+              }}
+            />
+          </label>
+          <button
+            type="button"
+            onClick={() => setLibraryOpen(true)}
+            className="inline-flex h-9 items-center gap-1.5 rounded-md border border-white/15 bg-white/5 px-3 text-[12px] font-semibold"
+          >
+            <FolderOpen className="size-3.5" /> Media library
+          </button>
+        </div>
         <div className="grid gap-3 sm:grid-cols-2">
           <Field label="Promo eyebrow" value={content.promoEyebrow} onChange={(v) => update("promoEyebrow", v)} />
           <Field label="Promo CTA" value={content.promoCtaLabel} onChange={(v) => update("promoCtaLabel", v)} />
@@ -301,6 +309,16 @@ export function TravelerReviewsEditor({ initial }: Props) {
           </div>
         ))}
       </div>
+
+      <OrbitMediaLibraryModal
+        open={libraryOpen}
+        onClose={() => setLibraryOpen(false)}
+        onSelect={async (url) => {
+          const next = { ...content, promoImageUrl: url };
+          setContent(next);
+          await save(next);
+        }}
+      />
     </div>
   );
 }

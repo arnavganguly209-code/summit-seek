@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import {
   CheckCircle2,
   ChevronDown,
+  FolderOpen,
   Loader2,
   Plus,
   Save,
@@ -14,6 +15,7 @@ import {
 import type { BlogPageContent, BlogPost } from "@/types/blog-cms";
 import { orbitUploadFile, withCacheBust } from "@/lib/orbit/client-upload";
 import { OrbitMediaPreview } from "@/components/orbit/OrbitMediaPreview";
+import { OrbitMediaLibraryModal } from "@/components/orbit/OrbitMediaLibraryModal";
 
 type Props = { initial: BlogPageContent };
 
@@ -65,6 +67,7 @@ export function BlogEditor({ initial }: Props) {
   const [uploadingId, setUploadingId] = useState<string | null>(null);
   const [toast, setToast] = useState("");
   const [error, setError] = useState("");
+  const [libraryTarget, setLibraryTarget] = useState<string | null>(null);
   const fileRefs = useRef<Record<string, HTMLInputElement | null>>({});
   const contentRef = useRef(content);
   contentRef.current = content;
@@ -119,10 +122,7 @@ export function BlogEditor({ initial }: Props) {
     setError("");
     try {
       const current = contentRef.current.posts.find((p) => p.id === post.id) || post;
-      const replaceUrl = current.coverImageUrl.startsWith("/media/library/")
-        ? current.coverImageUrl.split("?")[0]
-        : undefined;
-      const item = await orbitUploadFile({ file, replaceUrl });
+      const item = await orbitUploadFile({ file });
       const coverImageUrl = withCacheBust(item.url);
       const next: BlogPageContent = {
         ...contentRef.current,
@@ -144,10 +144,7 @@ export function BlogEditor({ initial }: Props) {
     setUploadingId("page-cover");
     setError("");
     try {
-      const replaceUrl = contentRef.current.coverImageUrl.startsWith("/media/library/")
-        ? contentRef.current.coverImageUrl.split("?")[0]
-        : undefined;
-      const item = await orbitUploadFile({ file, replaceUrl });
+      const item = await orbitUploadFile({ file });
       const next = { ...contentRef.current, coverImageUrl: withCacheBust(item.url) };
       setContent(next);
       contentRef.current = next;
@@ -241,6 +238,13 @@ export function BlogEditor({ initial }: Props) {
                 <Upload className="size-4" />
               )}
               Upload page cover
+            </button>
+            <button
+              type="button"
+              onClick={() => setLibraryTarget("page-cover")}
+              className="ml-2 inline-flex h-10 items-center gap-2 rounded-lg border border-white/15 bg-white/5 px-3 text-[12px] font-semibold"
+            >
+              <FolderOpen className="size-4" /> Media library
             </button>
           </div>
           <label>
@@ -340,6 +344,13 @@ export function BlogEditor({ initial }: Props) {
                         <Upload className="size-3.5" />
                       )}
                       Upload image
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setLibraryTarget(post.id)}
+                      className="inline-flex h-9 items-center gap-1.5 rounded-lg border border-white/15 bg-white/5 px-3 text-[12px] font-semibold"
+                    >
+                      <FolderOpen className="size-3.5" /> Library
                     </button>
                     <button
                       type="button"
@@ -461,6 +472,29 @@ export function BlogEditor({ initial }: Props) {
           );
         })}
       </section>
+
+      <OrbitMediaLibraryModal
+        open={!!libraryTarget}
+        onClose={() => setLibraryTarget(null)}
+        onSelect={async (url) => {
+          if (libraryTarget === "page-cover") {
+            const next = { ...contentRef.current, coverImageUrl: url };
+            setContent(next);
+            contentRef.current = next;
+            await save(next);
+            return;
+          }
+          const next = {
+            ...contentRef.current,
+            posts: contentRef.current.posts.map((p) =>
+              p.id === libraryTarget ? { ...p, coverImageUrl: url } : p,
+            ),
+          };
+          setContent(next);
+          contentRef.current = next;
+          await save(next);
+        }}
+      />
     </div>
   );
 }

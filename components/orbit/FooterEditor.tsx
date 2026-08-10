@@ -4,6 +4,7 @@ import { useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import {
   CheckCircle2,
+  FolderOpen,
   ImagePlus,
   Loader2,
   Plus,
@@ -14,6 +15,7 @@ import {
 import type { FooterContent, FooterPartner, FooterPayment } from "@/types/footer-cms";
 import { orbitUploadFile, withCacheBust } from "@/lib/orbit/client-upload";
 import { OrbitMediaPreview } from "@/components/orbit/OrbitMediaPreview";
+import { OrbitMediaLibraryModal } from "@/components/orbit/OrbitMediaLibraryModal";
 
 type Props = { initial: FooterContent };
 
@@ -32,6 +34,7 @@ export function FooterEditor({ initial }: Props) {
   const [progress, setProgress] = useState(0);
   const [toast, setToast] = useState("");
   const [error, setError] = useState("");
+  const [librarySlot, setLibrarySlot] = useState<UploadSlot | null>(null);
   const fileRefs = useRef<Record<string, HTMLInputElement | null>>({});
   const contentRef = useRef(content);
   contentRef.current = content;
@@ -69,42 +72,41 @@ export function FooterEditor({ initial }: Props) {
     }
   };
 
-  const uploadTo = async (slot: UploadSlot, currentUrl: string, file: File) => {
+  const applyUrlToSlot = async (slot: UploadSlot, url: string) => {
+    let next = { ...contentRef.current };
+
+    if (slot === "topLogo") next = { ...next, topLogoUrl: url };
+    else if (slot === "brandLogo") next = { ...next, brandLogoUrl: url };
+    else if (slot === "travelersBadge") next = { ...next, travelersChoiceBadgeUrl: url };
+    else if (slot.startsWith("partner:")) {
+      const id = slot.slice(8);
+      next = {
+        ...next,
+        partners: next.partners.map((p) => (p.id === id ? { ...p, logoUrl: url } : p)),
+      };
+    } else if (slot.startsWith("payment:")) {
+      const id = slot.slice(8);
+      next = {
+        ...next,
+        payments: next.payments.map((p) => (p.id === id ? { ...p, imageUrl: url } : p)),
+      };
+    }
+
+    setContent(next);
+    contentRef.current = next;
+    await save(next);
+  };
+
+  const uploadTo = async (slot: UploadSlot, _currentUrl: string, file: File) => {
     setUploading(slot);
     setProgress(2);
     setError("");
     try {
-      const replaceUrl = currentUrl.startsWith("/media/library/")
-        ? currentUrl.split("?")[0]
-        : undefined;
       const item = await orbitUploadFile({
         file,
-        replaceUrl,
         onProgress: setProgress,
       });
-      const url = withCacheBust(item.url);
-      let next = { ...contentRef.current };
-
-      if (slot === "topLogo") next = { ...next, topLogoUrl: url };
-      else if (slot === "brandLogo") next = { ...next, brandLogoUrl: url };
-      else if (slot === "travelersBadge") next = { ...next, travelersChoiceBadgeUrl: url };
-      else if (slot.startsWith("partner:")) {
-        const id = slot.slice(8);
-        next = {
-          ...next,
-          partners: next.partners.map((p) => (p.id === id ? { ...p, logoUrl: url } : p)),
-        };
-      } else if (slot.startsWith("payment:")) {
-        const id = slot.slice(8);
-        next = {
-          ...next,
-          payments: next.payments.map((p) => (p.id === id ? { ...p, imageUrl: url } : p)),
-        };
-      }
-
-      setContent(next);
-      contentRef.current = next;
-      await save(next);
+      await applyUrlToSlot(slot, withCacheBust(item.url));
     } catch (err) {
       setError(err instanceof Error ? err.message : "Upload failed.");
     } finally {
@@ -155,6 +157,15 @@ export function FooterEditor({ initial }: Props) {
       >
         {url.startsWith("/media/") ? <Upload className="size-3.5" /> : <ImagePlus className="size-3.5" />}
         {url.startsWith("/media/") ? "Replace" : "Upload"}
+      </button>
+      <button
+        type="button"
+        disabled={!!uploading || saving}
+        onClick={() => setLibrarySlot(slot)}
+        className="mt-2 inline-flex w-full items-center justify-center gap-2 rounded-lg border border-white/15 bg-white/5 px-3 py-2 text-xs font-semibold text-white transition hover:bg-white/10 disabled:opacity-50"
+      >
+        <FolderOpen className="size-3.5" />
+        Media library
       </button>
     </div>
   );
@@ -435,6 +446,14 @@ export function FooterEditor({ initial }: Props) {
           </label>
         </div>
       </section>
+
+      <OrbitMediaLibraryModal
+        open={!!librarySlot}
+        onClose={() => setLibrarySlot(null)}
+        onSelect={async (url) => {
+          if (librarySlot) await applyUrlToSlot(librarySlot, url);
+        }}
+      />
     </div>
   );
 }

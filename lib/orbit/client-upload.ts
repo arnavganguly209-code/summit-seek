@@ -8,6 +8,7 @@ import {
 type UploadOptions = {
   file: File;
   setAsHero?: boolean;
+  /** @deprecated Ignored — uploads never delete previous library files. */
   replaceUrl?: string;
   onProgress?: (pct: number) => void;
 };
@@ -53,7 +54,7 @@ export function withCacheBust(url: string): string {
  * Avoids nginx/proxy body limits and fragile single-shot multipart parsing.
  */
 export async function orbitUploadFile(opts: UploadOptions): Promise<MediaItem> {
-  const { file, setAsHero, replaceUrl, onProgress } = opts;
+  const { file, setAsHero, onProgress } = opts;
 
   if (file.size <= 0) {
     throw new Error("Empty file. Choose a valid file and retry.");
@@ -71,7 +72,7 @@ export async function orbitUploadFile(opts: UploadOptions): Promise<MediaItem> {
   init.append("mimeType", file.type || "application/octet-stream");
   init.append("size", String(file.size));
   if (setAsHero) init.append("setAsHero", "1");
-  if (replaceUrl) init.append("replaceUrl", replaceUrl.split("?")[0]);
+  // replaceUrl intentionally not sent — old files stay in the media library
 
   const initRes = await postForm(init);
   if (!initRes.data.ok || !initRes.data.uploadId) {

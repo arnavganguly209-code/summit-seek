@@ -103,8 +103,9 @@ export default function OrbitMediaPage() {
           </p>
           <h1 className="mt-1 text-[26px] font-bold tracking-tight">Media Library</h1>
           <p className="mt-1.5 text-[13px] text-white/55">
-            Upload, preview, rename, replace, and delete images or videos (max{" "}
-            {ORBIT_MAX_UPLOAD_MB}MB).
+            Every upload from any Orbit page appears here. Pick files here or from each
+            page&apos;s Media library button. Files stay forever unless you delete them on this
+            page (max {ORBIT_MAX_UPLOAD_MB}MB).
           </p>
         </div>
         <button

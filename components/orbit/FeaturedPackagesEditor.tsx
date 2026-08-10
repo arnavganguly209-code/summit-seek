@@ -4,6 +4,7 @@ import { useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import {
   CheckCircle2,
+  FolderOpen,
   ImagePlus,
   Loader2,
   Save,
@@ -16,6 +17,7 @@ import type {
 } from "@/types/featured-packages";
 import { orbitUploadFile, withCacheBust } from "@/lib/orbit/client-upload";
 import { OrbitMediaPreview } from "@/components/orbit/OrbitMediaPreview";
+import { OrbitMediaLibraryModal } from "@/components/orbit/OrbitMediaLibraryModal";
 import { cn } from "@/lib/utils";
 type Props = {
   initial: FeaturedPackagesContent;
@@ -57,6 +59,7 @@ export function FeaturedPackagesEditor({ initial }: Props) {
   const [toast, setToast] = useState("");
   const [error, setError] = useState("");
   const [uploadProgress, setUploadProgress] = useState(0);
+  const [libraryPkgId, setLibraryPkgId] = useState<string | null>(null);
   const fileRefs = useRef<Record<string, HTMLInputElement | null>>({});
   const contentRef = useRef(content);
   contentRef.current = content;
@@ -152,48 +155,53 @@ export function FeaturedPackagesEditor({ initial }: Props) {
     setToast("");
 
     try {
-      const currentPkg =
-        contentRef.current.categories
-          .find((c) => c.id === category.id)
-          ?.packages.find((p) => p.id === pkg.id) || pkg;
-      const prev = currentPkg.imageUrl;
-      const replaceUrl = prev.startsWith("/media/library/")
-        ? prev.split("?")[0]
-        : undefined;
       const item = await orbitUploadFile({
         file,
-        replaceUrl,
         onProgress: setUploadProgress,
       });
-      const imageUrl = withCacheBust(item.url);
-
-      const next: FeaturedPackagesContent = {
-        ...contentRef.current,
-        categories: contentRef.current.categories.map((cat) =>
-          cat.id !== category.id
-            ? cat
-            : {
-                ...cat,
-                packages: cat.packages.map((p) =>
-                  p.id === pkg.id ? { ...p, imageUrl } : p,
-                ),
-              },
-        ),
-      };
-      setContent(next);
-      contentRef.current = next;
-
-      const saved = await save(next);
-      if (saved) {
-        setToast(`Image uploaded and saved for “${pkg.title}”.`);
-      } else {
-        setError((e) => e || "Image uploaded, but saving the package failed. Click Save & Publish.");
-      }
+      await applyPackageImage(pkg, withCacheBust(item.url), "uploaded");
     } catch (err) {
       setError(err instanceof Error ? err.message : "Upload failed.");
     } finally {
       setUploadingId(null);
       setUploadProgress(0);
+    }
+  };
+
+  const applyPackageImage = async (
+    pkg: FeaturedPackage,
+    imageUrl: string,
+    source: "uploaded" | "library",
+  ) => {
+    if (!category) return;
+    const next: FeaturedPackagesContent = {
+      ...contentRef.current,
+      categories: contentRef.current.categories.map((cat) =>
+        cat.id !== category.id
+          ? cat
+          : {
+              ...cat,
+              packages: cat.packages.map((p) =>
+                p.id === pkg.id ? { ...p, imageUrl } : p,
+              ),
+            },
+      ),
+    };
+    setContent(next);
+    contentRef.current = next;
+    const saved = await save(next);
+    if (saved) {
+      setToast(
+        source === "library"
+          ? `Library image selected for “${pkg.title}”.`
+          : `Image uploaded and saved for “${pkg.title}”.`,
+      );
+    } else {
+      setError(
+        (e) =>
+          e ||
+          "Image set, but saving the package failed. Click Save & Publish.",
+      );
     }
   };
 
@@ -366,6 +374,14 @@ export function FeaturedPackagesEditor({ initial }: Props) {
                     >
                       <Upload className="size-3.5" />
                       {pkg.imageUrl.startsWith("/media/") ? "Replace" : "Upload"}
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setLibraryPkgId(pkg.id)}
+                      className="inline-flex h-9 items-center gap-1.5 rounded-md border border-white/15 bg-white/5 px-3 text-[12px] font-semibold text-white transition hover:bg-white/10"
+                    >
+                      <FolderOpen className="size-3.5" />
+                      Media library
                     </button>
                     <button
                       type="button"
@@ -547,6 +563,15 @@ export function FeaturedPackagesEditor({ initial }: Props) {
           </div>
         </div>
       ) : null}
+
+      <OrbitMediaLibraryModal
+        open={!!libraryPkgId}
+        onClose={() => setLibraryPkgId(null)}
+        onSelect={async (url) => {
+          const pkg = category?.packages.find((p) => p.id === libraryPkgId);
+          if (pkg) await applyPackageImage(pkg, url, "library");
+        }}
+      />
     </div>
   );
 }

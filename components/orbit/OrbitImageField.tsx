@@ -1,10 +1,10 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
-import { FolderOpen, Loader2, Trash2, Upload, X } from "lucide-react";
-import type { MediaItem } from "@/types/hero";
+import { useRef, useState } from "react";
+import { FolderOpen, Loader2, Trash2, Upload } from "lucide-react";
 import { orbitUploadFile, withCacheBust } from "@/lib/orbit/client-upload";
 import { OrbitMediaPreview } from "@/components/orbit/OrbitMediaPreview";
+import { OrbitMediaLibraryModal } from "@/components/orbit/OrbitMediaLibraryModal";
 
 type Props = {
   label: string;
@@ -26,8 +26,6 @@ export function OrbitImageField({
   const fileRef = useRef<HTMLInputElement>(null);
   const [uploading, setUploading] = useState(false);
   const [libraryOpen, setLibraryOpen] = useState(false);
-  const [items, setItems] = useState<MediaItem[]>([]);
-  const [loadingLibrary, setLoadingLibrary] = useState(false);
   const [error, setError] = useState("");
 
   const apply = async (url: string) => {
@@ -35,42 +33,12 @@ export function OrbitImageField({
     if (onAfterChange) await onAfterChange(url);
   };
 
-  const loadLibrary = async () => {
-    setLoadingLibrary(true);
-    setError("");
-    try {
-      const res = await fetch("/api/orbit/media?sort=newest");
-      const data = (await res.json()) as { ok?: boolean; items?: MediaItem[]; error?: string };
-      if (!res.ok || !data.ok) {
-        setError(data.error || "Could not load media library.");
-        setItems([]);
-        return;
-      }
-      const list = data.items || [];
-      setItems(
-        imagesOnly
-          ? list.filter((i) => (i.mimeType || "").startsWith("image/"))
-          : list,
-      );
-    } catch {
-      setError("Network error loading media library.");
-      setItems([]);
-    } finally {
-      setLoadingLibrary(false);
-    }
-  };
-
-  useEffect(() => {
-    if (!libraryOpen) return;
-    void loadLibrary();
-  }, [libraryOpen]);
-
   const upload = async (file: File) => {
     setUploading(true);
     setError("");
     try {
-      const replaceUrl = value.startsWith("/media/library/") ? value.split("?")[0] : undefined;
-      const item = await orbitUploadFile({ file, replaceUrl });
+      // Never replace/delete the previous library file — keep all uploads
+      const item = await orbitUploadFile({ file });
       await apply(withCacheBust(item.url));
     } catch (err) {
       setError(err instanceof Error ? err.message : "Upload failed.");
@@ -141,59 +109,12 @@ export function OrbitImageField({
         <p className="mt-2 text-[12px] text-red-200">{error}</p>
       ) : null}
 
-      {libraryOpen ? (
-        <div className="fixed inset-0 z-[80] flex items-center justify-center bg-black/70 p-4">
-          <div className="flex max-h-[85vh] w-full max-w-3xl flex-col overflow-hidden rounded-2xl border border-white/15 bg-[#0d1520] shadow-2xl">
-            <div className="flex items-center justify-between border-b border-white/10 px-4 py-3">
-              <div>
-                <p className="text-[14px] font-bold text-white">Media library</p>
-                <p className="text-[12px] text-white/50">Pick an already uploaded image</p>
-              </div>
-              <button
-                type="button"
-                onClick={() => setLibraryOpen(false)}
-                className="rounded-lg border border-white/15 p-1.5 text-white/70 hover:bg-white/5"
-              >
-                <X className="size-4" />
-              </button>
-            </div>
-            <div className="overflow-y-auto p-4">
-              {loadingLibrary ? (
-                <div className="flex items-center justify-center gap-2 py-16 text-white/50">
-                  <Loader2 className="size-5 animate-spin" /> Loading…
-                </div>
-              ) : items.length === 0 ? (
-                <p className="py-16 text-center text-[13px] text-white/45">
-                  No images in the library yet. Upload one first.
-                </p>
-              ) : (
-                <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-4">
-                  {items.map((item) => (
-                    <button
-                      key={item.id}
-                      type="button"
-                      onClick={() => {
-                        void apply(withCacheBust(item.url));
-                        setLibraryOpen(false);
-                      }}
-                      className="group overflow-hidden rounded-xl border border-white/10 bg-black/30 text-left transition hover:border-[#F58220]/50"
-                    >
-                      <div className="aspect-square overflow-hidden">
-                        <OrbitMediaPreview
-                          src={item.url}
-                          alt={item.name}
-                          className="h-full w-full object-cover transition group-hover:scale-[1.03]"
-                        />
-                      </div>
-                      <p className="truncate px-2 py-1.5 text-[11px] text-white/60">{item.name}</p>
-                    </button>
-                  ))}
-                </div>
-              )}
-            </div>
-          </div>
-        </div>
-      ) : null}
+      <OrbitMediaLibraryModal
+        open={libraryOpen}
+        onClose={() => setLibraryOpen(false)}
+        onSelect={(url) => apply(url)}
+        imagesOnly={imagesOnly}
+      />
     </div>
   );
 }

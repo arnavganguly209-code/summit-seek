@@ -2,27 +2,21 @@
 
 import { useRef, useState } from "react";
 import { useRouter } from "next/navigation";
-import { CheckCircle2, Loader2, Save, Upload } from "lucide-react";
+import { CheckCircle2, FolderOpen, Loader2, Save, Upload } from "lucide-react";
 import type { HeroContent } from "@/types/hero";
 import { orbitUploadFile, withCacheBust } from "@/lib/orbit/client-upload";
 import { OrbitMediaPreview } from "@/components/orbit/OrbitMediaPreview";
+import { OrbitMediaLibraryModal } from "@/components/orbit/OrbitMediaLibraryModal";
 
 type Props = { initial: HeroContent };
 type LogoSlot = "logoUrl" | "logoUrlLight";
-
-function cleanUrl(url: string) {
-  return url.split("?")[0].trim();
-}
-
-function isLibraryLogo(url: string) {
-  return cleanUrl(url).startsWith("/media/library/");
-}
 
 export function HeaderLogosEditor({ initial }: Props) {
   const router = useRouter();
   const [content, setContent] = useState(initial);
   const [saving, setSaving] = useState(false);
   const [uploading, setUploading] = useState<LogoSlot | null>(null);
+  const [librarySlot, setLibrarySlot] = useState<LogoSlot | null>(null);
   const [toast, setToast] = useState("");
   const [error, setError] = useState("");
   const fileRefs = useRef<Record<LogoSlot, HTMLInputElement | null>>({
@@ -62,6 +56,14 @@ export function HeaderLogosEditor({ initial }: Props) {
     }
   };
 
+  const applyLogo = async (slot: LogoSlot, nextUrl: string, note: string) => {
+    const next: HeroContent = { ...contentRef.current, [slot]: nextUrl };
+    setContent(next);
+    contentRef.current = next;
+    const ok = await save(next);
+    if (ok) setToast(note);
+  };
+
   const uploadLogo = async (slot: LogoSlot, file: File) => {
     if (!file.type.startsWith("image/")) {
       setError("Please upload an image (PNG, JPG, WEBP, or SVG).");
@@ -70,27 +72,14 @@ export function HeaderLogosEditor({ initial }: Props) {
     setUploading(slot);
     setError("");
     setToast("");
-    const previous = cleanUrl(contentRef.current[slot]);
-
     try {
-      // Always upload as a NEW library file first — never delete-before-swap
-      // (that was causing a brief flash of the old/missing logo).
       const item = await orbitUploadFile({ file });
-      const nextUrl = withCacheBust(item.url);
-      const next: HeroContent = { ...contentRef.current, [slot]: nextUrl };
-      setContent(next);
-      contentRef.current = next;
-      const ok = await save(next);
-      if (ok && isLibraryLogo(previous) && cleanUrl(previous) !== cleanUrl(nextUrl)) {
-        // Remove previous library logo only AFTER the new one is live
-        void fetch(`/api/orbit/media?url=${encodeURIComponent(previous)}`, {
-          method: "DELETE",
-        }).catch(() => undefined);
-      }
-      setToast(
+      await applyLogo(
+        slot,
+        withCacheBust(item.url),
         slot === "logoUrlLight"
-          ? "White header logo replaced."
-          : "Blue (scrolled) header logo replaced.",
+          ? "White header logo saved. Previous logo kept in Media Library."
+          : "Blue header logo saved. Previous logo kept in Media Library.",
       );
     } catch (err) {
       setError(err instanceof Error ? err.message : "Logo upload failed.");
@@ -119,8 +108,8 @@ export function HeaderLogosEditor({ initial }: Props) {
           <p className="text-[11px] font-bold uppercase tracking-[0.2em] text-[#F58220]">Website</p>
           <h1 className="mt-1 text-2xl font-bold text-white">Header Logos</h1>
           <p className="mt-1.5 max-w-xl text-[14px] text-white/55">
-            Replace the white and blue header logos. New logo goes live immediately — old logo is
-            removed only after the new one is saved (no flash).
+            Upload or pick from Media Library. Old logos stay in the library until you delete them
+            there permanently.
           </p>
         </div>
         <button
@@ -178,19 +167,28 @@ export function HeaderLogosEditor({ initial }: Props) {
                 e.target.value = "";
               }}
             />
-            <button
-              type="button"
-              disabled={uploading === slot.key}
-              onClick={() => fileRefs.current[slot.key]?.click()}
-              className="mt-3 inline-flex h-10 w-full items-center justify-center gap-2 rounded-lg border border-white/15 bg-white/5 text-[12px] font-semibold disabled:opacity-60"
-            >
-              {uploading === slot.key ? (
-                <Loader2 className="size-4 animate-spin" />
-              ) : (
-                <Upload className="size-4" />
-              )}
-              {uploading === slot.key ? "Uploading…" : "Upload & replace"}
-            </button>
+            <div className="mt-3 flex flex-col gap-2">
+              <button
+                type="button"
+                disabled={uploading === slot.key}
+                onClick={() => fileRefs.current[slot.key]?.click()}
+                className="inline-flex h-10 w-full items-center justify-center gap-2 rounded-lg border border-white/15 bg-white/5 text-[12px] font-semibold disabled:opacity-60"
+              >
+                {uploading === slot.key ? (
+                  <Loader2 className="size-4 animate-spin" />
+                ) : (
+                  <Upload className="size-4" />
+                )}
+                {uploading === slot.key ? "Uploading…" : "Upload new"}
+              </button>
+              <button
+                type="button"
+                onClick={() => setLibrarySlot(slot.key)}
+                className="inline-flex h-10 w-full items-center justify-center gap-2 rounded-lg border border-white/15 bg-white/5 text-[12px] font-semibold"
+              >
+                <FolderOpen className="size-4" /> Media library
+              </button>
+            </div>
             <label className="mt-3 block">
               <span className="mb-1 block text-[11px] font-medium text-white/55">Logo URL</span>
               <input
@@ -204,6 +202,15 @@ export function HeaderLogosEditor({ initial }: Props) {
           </section>
         ))}
       </div>
+
+      <OrbitMediaLibraryModal
+        open={!!librarySlot}
+        onClose={() => setLibrarySlot(null)}
+        onSelect={async (url) => {
+          if (!librarySlot) return;
+          await applyLogo(librarySlot, url, "Logo selected from Media Library.");
+        }}
+      />
     </div>
   );
 }

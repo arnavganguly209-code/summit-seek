@@ -4,6 +4,7 @@ import { useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import {
   CheckCircle2,
+  FolderOpen,
   ImagePlus,
   Loader2,
   Save,
@@ -13,6 +14,7 @@ import {
 import type { AboutIntroContent } from "@/types/about-intro";
 import { orbitUploadFile, withCacheBust } from "@/lib/orbit/client-upload";
 import { OrbitMediaPreview } from "@/components/orbit/OrbitMediaPreview";
+import { OrbitMediaLibraryModal } from "@/components/orbit/OrbitMediaLibraryModal";
 
 type Props = { initial: AboutIntroContent };
 
@@ -24,6 +26,7 @@ export function AboutIntroEditor({ initial }: Props) {
   const [progress, setProgress] = useState(0);
   const [toast, setToast] = useState("");
   const [error, setError] = useState("");
+  const [librarySlot, setLibrarySlot] = useState<"main" | "circle" | null>(null);
   const mainRef = useRef<HTMLInputElement>(null);
   const circleRef = useRef<HTMLInputElement>(null);
   const contentRef = useRef(content);
@@ -87,17 +90,8 @@ export function AboutIntroEditor({ initial }: Props) {
     setError("");
     setToast("");
     try {
-      const prevUrl =
-        slot === "main"
-          ? contentRef.current.mainImageUrl
-          : contentRef.current.circleImageUrl;
-      const replaceUrl = prevUrl.startsWith("/media/library/")
-        ? prevUrl.split("?")[0]
-        : undefined;
-
       const item = await orbitUploadFile({
         file,
-        replaceUrl,
         onProgress: setProgress,
       });
       const url = withCacheBust(item.url);
@@ -125,6 +119,17 @@ export function AboutIntroEditor({ initial }: Props) {
       setUploading(null);
       setProgress(0);
     }
+  };
+
+  const applyLibraryUrl = async (slot: "main" | "circle", url: string) => {
+    const next: AboutIntroContent =
+      slot === "main"
+        ? { ...contentRef.current, mainImageUrl: url }
+        : { ...contentRef.current, circleImageUrl: url };
+    setContent(next);
+    contentRef.current = next;
+    const saved = await save(next);
+    if (saved) setToast("Image selected from Media Library.");
   };
 
   const removeSlot = async (slot: "main" | "circle") => {
@@ -243,6 +248,14 @@ export function AboutIntroEditor({ initial }: Props) {
                 </button>
                 <button
                   type="button"
+                  onClick={() => setLibrarySlot(slot)}
+                  className="inline-flex h-9 items-center gap-1.5 rounded-md border border-white/15 bg-white/5 px-3 text-[12px] font-semibold"
+                >
+                  <FolderOpen className="size-3.5" />
+                  Media library
+                </button>
+                <button
+                  type="button"
                   onClick={() => void removeSlot(slot)}
                   className="inline-flex h-9 items-center gap-1.5 rounded-md border border-red-500/30 bg-red-500/10 px-3 text-[12px] font-semibold text-red-300"
                 >
@@ -326,6 +339,14 @@ export function AboutIntroEditor({ initial }: Props) {
           />
         ))}
       </div>
+
+      <OrbitMediaLibraryModal
+        open={!!librarySlot}
+        onClose={() => setLibrarySlot(null)}
+        onSelect={async (url) => {
+          if (librarySlot) await applyLibraryUrl(librarySlot, url);
+        }}
+      />
     </div>
   );
 }

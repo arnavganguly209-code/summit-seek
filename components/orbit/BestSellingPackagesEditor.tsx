@@ -4,6 +4,7 @@ import { useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import {
   CheckCircle2,
+  FolderOpen,
   ImagePlus,
   Loader2,
   Plus,
@@ -17,6 +18,7 @@ import type {
 } from "@/types/best-selling-packages";
 import { orbitUploadFile, withCacheBust } from "@/lib/orbit/client-upload";
 import { OrbitMediaPreview } from "@/components/orbit/OrbitMediaPreview";
+import { OrbitMediaLibraryModal } from "@/components/orbit/OrbitMediaLibraryModal";
 
 type Props = { initial: BestSellingPackagesContent };
 
@@ -46,6 +48,7 @@ export function BestSellingPackagesEditor({ initial }: Props) {
   const [progress, setProgress] = useState(0);
   const [toast, setToast] = useState("");
   const [error, setError] = useState("");
+  const [libraryPkgId, setLibraryPkgId] = useState<string | null>(null);
   const fileRefs = useRef<Record<string, HTMLInputElement | null>>({});
   const contentRef = useRef(content);
   contentRef.current = content;
@@ -115,34 +118,40 @@ export function BestSellingPackagesEditor({ initial }: Props) {
     setError("");
     setToast("");
     try {
-      const current =
-        contentRef.current.packages.find((p) => p.id === pkg.id) || pkg;
-      const replaceUrl = current.imageUrl.startsWith("/media/library/")
-        ? current.imageUrl.split("?")[0]
-        : undefined;
       const item = await orbitUploadFile({
         file,
-        replaceUrl,
         onProgress: setProgress,
       });
-      const imageUrl = withCacheBust(item.url);
-      const next: BestSellingPackagesContent = {
-        ...contentRef.current,
-        packages: contentRef.current.packages.map((p) =>
-          p.id === pkg.id ? { ...p, imageUrl } : p,
-        ),
-      };
-      setContent(next);
-      contentRef.current = next;
-      const saved = await save(next);
-      if (saved) setToast(`Image saved for “${pkg.title}”.`);
-      else setError((e) => e || "Image uploaded — click Save & Publish.");
+      await applyPackageImage(pkg, withCacheBust(item.url), true);
     } catch (err) {
       setError(err instanceof Error ? err.message : "Upload failed.");
     } finally {
       setUploadingId(null);
       setProgress(0);
     }
+  };
+
+  const applyPackageImage = async (
+    pkg: BestSellingPackage,
+    imageUrl: string,
+    fromUpload: boolean,
+  ) => {
+    const next: BestSellingPackagesContent = {
+      ...contentRef.current,
+      packages: contentRef.current.packages.map((p) =>
+        p.id === pkg.id ? { ...p, imageUrl } : p,
+      ),
+    };
+    setContent(next);
+    contentRef.current = next;
+    const saved = await save(next);
+    if (saved) {
+      setToast(
+        fromUpload
+          ? `Image saved for “${pkg.title}”.`
+          : `Library image selected for “${pkg.title}”.`,
+      );
+    } else setError((e) => e || "Image set — click Save & Publish.");
   };
 
   const addPackage = () => {
@@ -339,6 +348,14 @@ export function BestSellingPackagesEditor({ initial }: Props) {
                   <Upload className="size-3.5" />
                   Upload image
                 </button>
+                <button
+                  type="button"
+                  onClick={() => setLibraryPkgId(pkg.id)}
+                  className="inline-flex h-9 items-center gap-1.5 rounded-md border border-white/15 bg-white/5 px-3 text-[12px] font-semibold"
+                >
+                  <FolderOpen className="size-3.5" />
+                  Media library
+                </button>
               </div>
 
               <Field
@@ -402,6 +419,15 @@ export function BestSellingPackagesEditor({ initial }: Props) {
           </div>
         ))}
       </div>
+
+      <OrbitMediaLibraryModal
+        open={!!libraryPkgId}
+        onClose={() => setLibraryPkgId(null)}
+        onSelect={async (url) => {
+          const pkg = content.packages.find((p) => p.id === libraryPkgId);
+          if (pkg) await applyPackageImage(pkg, url, false);
+        }}
+      />
     </div>
   );
 }

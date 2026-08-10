@@ -2,10 +2,9 @@
 
 import { useRef, useState } from "react";
 import { useRouter } from "next/navigation";
-import { CheckCircle2, Loader2, Save, Upload } from "lucide-react";
+import { CheckCircle2, Loader2, Save } from "lucide-react";
 import type { ContactPageContent, ContactSocialLink } from "@/types/contact-cms";
-import { orbitUploadFile, withCacheBust } from "@/lib/orbit/client-upload";
-import { OrbitMediaPreview } from "@/components/orbit/OrbitMediaPreview";
+import { OrbitImageField } from "@/components/orbit/OrbitImageField";
 
 type Props = { initial: ContactPageContent };
 
@@ -17,10 +16,8 @@ export function ContactEditor({ initial }: Props) {
   const router = useRouter();
   const [content, setContent] = useState(initial);
   const [saving, setSaving] = useState(false);
-  const [uploading, setUploading] = useState(false);
   const [toast, setToast] = useState("");
   const [error, setError] = useState("");
-  const fileRef = useRef<HTMLInputElement | null>(null);
   const contentRef = useRef(content);
   contentRef.current = content;
 
@@ -64,25 +61,6 @@ export function ContactEditor({ initial }: Props) {
     }
   };
 
-  const uploadCover = async (file: File) => {
-    setUploading(true);
-    setError("");
-    try {
-      const replaceUrl = contentRef.current.coverImageUrl.startsWith("/media/library/")
-        ? contentRef.current.coverImageUrl.split("?")[0]
-        : undefined;
-      const item = await orbitUploadFile({ file, replaceUrl });
-      const next = { ...contentRef.current, coverImageUrl: withCacheBust(item.url) };
-      setContent(next);
-      contentRef.current = next;
-      await save(next);
-    } catch (err) {
-      setError(err instanceof Error ? err.message : "Upload failed.");
-    } finally {
-      setUploading(false);
-    }
-  };
-
   return (
     <div className="mx-auto max-w-5xl space-y-6 px-4 py-8 sm:px-6">
       <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
@@ -119,41 +97,21 @@ export function ContactEditor({ initial }: Props) {
         <h2 className="text-[14px] font-bold text-white">Cover & SEO</h2>
         <div className="mt-4 grid gap-4 sm:grid-cols-2">
           <div className="sm:col-span-2">
-            <div className="relative mb-3 aspect-[21/7] overflow-hidden rounded-xl border border-white/10">
-              <OrbitMediaPreview
-                src={content.coverImageUrl}
-                alt="Cover"
-                className="h-full w-full object-cover"
-              />
-            </div>
-            <input
-              ref={fileRef}
-              type="file"
-              accept="image/*"
-              className="hidden"
-              onChange={(e) => {
-                const f = e.target.files?.[0];
-                if (f) void uploadCover(f);
-                e.target.value = "";
+            <OrbitImageField
+              label="Cover image"
+              value={content.coverImageUrl}
+              aspectClassName="aspect-[21/7]"
+              onChange={(url) => {
+                update("coverImageUrl", url);
+                contentRef.current = { ...contentRef.current, coverImageUrl: url };
+              }}
+              onAfterChange={async (url) => {
+                const next = { ...contentRef.current, coverImageUrl: url };
+                setContent(next);
+                contentRef.current = next;
+                await save(next);
               }}
             />
-            <button
-              type="button"
-              disabled={uploading}
-              onClick={() => fileRef.current?.click()}
-              className="inline-flex h-10 items-center gap-2 rounded-lg border border-white/15 bg-white/5 px-3 text-[12px] font-semibold"
-            >
-              {uploading ? <Loader2 className="size-4 animate-spin" /> : <Upload className="size-4" />}
-              {uploading ? "Uploading…" : "Upload cover"}
-            </button>
-            <label className="mt-3 block">
-              <span className={label}>Cover image URL</span>
-              <input
-                className={field}
-                value={content.coverImageUrl}
-                onChange={(e) => update("coverImageUrl", e.target.value)}
-              />
-            </label>
           </div>
           <label>
             <span className={label}>Cover title</span>

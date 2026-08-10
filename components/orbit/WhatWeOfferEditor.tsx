@@ -4,6 +4,7 @@ import { useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import {
   CheckCircle2,
+  FolderOpen,
   ImagePlus,
   Loader2,
   Plus,
@@ -14,6 +15,7 @@ import {
 import type { WhatWeOfferCard, WhatWeOfferContent } from "@/types/what-we-offer";
 import { orbitUploadFile, withCacheBust } from "@/lib/orbit/client-upload";
 import { OrbitMediaPreview } from "@/components/orbit/OrbitMediaPreview";
+import { OrbitMediaLibraryModal } from "@/components/orbit/OrbitMediaLibraryModal";
 
 type Props = { initial: WhatWeOfferContent };
 
@@ -39,6 +41,7 @@ export function WhatWeOfferEditor({ initial }: Props) {
   const [progress, setProgress] = useState(0);
   const [toast, setToast] = useState("");
   const [error, setError] = useState("");
+  const [libraryCardId, setLibraryCardId] = useState<string | null>(null);
   const fileRefs = useRef<Record<string, HTMLInputElement | null>>({});
   const contentRef = useRef(content);
   contentRef.current = content;
@@ -90,32 +93,29 @@ export function WhatWeOfferEditor({ initial }: Props) {
     setProgress(2);
     setError("");
     try {
-      const current =
-        contentRef.current.cards.find((c) => c.id === card.id) || card;
-      const replaceUrl = current.imageUrl.startsWith("/media/library/")
-        ? current.imageUrl.split("?")[0]
-        : undefined;
       const item = await orbitUploadFile({
         file,
-        replaceUrl,
         onProgress: setProgress,
       });
-      const imageUrl = withCacheBust(item.url);
-      const next: WhatWeOfferContent = {
-        ...contentRef.current,
-        cards: contentRef.current.cards.map((c) =>
-          c.id === card.id ? { ...c, imageUrl } : c,
-        ),
-      };
-      setContent(next);
-      contentRef.current = next;
-      await save(next);
+      await applyCardImage(card.id, withCacheBust(item.url));
     } catch (err) {
       setError(err instanceof Error ? err.message : "Upload failed.");
     } finally {
       setUploadingId(null);
       setProgress(0);
     }
+  };
+
+  const applyCardImage = async (cardId: string, imageUrl: string) => {
+    const next: WhatWeOfferContent = {
+      ...contentRef.current,
+      cards: contentRef.current.cards.map((c) =>
+        c.id === cardId ? { ...c, imageUrl } : c,
+      ),
+    };
+    setContent(next);
+    contentRef.current = next;
+    await save(next);
   };
 
   return (
@@ -258,6 +258,13 @@ export function WhatWeOfferEditor({ initial }: Props) {
               >
                 <Upload className="size-3.5" /> Upload image
               </button>
+              <button
+                type="button"
+                onClick={() => setLibraryCardId(card.id)}
+                className="ml-2 inline-flex h-9 items-center gap-1.5 rounded-md border border-white/15 bg-white/5 px-3 text-[12px] font-semibold"
+              >
+                <FolderOpen className="size-3.5" /> Library
+              </button>
               <Field label="Title" value={card.title} onChange={(v) => updateCard(card.id, { title: v })} />
               <Field label="Subtitle" value={card.subtitle} onChange={(v) => updateCard(card.id, { subtitle: v })} />
               <Field label="CTA label" value={card.ctaLabel} onChange={(v) => updateCard(card.id, { ctaLabel: v })} />
@@ -267,6 +274,14 @@ export function WhatWeOfferEditor({ initial }: Props) {
           </div>
         ))}
       </div>
+
+      <OrbitMediaLibraryModal
+        open={!!libraryCardId}
+        onClose={() => setLibraryCardId(null)}
+        onSelect={async (url) => {
+          if (libraryCardId) await applyCardImage(libraryCardId, url);
+        }}
+      />
     </div>
   );
 }

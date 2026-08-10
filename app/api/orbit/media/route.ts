@@ -116,7 +116,6 @@ async function finalizeUploadedFile(opts: {
   mime: string;
   size: number;
   setAsHero: boolean;
-  replaceUrl: string;
 }): Promise<MediaItem> {
   const id = randomUUID();
   const ext = extFor(opts.mime, opts.originalName) || ".bin";
@@ -128,10 +127,8 @@ async function finalizeUploadedFile(opts: {
     await fs.unlink(opts.absSource).catch(() => undefined);
   });
 
-  if (opts.replaceUrl) {
-    // Never fail a successful upload because the old file could not be removed
-    await permanentlyDeleteMedia({ url: opts.replaceUrl }).catch(() => undefined);
-  }
+  // Always ADD to the library. Never delete the previous field image on
+  // "replace" — permanent delete is Media Library / explicit DELETE only.
 
   const item: MediaItem = {
     id,
@@ -230,7 +227,6 @@ export async function POST(req: Request) {
           mime,
           size,
           setAsHero: String(form.get("setAsHero") || "") === "1",
-          replaceUrl: String(form.get("replaceUrl") || "").trim(),
           createdAt: new Date().toISOString(),
         }),
         "utf8",
@@ -282,7 +278,6 @@ export async function POST(req: Request) {
         mime: string;
         size: number;
         setAsHero: boolean;
-        replaceUrl: string;
       };
 
       const entries = (await fs.readdir(dir))
@@ -323,7 +318,6 @@ export async function POST(req: Request) {
         mime,
         size: stat.size,
         setAsHero: meta.setAsHero,
-        replaceUrl: meta.replaceUrl,
       });
 
       await fs.rm(dir, { recursive: true, force: true }).catch(() => undefined);
@@ -370,7 +364,6 @@ export async function POST(req: Request) {
       );
     }
 
-    const replaceUrl = String(form.get("replaceUrl") || "").trim();
     const setAsHero = String(form.get("setAsHero") || "") === "1";
     const id = randomUUID();
     const tmp = path.join(UPLOADS_DIR, `${id}.tmp`);
@@ -399,7 +392,6 @@ export async function POST(req: Request) {
       mime,
       size: file.size,
       setAsHero,
-      replaceUrl,
     });
 
     return NextResponse.json({ ok: true, item });

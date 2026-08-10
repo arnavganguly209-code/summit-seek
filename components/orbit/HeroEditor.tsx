@@ -105,15 +105,10 @@ export function HeroEditor({ initial }: Props) {
     setToast("");
 
     try {
-      const replaceUrl =
-        content.videoUrl && !content.videoUrl.includes("/media/hero/hero.mp4")
-          ? content.videoUrl.split("?")[0]
-          : undefined;
-
+      // Keep previous hero video in Media Library (delete only via Media Library)
       const item = await orbitUploadFile({
         file,
         setAsHero: true,
-        replaceUrl,
         onProgress: setProgress,
       });
 

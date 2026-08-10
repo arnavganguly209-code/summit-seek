@@ -1822,13 +1822,77 @@ export async function saveAnnapurnaRegionContent(
   await fs.writeFile(ANNAPURNA_REGION_FILE, JSON.stringify(content, null, 2), "utf8");
 }
 
+const LIBRARY_EXT_MIME: Record<string, string> = {
+  ".mp4": "video/mp4",
+  ".webm": "video/webm",
+  ".mov": "video/quicktime",
+  ".png": "image/png",
+  ".jpg": "image/jpeg",
+  ".jpeg": "image/jpeg",
+  ".webp": "image/webp",
+  ".gif": "image/gif",
+};
+
+/**
+ * Re-index any files on disk that are missing from media-library.json.
+ * Upload files live in storage/media/library (survives deploy); the JSON
+ * index can drift if an upload was interrupted or an older build wiped data/.
+ */
+async function reconcileMediaLibraryFromDisk(items: MediaItem[]): Promise<MediaItem[]> {
+  await ensureMediaDirs();
+  let names: string[] = [];
+  try {
+    names = await fs.readdir(MEDIA_LIBRARY_DIR);
+  } catch {
+    return items;
+  }
+
+  const known = new Set(items.map((i) => i.filename));
+  const additions: MediaItem[] = [];
+
+  for (const name of names) {
+    if (!name || name.startsWith(".") || name === ".gitkeep") continue;
+    if (known.has(name)) continue;
+    const abs = path.join(MEDIA_LIBRARY_DIR, name);
+    if (!abs.startsWith(MEDIA_LIBRARY_DIR)) continue;
+    const st = await fs.stat(abs).catch(() => null);
+    if (!st?.isFile()) continue;
+    const ext = path.extname(name).toLowerCase();
+    const mime = LIBRARY_EXT_MIME[ext];
+    if (!mime) continue;
+    const base = path.basename(name, ext) || name;
+    additions.push({
+      id: base,
+      name: base,
+      filename: name,
+      url: `/media/library/${name}`,
+      mimeType: mime,
+      size: st.size,
+      uploadedAt: st.mtime.toISOString(),
+      status: "ready",
+    });
+    known.add(name);
+  }
+
+  if (!additions.length) return items;
+
+  // Newest disk discoveries first, then existing index
+  const next = [...additions, ...items];
+  await saveMediaLibrary(next);
+  return next;
+}
+
 export async function getMediaLibrary(): Promise<MediaItem[]> {
+  await ensureMediaDirs();
+  let items: MediaItem[] = [];
   try {
     const raw = await fs.readFile(MEDIA_FILE, "utf8");
-    return JSON.parse(raw) as MediaItem[];
+    items = JSON.parse(raw) as MediaItem[];
+    if (!Array.isArray(items)) items = [];
   } catch {
-    return [];
+    items = [];
   }
+  return reconcileMediaLibraryFromDisk(items);
 }
 
 export async function saveMediaLibrary(items: MediaItem[]): Promise<void> {

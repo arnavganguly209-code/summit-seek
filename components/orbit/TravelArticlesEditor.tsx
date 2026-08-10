@@ -4,6 +4,7 @@ import { useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import {
   CheckCircle2,
+  FolderOpen,
   ImagePlus,
   Loader2,
   Plus,
@@ -14,6 +15,7 @@ import {
 import type { TravelArticle, TravelArticlesContent } from "@/types/travel-articles";
 import { orbitUploadFile, withCacheBust } from "@/lib/orbit/client-upload";
 import { OrbitMediaPreview } from "@/components/orbit/OrbitMediaPreview";
+import { OrbitMediaLibraryModal } from "@/components/orbit/OrbitMediaLibraryModal";
 
 type Props = { initial: TravelArticlesContent };
 
@@ -37,6 +39,7 @@ export function TravelArticlesEditor({ initial }: Props) {
   const [uploadingId, setUploadingId] = useState<string | null>(null);
   const [toast, setToast] = useState("");
   const [error, setError] = useState("");
+  const [libraryArticleId, setLibraryArticleId] = useState<string | null>(null);
   const fileRefs = useRef<Record<string, HTMLInputElement | null>>({});
   const contentRef = useRef(content);
   contentRef.current = content;
@@ -89,25 +92,25 @@ export function TravelArticlesEditor({ initial }: Props) {
     try {
       const current =
         contentRef.current.articles.find((a) => a.id === article.id) || article;
-      const replaceUrl = current.imageUrl.startsWith("/media/library/")
-        ? current.imageUrl.split("?")[0]
-        : undefined;
-      const item = await orbitUploadFile({ file, replaceUrl });
-      const imageUrl = withCacheBust(item.url);
-      const next: TravelArticlesContent = {
-        ...contentRef.current,
-        articles: contentRef.current.articles.map((a) =>
-          a.id === article.id ? { ...a, imageUrl } : a,
-        ),
-      };
-      setContent(next);
-      contentRef.current = next;
-      await save(next);
+      const item = await orbitUploadFile({ file });
+      await applyArticleImage(article.id, withCacheBust(item.url));
     } catch (err) {
       setError(err instanceof Error ? err.message : "Upload failed.");
     } finally {
       setUploadingId(null);
     }
+  };
+
+  const applyArticleImage = async (articleId: string, imageUrl: string) => {
+    const next: TravelArticlesContent = {
+      ...contentRef.current,
+      articles: contentRef.current.articles.map((a) =>
+        a.id === articleId ? { ...a, imageUrl } : a,
+      ),
+    };
+    setContent(next);
+    contentRef.current = next;
+    await save(next);
   };
 
   return (
@@ -257,6 +260,13 @@ export function TravelArticlesEditor({ initial }: Props) {
               >
                 <Upload className="size-3.5" /> Upload image
               </button>
+              <button
+                type="button"
+                onClick={() => setLibraryArticleId(article.id)}
+                className="ml-2 inline-flex h-9 items-center gap-1.5 rounded-md border border-white/15 bg-white/5 px-3 text-[12px] font-semibold"
+              >
+                <FolderOpen className="size-3.5" /> Library
+              </button>
               <Field
                 label="Title"
                 value={article.title}
@@ -281,6 +291,14 @@ export function TravelArticlesEditor({ initial }: Props) {
           </div>
         ))}
       </div>
+
+      <OrbitMediaLibraryModal
+        open={!!libraryArticleId}
+        onClose={() => setLibraryArticleId(null)}
+        onSelect={async (url) => {
+          if (libraryArticleId) await applyArticleImage(libraryArticleId, url);
+        }}
+      />
     </div>
   );
 }
