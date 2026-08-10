@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Playfair_Display, Inter, Poppins, Plus_Jakarta_Sans } from "next/font/google";
+import { Playfair_Display, Inter, Plus_Jakarta_Sans } from "next/font/google";
 import { SITE } from "@/lib/constants";
 import "./globals.css";
 
@@ -19,15 +19,17 @@ const sans = Inter({
   display: "swap",
 });
 
-/** Bold UI sans — About + featured package cards (reference style) */
-const ui = Poppins({
+/**
+ * Site UI + all package surfaces — Plus Jakarta Sans (permanent default).
+ * Loaded twice so both CSS variables resolve to the same family.
+ */
+const ui = Plus_Jakarta_Sans({
   variable: "--font-ui",
   subsets: ["latin"],
-  weight: ["500", "600", "700", "800"],
+  weight: ["400", "500", "600", "700", "800"],
   display: "swap",
 });
 
-/** Destination / package pages */
 const jakarta = Plus_Jakarta_Sans({
   variable: "--font-jakarta",
   subsets: ["latin"],

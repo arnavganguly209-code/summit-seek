@@ -74,10 +74,10 @@ export const destinationRegions: DestinationRegion[] = [
     icon: "valley",
     description: "Close-to-Kathmandu alpine valleys and culture",
     packages: [
-      { title: "Langtang Valley", href: "/treks/langtang-valley", duration: "9 Days" },
-      { title: "Gosaikunda Lake", href: "/treks/gosaikunda", duration: "8 Days" },
-      { title: "Helambu Circuit", href: "/treks/helambu", duration: "7 Days" },
-      { title: "Tamang Heritage", href: "/treks/tamang-heritage", duration: "8 Days" },
+      { title: "Langtang Valley", href: "/treks/langtang-valley", duration: "10 Days" },
+      { title: "Gosainkunda", href: "/treks/gosainkunda", duration: "8 Days" },
+      { title: "Helambu", href: "/treks/helambu", duration: "7 Days" },
+      { title: "Tamang Heritage", href: "/treks/tamang-heritage", duration: "11 Days" },
     ],
   },
   {

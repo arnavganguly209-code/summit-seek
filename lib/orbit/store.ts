@@ -60,6 +60,7 @@ import { DEFAULT_PACKING_CHECKLIST } from "@/lib/orbit/packing-checklist-default
 import { DEFAULT_POON_HILL } from "@/lib/orbit/poon-hill-defaults";
 import { DEFAULT_EVEREST_REGION } from "@/lib/orbit/everest-region-defaults";
 import { DEFAULT_ANNAPURNA_REGION } from "@/lib/orbit/annapurna-region-defaults";
+import { DEFAULT_LANGTANG_REGION } from "@/lib/orbit/langtang-region-defaults";
 
 const DATA_DIR = path.join(process.cwd(), "data");
 const HERO_FILE = path.join(DATA_DIR, "hero.json");
@@ -91,6 +92,7 @@ const PACKING_CHECKLIST_FILE = path.join(DATA_DIR, "packing-checklist.json");
 const POON_HILL_FILE = path.join(DATA_DIR, "poon-hill.json");
 const EVEREST_REGION_FILE = path.join(DATA_DIR, "everest-region.json");
 const ANNAPURNA_REGION_FILE = path.join(DATA_DIR, "annapurna-region.json");
+const LANGTANG_REGION_FILE = path.join(DATA_DIR, "langtang-region.json");
 const MEDIA_FILE = path.join(DATA_DIR, "media-library.json");
 
 /** Durable upload root — survives `git reset --hard` (unlike public/). */
@@ -1820,6 +1822,25 @@ export async function saveAnnapurnaRegionContent(
 ): Promise<void> {
   await ensureDataDir();
   await fs.writeFile(ANNAPURNA_REGION_FILE, JSON.stringify(content, null, 2), "utf8");
+}
+
+export async function getLangtangRegionContent(): Promise<DestinationRegionContent> {
+  try {
+    const raw = await fs.readFile(LANGTANG_REGION_FILE, "utf8");
+    return mergeDestinationRegion(
+      JSON.parse(raw) as Partial<DestinationRegionContent>,
+      DEFAULT_LANGTANG_REGION,
+    );
+  } catch {
+    return DEFAULT_LANGTANG_REGION;
+  }
+}
+
+export async function saveLangtangRegionContent(
+  content: DestinationRegionContent,
+): Promise<void> {
+  await ensureDataDir();
+  await fs.writeFile(LANGTANG_REGION_FILE, JSON.stringify(content, null, 2), "utf8");
 }
 
 const LIBRARY_EXT_MIME: Record<string, string> = {
