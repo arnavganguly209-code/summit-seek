@@ -34,7 +34,7 @@ function SecurePaymentBadge() {
         alt="Secure Payment — Visa, Mastercard, American Express, Alipay, SWIFT Bank Transfer"
         width={1024}
         height={146}
-        className="mx-auto h-auto w-full max-w-[760px] object-contain"
+        className="mx-auto h-auto w-full max-w-[684px] object-contain"
         loading="lazy"
         decoding="async"
       />
