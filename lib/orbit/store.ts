@@ -59,6 +59,7 @@ import { DEFAULT_MONEY_CURRENCY } from "@/lib/orbit/money-currency-defaults";
 import { DEFAULT_PACKING_CHECKLIST } from "@/lib/orbit/packing-checklist-defaults";
 import { DEFAULT_POON_HILL } from "@/lib/orbit/poon-hill-defaults";
 import { DEFAULT_EVEREST_REGION } from "@/lib/orbit/everest-region-defaults";
+import { DEFAULT_ANNAPURNA_REGION } from "@/lib/orbit/annapurna-region-defaults";
 
 const DATA_DIR = path.join(process.cwd(), "data");
 const HERO_FILE = path.join(DATA_DIR, "hero.json");
@@ -89,6 +90,7 @@ const MONEY_CURRENCY_FILE = path.join(DATA_DIR, "money-currency.json");
 const PACKING_CHECKLIST_FILE = path.join(DATA_DIR, "packing-checklist.json");
 const POON_HILL_FILE = path.join(DATA_DIR, "poon-hill.json");
 const EVEREST_REGION_FILE = path.join(DATA_DIR, "everest-region.json");
+const ANNAPURNA_REGION_FILE = path.join(DATA_DIR, "annapurna-region.json");
 const MEDIA_FILE = path.join(DATA_DIR, "media-library.json");
 
 /** Durable upload root — survives `git reset --hard` (unlike public/). */
@@ -1799,6 +1801,25 @@ export async function saveEverestRegionContent(
 ): Promise<void> {
   await ensureDataDir();
   await fs.writeFile(EVEREST_REGION_FILE, JSON.stringify(content, null, 2), "utf8");
+}
+
+export async function getAnnapurnaRegionContent(): Promise<DestinationRegionContent> {
+  try {
+    const raw = await fs.readFile(ANNAPURNA_REGION_FILE, "utf8");
+    return mergeDestinationRegion(
+      JSON.parse(raw) as Partial<DestinationRegionContent>,
+      DEFAULT_ANNAPURNA_REGION,
+    );
+  } catch {
+    return DEFAULT_ANNAPURNA_REGION;
+  }
+}
+
+export async function saveAnnapurnaRegionContent(
+  content: DestinationRegionContent,
+): Promise<void> {
+  await ensureDataDir();
+  await fs.writeFile(ANNAPURNA_REGION_FILE, JSON.stringify(content, null, 2), "utf8");
 }
 
 export async function getMediaLibrary(): Promise<MediaItem[]> {

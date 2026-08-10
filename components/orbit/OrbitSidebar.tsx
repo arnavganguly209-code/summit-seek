@@ -61,6 +61,11 @@ const nav = [
         label: "Everest Region",
         icon: Mountain,
       },
+      {
+        href: "/orbit/dashboard/website/annapurna-region",
+        label: "Annapurna Region",
+        icon: Mountain,
+      },
       { href: "/orbit/dashboard/website/best-selling", label: "Best Selling Packages", icon: Package },
       { href: "/orbit/dashboard/website/services", label: "What We Offer", icon: BriefcaseBusiness },
       {

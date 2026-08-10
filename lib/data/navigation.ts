@@ -55,14 +55,14 @@ export const destinationRegions: DestinationRegion[] = [
   {
     id: "annapurna",
     label: "Annapurna",
-    href: "/destinations/annapurna",
+    href: "/destinations/annapurna-region",
     icon: "peaks",
     description: "Diverse landscapes from valleys to high passes",
     packages: [
-      { title: "Annapurna Circuit", href: "/treks/annapurna-circuit", duration: "16 Days" },
       { title: "Annapurna Base Camp", href: "/treks/annapurna-base-camp", duration: "11 Days" },
-      { title: "Poon Hill Luxury", href: "/treks/poon-hill-luxury", duration: "7 Days" },
-      { title: "Mardi Himal", href: "/treks/mardi-himal", duration: "8 Days" },
+      { title: "Annapurna Circuit", href: "/treks/annapurna-circuit", duration: "16 Days" },
+      { title: "Mardi Himal", href: "/treks/mardi-himal", duration: "5 Days" },
+      { title: "Poon Hill Trek", href: "/treks/poon-hill", duration: "5 Days" },
       { title: "Annapurna Sanctuary Luxury", href: "/treks/abc-luxury", duration: "10 Days" },
       { title: "Ghorepani Trek", href: "/treks/ghorepani", duration: "6 Days" },
     ],
@@ -223,7 +223,7 @@ export const trekkingColumns: TrekkingColumn[] = [
   {
     id: "annapurna",
     heading: "Annapurna Region",
-    href: "/destinations/annapurna",
+    href: "/destinations/annapurna-region",
     subtitle: "Classic trails beneath sacred Himalayan peaks.",
     links: [
       { title: "Annapurna Base Camp", href: "/treks/annapurna-base-camp", duration: "11 Days", difficulty: "Moderate" },
