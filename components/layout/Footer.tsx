@@ -4,7 +4,7 @@ import { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { motion } from "framer-motion";
-import { Mail, Phone, MapPin, MessageCircle } from "lucide-react";
+import { Mail, Phone, MapPin, MessageCircle, Shield } from "lucide-react";
 import {
   TikTokIcon,
   FacebookIcon,
@@ -25,53 +25,113 @@ const socials = [
 ];
 
 function PaymentRow({
-  label,
   payments,
 }: {
-  label: string;
   payments: FooterPayment[];
 }) {
   const visible = payments.filter((p) => p.visible !== false);
   if (visible.length === 0) return null;
 
-  return (
-    <div className="mx-auto flex w-full max-w-[920px] flex-col items-center">
-      <div className="text-center">
-        <h3 className="font-[family-name:var(--font-jakarta)] text-[11px] font-semibold uppercase tracking-[0.32em] text-white/72 sm:text-[12px]">
-          {label}
-        </h3>
-        <div
-          className="mx-auto mt-3 h-px w-12 rounded-full sm:w-14"
-          style={{
-            background: `linear-gradient(90deg, transparent, ${ORANGE}, transparent)`,
-          }}
-        />
-      </div>
+  const hasBank = visible.some((p) =>
+    /bank|swift|transfer|wire/i.test(`${p.id} ${p.label}`),
+  );
+  const chips = hasBank
+    ? visible
+    : [
+        ...visible,
+        {
+          id: "bank-transfer",
+          label: "SWIFT Bank Transfer",
+          imageUrl: "/payments/bank-transfer.svg",
+          visible: true,
+        },
+      ];
 
-      {/* Unified payment rail — hotel / banker strip */}
+  return (
+    <div className="mx-auto w-full max-w-[1080px] px-1">
+      {/* Gold double-frame pill — matches premium secure-payment badge */}
       <div
-        className="mt-6 w-full rounded-2xl border border-white/[0.08] bg-gradient-to-b from-white/[0.06] to-white/[0.02] px-3 py-3.5 shadow-[inset_0_1px_0_rgba(255,255,255,0.06)] backdrop-blur-[6px] sm:mt-7 sm:px-5 sm:py-4"
-        role="list"
-        aria-label="Accepted payment methods"
+        className="rounded-full p-[2.5px] shadow-[0_0_0_1px_rgba(212,175,55,0.25),0_10px_36px_rgba(0,0,0,0.35),0_0_28px_rgba(212,175,55,0.18)]"
+        style={{
+          background:
+            "linear-gradient(180deg, #f7e7b0 0%, #e0c35a 18%, #b8860b 48%, #8a6508 72%, #f0d98a 100%)",
+        }}
       >
-        <div className="flex flex-wrap items-center justify-center gap-2 sm:gap-2.5">
-          {visible.map((pay) => (
+        <div
+          className="rounded-full p-[2px]"
+          style={{
+            background:
+              "linear-gradient(180deg, #1a2d4a 0%, #0a1628 40%, #07111f 100%)",
+          }}
+        >
+          <div
+            className="relative overflow-hidden rounded-full border border-[#d4af37]/35 px-3 py-2.5 sm:px-5 sm:py-3"
+            style={{
+              background:
+                "radial-gradient(120% 80% at 8% 50%, rgba(56,120,220,0.22), transparent 42%), radial-gradient(90% 70% at 92% 50%, rgba(212,175,55,0.12), transparent 45%), linear-gradient(90deg, #071526 0%, #0b1a30 50%, #071526 100%)",
+            }}
+          >
+            {/* Soft edge glow streaks */}
             <div
-              key={pay.id}
-              role="listitem"
-              title={pay.label}
-              className="group flex h-9 min-w-[68px] items-center justify-center rounded-lg bg-[#f7f8fa] px-3.5 shadow-[0_1px_2px_rgba(0,0,0,0.18),0_8px_20px_rgba(0,0,0,0.12)] ring-1 ring-black/5 transition duration-300 ease-out hover:-translate-y-0.5 hover:bg-white hover:shadow-[0_4px_16px_rgba(0,0,0,0.22)] sm:h-10 sm:min-w-[76px] sm:px-4"
+              className="pointer-events-none absolute inset-y-0 left-0 w-16 bg-gradient-to-r from-[#3b82f6]/20 to-transparent sm:w-24"
+              aria-hidden
+            />
+            <div
+              className="pointer-events-none absolute inset-y-0 right-0 w-16 bg-gradient-to-l from-[#d4af37]/15 to-transparent sm:w-24"
+              aria-hidden
+            />
+
+            <div
+              className="relative flex flex-wrap items-center justify-center gap-2.5 sm:flex-nowrap sm:justify-start sm:gap-3.5"
+              role="list"
+              aria-label="Secure payment methods"
             >
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img
-                src={pay.imageUrl}
-                alt={pay.label}
-                className="h-[18px] w-auto max-w-[58px] object-contain opacity-[0.92] transition duration-300 group-hover:opacity-100 sm:h-[20px] sm:max-w-[64px]"
-                loading="lazy"
-                decoding="async"
-              />
+              <div className="flex shrink-0 items-center gap-2 sm:gap-2.5">
+                <span
+                  className="relative flex size-8 items-center justify-center sm:size-9"
+                  aria-hidden
+                >
+                  <Shield
+                    className="absolute inset-0 m-auto size-8 fill-[#d4af37] text-[#d4af37] sm:size-9"
+                    strokeWidth={1.25}
+                  />
+                  <svg
+                    viewBox="0 0 24 24"
+                    className="relative z-[1] mt-0.5 size-3.5 text-[#071526] sm:size-4"
+                    fill="currentColor"
+                    aria-hidden
+                  >
+                    <path d="M12 2a5 5 0 0 0-5 5v2H6a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8a2 2 0 0 0-2-2h-1V7a5 5 0 0 0-5-5Zm0 2a3 3 0 0 1 3 3v2H9V7a3 3 0 0 1 3-3Zm0 9a2 2 0 1 1 0 4 2 2 0 0 1 0-4Z" />
+                  </svg>
+                </span>
+                <p className="font-[family-name:var(--font-jakarta)] text-[11px] font-extrabold uppercase tracking-[0.12em] text-[#e8c75a] sm:text-[12.5px] sm:tracking-[0.14em]">
+                  Secure Payment
+                </p>
+              </div>
+
+              <div className="hidden h-7 w-px shrink-0 bg-[#d4af37]/35 sm:block" aria-hidden />
+
+              <div className="flex flex-wrap items-center justify-center gap-1.5 sm:gap-2">
+                {chips.map((pay) => (
+                  <div
+                    key={pay.id}
+                    role="listitem"
+                    title={pay.label}
+                    className="flex h-8 items-center justify-center rounded-md bg-white px-2.5 shadow-[0_2px_8px_rgba(0,0,0,0.25)] ring-1 ring-black/5 sm:h-9 sm:px-3"
+                  >
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img
+                      src={pay.imageUrl}
+                      alt={pay.label}
+                      className="h-[16px] w-auto max-w-[72px] object-contain sm:h-[18px] sm:max-w-[88px]"
+                      loading="lazy"
+                      decoding="async"
+                    />
+                  </div>
+                ))}
+              </div>
             </div>
-          ))}
+          </div>
         </div>
       </div>
     </div>
@@ -353,9 +413,9 @@ export function Footer({ content }: { content: FooterContent }) {
           </motion.div>
         </div>
 
-        {/* We Accept — premium payment rail */}
+        {/* Secure Payment — gold framed badge */}
         <div className="mx-auto mt-8 max-w-[1320px] border-t border-white/[0.08] pt-8 sm:mt-10 sm:pt-10">
-          <PaymentRow label={content.weAcceptLabel} payments={content.payments} />
+          <PaymentRow payments={content.payments} />
         </div>
 
         <div className="mx-auto mt-7 max-w-[1320px] border-t border-white/[0.08] pt-4 sm:mt-8 sm:pt-5">
