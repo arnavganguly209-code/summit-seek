@@ -10,8 +10,8 @@ import type {
 import { PageCover } from "@/components/site/PageCover";
 import { cn } from "@/lib/utils";
 
-/** Bebas Neue — destination pages + package cards */
-const face = "font-[family-name:var(--font-bebas)] tracking-[0.04em]";
+/** Plus Jakarta Sans — destination pages + package cards */
+const face = "font-[family-name:var(--font-jakarta)]";
 
 function formatUsd(price: number) {
   return `US$${price.toLocaleString("en-US")}`;
@@ -53,37 +53,39 @@ function DestinationPackageCard({ pkg }: { pkg: DestinationPackage }) {
       </div>
 
       <div className={cn(face, "flex flex-1 flex-col px-5 pb-5 pt-4 sm:px-6 sm:pb-6 sm:pt-5")}>
-        <div className="flex flex-wrap items-center gap-x-4 gap-y-2 text-[15px] text-[#6b7585] sm:text-[16px]">
+        <div className="flex flex-wrap items-center gap-x-4 gap-y-2 text-[13px] font-medium text-[#6b7585] sm:text-[14px]">
           <span className="inline-flex items-center gap-1.5">
             <CalendarDays className="size-3.5 text-[#1d4ed8]" strokeWidth={2.25} />
             {durationLabel(pkg.durationDays)}
           </span>
           <span className="inline-flex items-center gap-1.5">
             <Star className="size-3.5 fill-[#F5B400] text-[#F5B400]" />
-            <span className="text-[#0b1524]">{rating}</span>
+            <span className="font-bold text-[#0b1524]">{rating}</span>
             <span>({pkg.reviewCount})</span>
           </span>
         </div>
 
         <Link href={pkg.href || "#"} className="mt-3 block">
-          <h3 className="text-[1.45rem] leading-snug tracking-[0.03em] text-[#1d4ed8] transition group-hover:text-[#1e40af] sm:text-[1.65rem]">
+          <h3 className="text-[1.2rem] font-extrabold leading-snug tracking-[-0.02em] text-[#1d4ed8] transition group-hover:text-[#1e40af] sm:text-[1.35rem]">
             {pkg.title}
           </h3>
         </Link>
 
-        <p className="mt-2.5 inline-flex items-center gap-1.5 text-[15px] text-[#6b7585]">
+        <p className="mt-2.5 inline-flex items-center gap-1.5 text-[13.5px] font-medium text-[#6b7585]">
           <MapPin className="size-3.5 text-[#1d4ed8]" strokeWidth={2.25} />
           {pkg.startLocation}
         </p>
 
         <div className="mt-auto flex items-end justify-between gap-4 pt-5">
           <div>
-            <p className="text-[12px] uppercase tracking-[0.14em] text-[#8a93a3]">Per Person</p>
-            <p className="mt-1 text-[1.7rem] tracking-[0.03em] text-[#0b1524] sm:text-[1.85rem]">
+            <p className="text-[10px] font-bold uppercase tracking-[0.14em] text-[#8a93a3]">
+              Per Person
+            </p>
+            <p className="mt-1 text-[1.45rem] font-extrabold tracking-[-0.03em] text-[#0b1524] sm:text-[1.6rem]">
               {formatUsd(pkg.price)}
             </p>
             {pkg.compareAtPrice && pkg.compareAtPrice > pkg.price ? (
-              <p className="mt-0.5 text-[15px] text-[#9aa3b2] line-through">
+              <p className="mt-0.5 text-[13px] font-semibold text-[#9aa3b2] line-through">
                 {formatUsd(pkg.compareAtPrice)}
               </p>
             ) : null}
@@ -91,7 +93,7 @@ function DestinationPackageCard({ pkg }: { pkg: DestinationPackage }) {
 
           <Link
             href={pkg.href || "#"}
-            className="inline-flex h-11 shrink-0 items-center gap-1.5 rounded-lg bg-[#0b1524] px-4 text-[15px] uppercase tracking-[0.08em] text-white transition hover:bg-[#1d4ed8] sm:px-5"
+            className="inline-flex h-11 shrink-0 items-center gap-1.5 rounded-lg bg-[#0b1524] px-4 text-[12px] font-extrabold uppercase tracking-[0.06em] text-white transition hover:bg-[#1d4ed8] sm:px-5"
           >
             {pkg.ctaLabel || "Trip Details"}
             <ArrowUpRight className="size-3.5" strokeWidth={2.5} />
@@ -111,22 +113,24 @@ export function DestinationRegionView({ content }: { content: DestinationRegionC
         imageUrl={content.coverImageUrl}
         title={content.coverTitle}
         subtitle={content.coverSubtitle}
-        typography="bebas"
+        typography="jakarta"
       />
 
       <section className="mx-auto max-w-[1180px] px-4 py-10 sm:px-6 sm:py-12 lg:px-8 lg:py-14">
-        <p className="text-[13px] uppercase tracking-[0.2em] text-[#F58220]">{content.eyebrow}</p>
-        <h2 className="mt-2 text-[2rem] tracking-[0.03em] text-[#0b1524] sm:text-[2.45rem]">
+        <p className="text-[11px] font-bold uppercase tracking-[0.2em] text-[#F58220]">
+          {content.eyebrow}
+        </p>
+        <h2 className="mt-2 text-[1.75rem] font-extrabold tracking-[-0.03em] text-[#0b1524] sm:text-[2.15rem]">
           {content.heading}
         </h2>
         {content.intro ? (
-          <p className="mt-4 max-w-3xl text-[17px] leading-[1.55] tracking-[0.05em] text-[#5a6577] sm:text-[18px]">
+          <p className="mt-4 max-w-3xl text-[15px] font-medium leading-[1.8] text-[#5a6577] sm:text-[16px]">
             {content.intro}
           </p>
         ) : null}
 
         <div className="mt-10 flex items-end justify-between gap-4 sm:mt-12">
-          <h3 className="text-[1.45rem] tracking-[0.03em] text-[#0b1524] sm:text-[1.65rem]">
+          <h3 className="text-[1.25rem] font-extrabold tracking-[-0.02em] text-[#0b1524] sm:text-[1.4rem]">
             {content.packagesHeading}
           </h3>
           <div className="hidden h-[3px] flex-1 rounded-full bg-[#F58220]/35 sm:block" />

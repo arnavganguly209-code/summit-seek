@@ -5,16 +5,14 @@ type Props = {
   imageUrl: string;
   title: string;
   subtitle?: string;
-  /** Optional typography override (e.g. Bebas Neue on destination pages) */
-  typography?: "default" | "bebas";
+  /** Optional typography override (e.g. Plus Jakarta Sans on destination pages) */
+  typography?: "default" | "jakarta";
 };
 
 export function PageCover({ imageUrl, title, subtitle, typography = "default" }: Props) {
   const hasImage = Boolean(imageUrl?.trim());
-  const bebas = typography === "bebas";
-  const face = bebas
-    ? "font-[family-name:var(--font-bebas)] tracking-[0.04em]"
-    : null;
+  const jakarta = typography === "jakarta";
+  const face = jakarta ? "font-[family-name:var(--font-jakarta)]" : null;
 
   return (
     <section className="relative isolate h-[240px] overflow-hidden sm:h-[300px] lg:h-[360px]">
@@ -41,17 +39,15 @@ export function PageCover({ imageUrl, title, subtitle, typography = "default" }:
           <p
             className={cn(
               "text-[11px] font-bold uppercase tracking-[0.22em] text-[#F58220]",
-              bebas ? face : "font-[family-name:var(--font-ui)]",
+              jakarta ? face : "font-[family-name:var(--font-ui)]",
             )}
           >
             Summit Seek
           </p>
           <h1
             className={cn(
-              "mt-1.5 text-[2.05rem] font-bold text-white sm:text-[2.75rem]",
-              bebas
-                ? cn(face, "tracking-[0.03em]")
-                : "font-[family-name:var(--font-display)] tracking-[-0.02em]",
+              "mt-1.5 text-[2.05rem] font-bold tracking-[-0.02em] text-white sm:text-[2.75rem]",
+              jakarta ? cn(face, "font-extrabold") : "font-[family-name:var(--font-display)]",
             )}
           >
             {title}
@@ -60,7 +56,7 @@ export function PageCover({ imageUrl, title, subtitle, typography = "default" }:
             <p
               className={cn(
                 "mt-2 max-w-2xl text-[14px] leading-relaxed text-white/78 sm:text-[15.5px]",
-                bebas ? cn(face, "tracking-[0.05em]") : "font-[family-name:var(--font-ui)]",
+                jakarta ? cn(face, "font-medium") : "font-[family-name:var(--font-ui)]",
               )}
             >
               {subtitle}

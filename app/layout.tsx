@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Playfair_Display, Inter, Poppins, Bebas_Neue } from "next/font/google";
+import { Playfair_Display, Inter, Poppins, Plus_Jakarta_Sans } from "next/font/google";
 import { SITE } from "@/lib/constants";
 import "./globals.css";
 
@@ -27,11 +27,11 @@ const ui = Poppins({
   display: "swap",
 });
 
-/** Display sans for destination / package pages */
-const bebas = Bebas_Neue({
-  variable: "--font-bebas",
+/** Destination / package pages */
+const jakarta = Plus_Jakarta_Sans({
+  variable: "--font-jakarta",
   subsets: ["latin"],
-  weight: "400",
+  weight: ["400", "500", "600", "700", "800"],
   display: "swap",
 });
 
@@ -111,7 +111,7 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`${display.variable} ${sans.variable} ${ui.variable} ${bebas.variable} h-full`}
+      className={`${display.variable} ${sans.variable} ${ui.variable} ${jakarta.variable} h-full`}
     >
       <body className="min-h-full flex flex-col bg-snow font-sans text-midnight antialiased">
         <script
