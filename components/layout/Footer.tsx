@@ -35,35 +35,44 @@ function PaymentRow({
   if (visible.length === 0) return null;
 
   return (
-    <div className="mx-auto flex w-full max-w-[1320px] flex-col items-center gap-3">
+    <div className="mx-auto flex w-full max-w-[920px] flex-col items-center">
       <div className="text-center">
-        <h3 className="font-[family-name:var(--font-ui)] text-[12px] font-bold uppercase tracking-[0.2em] text-white sm:text-[13px]">
+        <h3 className="font-[family-name:var(--font-jakarta)] text-[11px] font-semibold uppercase tracking-[0.32em] text-white/72 sm:text-[12px]">
           {label}
         </h3>
-        <div className="mx-auto mt-2.5 h-[2px] w-9 rounded-full" style={{ background: ORANGE }} />
+        <div
+          className="mx-auto mt-3 h-px w-12 rounded-full sm:w-14"
+          style={{
+            background: `linear-gradient(90deg, transparent, ${ORANGE}, transparent)`,
+          }}
+        />
       </div>
+
+      {/* Unified payment rail — hotel / banker strip */}
       <div
-        className="flex flex-wrap items-center justify-center gap-2.5 sm:gap-3"
+        className="mt-6 w-full rounded-2xl border border-white/[0.08] bg-gradient-to-b from-white/[0.06] to-white/[0.02] px-3 py-3.5 shadow-[inset_0_1px_0_rgba(255,255,255,0.06)] backdrop-blur-[6px] sm:mt-7 sm:px-5 sm:py-4"
         role="list"
         aria-label="Accepted payment methods"
       >
-        {visible.map((pay) => (
-          <div
-            key={pay.id}
-            role="listitem"
-            title={pay.label}
-            className="flex h-10 w-[60px] items-center justify-center overflow-hidden rounded-[6px] bg-white shadow-[0_3px_10px_rgba(0,0,0,0.22)] ring-1 ring-white/20 sm:h-11 sm:w-[66px]"
-          >
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img
-              src={pay.imageUrl}
-              alt={pay.label}
-              className="h-full w-full object-contain p-0.5"
-              loading="lazy"
-              decoding="async"
-            />
-          </div>
-        ))}
+        <div className="flex flex-wrap items-center justify-center gap-2 sm:gap-2.5">
+          {visible.map((pay) => (
+            <div
+              key={pay.id}
+              role="listitem"
+              title={pay.label}
+              className="group flex h-9 min-w-[68px] items-center justify-center rounded-lg bg-[#f7f8fa] px-3.5 shadow-[0_1px_2px_rgba(0,0,0,0.18),0_8px_20px_rgba(0,0,0,0.12)] ring-1 ring-black/5 transition duration-300 ease-out hover:-translate-y-0.5 hover:bg-white hover:shadow-[0_4px_16px_rgba(0,0,0,0.22)] sm:h-10 sm:min-w-[76px] sm:px-4"
+            >
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                src={pay.imageUrl}
+                alt={pay.label}
+                className="h-[18px] w-auto max-w-[58px] object-contain opacity-[0.92] transition duration-300 group-hover:opacity-100 sm:h-[20px] sm:max-w-[64px]"
+                loading="lazy"
+                decoding="async"
+              />
+            </div>
+          ))}
+        </div>
       </div>
     </div>
   );
@@ -344,12 +353,12 @@ export function Footer({ content }: { content: FooterContent }) {
           </motion.div>
         </div>
 
-        {/* We Accept — full-width centered row, no scroll */}
-        <div className="mx-auto mt-5 max-w-[1320px] border-t border-white/10 pt-5 sm:mt-6">
+        {/* We Accept — premium payment rail */}
+        <div className="mx-auto mt-8 max-w-[1320px] border-t border-white/[0.08] pt-8 sm:mt-10 sm:pt-10">
           <PaymentRow label={content.weAcceptLabel} payments={content.payments} />
         </div>
 
-        <div className="mx-auto mt-4 max-w-[1320px] border-t border-white/10 pt-3.5 sm:mt-5 sm:pt-4">
+        <div className="mx-auto mt-7 max-w-[1320px] border-t border-white/[0.08] pt-4 sm:mt-8 sm:pt-5">
           <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
             <p className="text-[12px] font-semibold tracking-[0.02em] sm:text-[13px]" style={{ color: TEXT }}>
               {content.copyrightText}
