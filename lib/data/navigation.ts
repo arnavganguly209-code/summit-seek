@@ -40,16 +40,16 @@ export const destinationRegions: DestinationRegion[] = [
   {
     id: "everest",
     label: "Everest",
-    href: "/destinations/everest",
+    href: "/destinations/everest-region",
     icon: "mountain",
     description: "Iconic trails beneath the world's highest peak",
     packages: [
       { title: "Everest Base Camp", href: "/treks/everest-base-camp", duration: "14 Days" },
       { title: "Everest Three Passes", href: "/treks/three-passes", duration: "18 Days" },
       { title: "Gokyo Lakes", href: "/treks/gokyo-lakes", duration: "12 Days" },
+      { title: "Everest View Trek", href: "/treks/everest-view", duration: "7 Days" },
       { title: "Island Peak", href: "/peaks/island-peak", duration: "18 Days" },
       { title: "Everest Luxury Trek", href: "/treks/everest-luxury", duration: "12 Days" },
-      { title: "Helicopter Return", href: "/treks/ebc-heli-return", duration: "11 Days" },
     ],
   },
   {
@@ -211,7 +211,7 @@ export const trekkingColumns: TrekkingColumn[] = [
   {
     id: "everest",
     heading: "Everest Region",
-    href: "/destinations/everest",
+    href: "/destinations/everest-region",
     subtitle: "World's highest mountain adventures.",
     links: [
       { title: "Everest Base Camp Trek", href: "/treks/everest-base-camp", duration: "14 Days", difficulty: "Challenging" },

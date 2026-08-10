@@ -37,7 +37,7 @@ export const footerPartners = [
 ] as const;
 
 export const footerDestinations = [
-  { label: "Everest", href: "/destinations/everest" },
+  { label: "Everest", href: "/destinations/everest-region" },
   { label: "Annapurna", href: "/destinations/annapurna" },
   { label: "Langtang", href: "/destinations/langtang" },
   { label: "Manaslu", href: "/destinations/manaslu" },

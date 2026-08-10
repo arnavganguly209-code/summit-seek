@@ -27,6 +27,7 @@ import type { HealthSafetyContent } from "@/types/health-safety-cms";
 import type { MoneyCurrencyContent } from "@/types/money-currency-cms";
 import type { PackingChecklistContent } from "@/types/packing-checklist-cms";
 import type { TrekPageContent } from "@/types/trek-page-cms";
+import type { DestinationRegionContent } from "@/types/destination-region-cms";
 import { DEFAULT_HERO } from "@/lib/orbit/defaults";
 import { DEFAULT_FEATURED_PACKAGES } from "@/lib/orbit/featured-packages-defaults";
 import { DEFAULT_ABOUT_INTRO } from "@/lib/orbit/about-intro-defaults";
@@ -57,6 +58,7 @@ import { DEFAULT_HEALTH_SAFETY } from "@/lib/orbit/health-safety-defaults";
 import { DEFAULT_MONEY_CURRENCY } from "@/lib/orbit/money-currency-defaults";
 import { DEFAULT_PACKING_CHECKLIST } from "@/lib/orbit/packing-checklist-defaults";
 import { DEFAULT_POON_HILL } from "@/lib/orbit/poon-hill-defaults";
+import { DEFAULT_EVEREST_REGION } from "@/lib/orbit/everest-region-defaults";
 
 const DATA_DIR = path.join(process.cwd(), "data");
 const HERO_FILE = path.join(DATA_DIR, "hero.json");
@@ -86,6 +88,7 @@ const HEALTH_SAFETY_FILE = path.join(DATA_DIR, "health-safety.json");
 const MONEY_CURRENCY_FILE = path.join(DATA_DIR, "money-currency.json");
 const PACKING_CHECKLIST_FILE = path.join(DATA_DIR, "packing-checklist.json");
 const POON_HILL_FILE = path.join(DATA_DIR, "poon-hill.json");
+const EVEREST_REGION_FILE = path.join(DATA_DIR, "everest-region.json");
 const MEDIA_FILE = path.join(DATA_DIR, "media-library.json");
 
 /** Durable upload root — survives `git reset --hard` (unlike public/). */
@@ -1718,6 +1721,84 @@ export async function getPoonHillContent(): Promise<TrekPageContent> {
 export async function savePoonHillContent(content: TrekPageContent): Promise<void> {
   await ensureDataDir();
   await fs.writeFile(POON_HILL_FILE, JSON.stringify(content, null, 2), "utf8");
+}
+
+function mergeDestinationRegion(
+  stored: Partial<DestinationRegionContent> | null,
+  fallback: DestinationRegionContent,
+): DestinationRegionContent {
+  if (!stored) return fallback;
+
+  const packages =
+    Array.isArray(stored.packages) && stored.packages.length > 0
+      ? stored.packages.map((item, i) => ({
+          id: item.id || `evr-${i + 1}`,
+          title: (item.title || "").trim() || `Package ${i + 1}`,
+          durationDays:
+            typeof item.durationDays === "number" ? item.durationDays : 0,
+          rating: typeof item.rating === "number" ? item.rating : 5,
+          reviewCount: typeof item.reviewCount === "number" ? item.reviewCount : 0,
+          startLocation:
+            typeof item.startLocation === "string" ? item.startLocation : "Kathmandu",
+          price: typeof item.price === "number" ? item.price : 0,
+          compareAtPrice:
+            item.compareAtPrice === null
+              ? null
+              : typeof item.compareAtPrice === "number"
+                ? item.compareAtPrice
+                : null,
+          href: typeof item.href === "string" ? item.href : "/contact",
+          imageUrl: typeof item.imageUrl === "string" ? item.imageUrl.trim() : "",
+          ctaLabel:
+            typeof item.ctaLabel === "string" && item.ctaLabel.trim()
+              ? item.ctaLabel
+              : "Trip Details",
+          visible: item.visible !== false,
+        }))
+      : fallback.packages.map((p) => ({ ...p }));
+
+  return {
+    ...fallback,
+    ...stored,
+    packages,
+    coverImageUrl:
+      typeof stored.coverImageUrl === "string"
+        ? stored.coverImageUrl.trim()
+        : fallback.coverImageUrl,
+    coverTitle: stored.coverTitle?.trim() || fallback.coverTitle,
+    coverSubtitle:
+      typeof stored.coverSubtitle === "string"
+        ? stored.coverSubtitle
+        : fallback.coverSubtitle,
+    eyebrow: stored.eyebrow?.trim() || fallback.eyebrow,
+    heading: stored.heading?.trim() || fallback.heading,
+    intro: typeof stored.intro === "string" ? stored.intro : fallback.intro,
+    packagesHeading: stored.packagesHeading?.trim() || fallback.packagesHeading,
+    metaTitle: stored.metaTitle?.trim() || fallback.metaTitle,
+    metaDescription:
+      typeof stored.metaDescription === "string"
+        ? stored.metaDescription
+        : fallback.metaDescription,
+  };
+}
+
+export async function getEverestRegionContent(): Promise<DestinationRegionContent> {
+  try {
+    const raw = await fs.readFile(EVEREST_REGION_FILE, "utf8");
+    return mergeDestinationRegion(
+      JSON.parse(raw) as Partial<DestinationRegionContent>,
+      DEFAULT_EVEREST_REGION,
+    );
+  } catch {
+    return DEFAULT_EVEREST_REGION;
+  }
+}
+
+export async function saveEverestRegionContent(
+  content: DestinationRegionContent,
+): Promise<void> {
+  await ensureDataDir();
+  await fs.writeFile(EVEREST_REGION_FILE, JSON.stringify(content, null, 2), "utf8");
 }
 
 export async function getMediaLibrary(): Promise<MediaItem[]> {
