@@ -12,9 +12,9 @@ interface TravelInfoMegaMenuProps {
   onClose: () => void;
 }
 
-/** Same dark glass language as Destinations */
+/** Solid navy panel — readable over page content while scrolling */
 const panelDark =
-  "overflow-hidden rounded-[14px] border border-white/25 bg-[rgba(8,18,30,0.47)] shadow-[0_22px_55px_rgba(0,0,0,0.22)] backdrop-blur-[28px] supports-[backdrop-filter]:bg-[rgba(8,18,30,0.43)]";
+  "overflow-hidden rounded-[14px] border border-white/12 bg-[#08121E] shadow-[0_24px_60px_rgba(0,0,0,0.45)]";
 
 function TravelInfoList({ onClose }: { onClose: () => void }) {
   const pathname = usePathname();
