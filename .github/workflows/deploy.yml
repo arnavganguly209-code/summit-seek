@@ -16,11 +16,9 @@ jobs:
           VPS_HOST: ${{ secrets.VPS_HOST }}
           VPS_USER: ${{ secrets.VPS_USER }}
           VPS_SSH_KEY: ${{ secrets.VPS_SSH_KEY }}
-          PROJECT_PATH: ${{ secrets.PROJECT_PATH }}
-          PM2_APP: ${{ secrets.PM2_APP }}
         run: |
           missing=0
-          for name in VPS_HOST VPS_USER VPS_SSH_KEY PROJECT_PATH PM2_APP; do
+          for name in VPS_HOST VPS_USER VPS_SSH_KEY; do
             if [ -z "${!name}" ]; then
               echo "::error::Secret $name is missing or empty. Add it in Repo Settings → Secrets and variables → Actions."
               missing=1
@@ -28,6 +26,7 @@ jobs:
               echo "Secret $name is set."
             fi
           done
+          echo "Fixed deploy target: PROJECT_PATH=/var/www/summit-seek PM2_APP=summit-seek"
           # Basic shape checks (no secret values printed)
           echo "VPS_HOST length: ${#VPS_HOST}"
           echo "VPS_USER length: ${#VPS_USER}"
@@ -60,8 +59,6 @@ jobs:
           VPS_HOST: ${{ secrets.VPS_HOST }}
           VPS_USER: ${{ secrets.VPS_USER }}
           VPS_SSH_KEY: ${{ secrets.VPS_SSH_KEY }}
-          PROJECT_PATH: ${{ secrets.PROJECT_PATH }}
-          PM2_APP: ${{ secrets.PM2_APP }}
         run: |
           set -euo pipefail
           mkdir -p ~/.ssh
@@ -99,13 +96,16 @@ jobs:
             "${SSH[@]}" "${VPS_USER}@${VPS_HOST}" "echo ssh-ok"
           fi
 
-          "${SSH[@]}" "${VPS_USER}@${VPS_HOST}" bash -s <<EOF
+          # Fixed Summit Seek targets (never from secrets — prevents cross-project deploy)
+          "${SSH[@]}" "${VPS_USER}@${VPS_HOST}" bash -s <<'EOF'
           set -euo pipefail
+          PROJECT_PATH=/var/www/summit-seek
+          PM2_APP=summit-seek
           echo "Deploying in: ${PROJECT_PATH}"
           cd "${PROJECT_PATH}"
           git fetch origin
           git reset --hard origin/main
-          echo "Checked out: \$(git rev-parse --short HEAD)"
+          echo "Checked out: $(git rev-parse --short HEAD)"
 
           if [ ! -f .env.local ] || ! grep -q '^ORBIT_PASSKEY=' .env.local 2>/dev/null; then
             echo 'ORBIT_PASSKEY=713304977' >> .env.local || true
@@ -122,7 +122,7 @@ jobs:
               sudo cp deploy/nginx-client-max-body.conf /etc/nginx/conf.d/summit-seek-uploads.conf || true
               sudo nginx -t && (sudo systemctl reload nginx || sudo service nginx reload) || true
               echo "Nginx upload limit applied (or skipped)."
-            elif [ "\$(id -u)" = "0" ]; then
+            elif [ "$(id -u)" = "0" ]; then
               cp deploy/nginx-client-max-body.conf /etc/nginx/conf.d/summit-seek-uploads.conf || true
               nginx -t && (systemctl reload nginx || service nginx reload) || true
             else
@@ -135,7 +135,7 @@ jobs:
           npm run build
           pm2 restart "${PM2_APP}" --update-env
           pm2 save
-          echo "Deploy finished: \$(git rev-parse --short HEAD)"
+          echo "Deploy finished: $(git rev-parse --short HEAD)"
           EOF
 
           echo "Remote deploy completed."
