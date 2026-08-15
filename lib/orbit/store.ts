@@ -1,4 +1,5 @@
 import { promises as fs } from "fs";
+import { prisma } from "@/lib/orbit/db";
 import path from "path";
 import type { HeroContent, MediaItem } from "@/types/hero";
 import type { FeaturedPackagesContent } from "@/types/featured-packages";
@@ -103,6 +104,22 @@ export const MEDIA_UPLOADS_DIR = path.join(STORAGE_MEDIA_DIR, ".uploads");
 export const MEDIA_HERO_DIR = path.join(process.cwd(), "public", "media", "hero");
 const LEGACY_PUBLIC_LIBRARY = path.join(process.cwd(), "public", "media", "library");
 
+async function dbReadFile(file: string): Promise<string> {
+  const key = path.basename(file, ".json");
+  const row = await prisma.siteContent.findUnique({ where: { key } });
+  if (!row) throw new Error(`Content not found: ${key}`);
+  return JSON.stringify(row.content);
+}
+
+async function dbWriteFile(file: string, content: string): Promise<void> {
+  const key = path.basename(file, ".json");
+  await prisma.siteContent.upsert({
+    where: { key },
+    update: { content: JSON.parse(content) },
+    create: { key, content: JSON.parse(content) },
+  });
+}
+
 async function ensureDataDir() {
   await fs.mkdir(DATA_DIR, { recursive: true });
 }
@@ -132,7 +149,7 @@ export async function ensureMediaDirs() {
 
 export async function getHeroContent(): Promise<HeroContent> {
   try {
-    const raw = await fs.readFile(HERO_FILE, "utf8");
+    const raw = await dbReadFile(HERO_FILE);
     return { ...DEFAULT_HERO, ...JSON.parse(raw) } as HeroContent;
   } catch {
     return DEFAULT_HERO;
@@ -141,7 +158,7 @@ export async function getHeroContent(): Promise<HeroContent> {
 
 export async function saveHeroContent(content: HeroContent): Promise<void> {
   await ensureDataDir();
-  await fs.writeFile(HERO_FILE, JSON.stringify(content, null, 2), "utf8");
+  await dbWriteFile(HERO_FILE, JSON.stringify(content, null, 2));
 }
 
 function mergeFeaturedPackages(
@@ -186,7 +203,7 @@ function mergeFeaturedPackages(
 
 export async function getFeaturedPackages(): Promise<FeaturedPackagesContent> {
   try {
-    const raw = await fs.readFile(FEATURED_PACKAGES_FILE, "utf8");
+    const raw = await dbReadFile(FEATURED_PACKAGES_FILE);
     return mergeFeaturedPackages(JSON.parse(raw) as FeaturedPackagesContent);
   } catch {
     return DEFAULT_FEATURED_PACKAGES;
@@ -196,17 +213,12 @@ export async function getFeaturedPackages(): Promise<FeaturedPackagesContent> {
 export async function saveFeaturedPackages(
   content: FeaturedPackagesContent,
 ): Promise<void> {
-  await ensureDataDir();
-  await fs.writeFile(
-    FEATURED_PACKAGES_FILE,
-    JSON.stringify(content, null, 2),
-    "utf8",
-  );
+  await dbWriteFile(FEATURED_PACKAGES_FILE, JSON.stringify(content, null, 2));
 }
 
 export async function getAboutIntro(): Promise<AboutIntroContent> {
   try {
-    const raw = await fs.readFile(ABOUT_INTRO_FILE, "utf8");
+    const raw = await dbReadFile(ABOUT_INTRO_FILE);
     const stored = JSON.parse(raw) as Partial<AboutIntroContent>;
     const highlights = Array.isArray(stored.highlights)
       ? ([
@@ -237,7 +249,7 @@ export async function getAboutIntro(): Promise<AboutIntroContent> {
 
 export async function saveAboutIntro(content: AboutIntroContent): Promise<void> {
   await ensureDataDir();
-  await fs.writeFile(ABOUT_INTRO_FILE, JSON.stringify(content, null, 2), "utf8");
+  await dbWriteFile(ABOUT_INTRO_FILE, JSON.stringify(content, null, 2));
 }
 
 function mergeBestSelling(
@@ -277,7 +289,7 @@ function mergeBestSelling(
 
 export async function getBestSellingPackages(): Promise<BestSellingPackagesContent> {
   try {
-    const raw = await fs.readFile(BEST_SELLING_FILE, "utf8");
+    const raw = await dbReadFile(BEST_SELLING_FILE);
     return mergeBestSelling(JSON.parse(raw) as Partial<BestSellingPackagesContent>);
   } catch {
     return DEFAULT_BEST_SELLING;
@@ -288,7 +300,7 @@ export async function saveBestSellingPackages(
   content: BestSellingPackagesContent,
 ): Promise<void> {
   await ensureDataDir();
-  await fs.writeFile(BEST_SELLING_FILE, JSON.stringify(content, null, 2), "utf8");
+  await dbWriteFile(BEST_SELLING_FILE, JSON.stringify(content, null, 2));
 }
 
 function mergeWhatWeOffer(
@@ -319,7 +331,7 @@ function mergeWhatWeOffer(
 
 export async function getWhatWeOffer(): Promise<WhatWeOfferContent> {
   try {
-    const raw = await fs.readFile(WHAT_WE_OFFER_FILE, "utf8");
+    const raw = await dbReadFile(WHAT_WE_OFFER_FILE);
     return mergeWhatWeOffer(JSON.parse(raw) as Partial<WhatWeOfferContent>);
   } catch {
     return DEFAULT_WHAT_WE_OFFER;
@@ -328,7 +340,7 @@ export async function getWhatWeOffer(): Promise<WhatWeOfferContent> {
 
 export async function saveWhatWeOffer(content: WhatWeOfferContent): Promise<void> {
   await ensureDataDir();
-  await fs.writeFile(WHAT_WE_OFFER_FILE, JSON.stringify(content, null, 2), "utf8");
+  await dbWriteFile(WHAT_WE_OFFER_FILE, JSON.stringify(content, null, 2));
 }
 
 function mergeUpcomingTrips(
@@ -384,7 +396,7 @@ function mergeUpcomingTrips(
 
 export async function getUpcomingTrips(): Promise<UpcomingTripsContent> {
   try {
-    const raw = await fs.readFile(UPCOMING_TRIPS_FILE, "utf8");
+    const raw = await dbReadFile(UPCOMING_TRIPS_FILE);
     return mergeUpcomingTrips(JSON.parse(raw) as Partial<UpcomingTripsContent>);
   } catch {
     return DEFAULT_UPCOMING_TRIPS;
@@ -393,7 +405,7 @@ export async function getUpcomingTrips(): Promise<UpcomingTripsContent> {
 
 export async function saveUpcomingTrips(content: UpcomingTripsContent): Promise<void> {
   await ensureDataDir();
-  await fs.writeFile(UPCOMING_TRIPS_FILE, JSON.stringify(content, null, 2), "utf8");
+  await dbWriteFile(UPCOMING_TRIPS_FILE, JSON.stringify(content, null, 2));
 }
 
 function mergeTravelerReviews(
@@ -439,7 +451,7 @@ function mergeTravelerReviews(
 
 export async function getTravelerReviews(): Promise<TravelerReviewsContent> {
   try {
-    const raw = await fs.readFile(TRAVELER_REVIEWS_FILE, "utf8");
+    const raw = await dbReadFile(TRAVELER_REVIEWS_FILE);
     return mergeTravelerReviews(JSON.parse(raw) as Partial<TravelerReviewsContent>);
   } catch {
     return DEFAULT_TRAVELER_REVIEWS;
@@ -450,7 +462,7 @@ export async function saveTravelerReviews(
   content: TravelerReviewsContent,
 ): Promise<void> {
   await ensureDataDir();
-  await fs.writeFile(TRAVELER_REVIEWS_FILE, JSON.stringify(content, null, 2), "utf8");
+  await dbWriteFile(TRAVELER_REVIEWS_FILE, JSON.stringify(content, null, 2));
 }
 
 function mergeTravelArticles(
@@ -483,7 +495,7 @@ function mergeTravelArticles(
 
 export async function getTravelArticles(): Promise<TravelArticlesContent> {
   try {
-    const raw = await fs.readFile(TRAVEL_ARTICLES_FILE, "utf8");
+    const raw = await dbReadFile(TRAVEL_ARTICLES_FILE);
     return mergeTravelArticles(JSON.parse(raw) as Partial<TravelArticlesContent>);
   } catch {
     return DEFAULT_TRAVEL_ARTICLES;
@@ -492,7 +504,7 @@ export async function getTravelArticles(): Promise<TravelArticlesContent> {
 
 export async function saveTravelArticles(content: TravelArticlesContent): Promise<void> {
   await ensureDataDir();
-  await fs.writeFile(TRAVEL_ARTICLES_FILE, JSON.stringify(content, null, 2), "utf8");
+  await dbWriteFile(TRAVEL_ARTICLES_FILE, JSON.stringify(content, null, 2));
 }
 
 function mergeFooter(stored: Partial<FooterContent> | null): FooterContent {
@@ -568,7 +580,7 @@ function mergeFooter(stored: Partial<FooterContent> | null): FooterContent {
 
 export async function getFooterContent(): Promise<FooterContent> {
   try {
-    const raw = await fs.readFile(FOOTER_FILE, "utf8");
+    const raw = await dbReadFile(FOOTER_FILE);
     return mergeFooter(JSON.parse(raw) as Partial<FooterContent>);
   } catch {
     return DEFAULT_FOOTER;
@@ -577,7 +589,7 @@ export async function getFooterContent(): Promise<FooterContent> {
 
 export async function saveFooterContent(content: FooterContent): Promise<void> {
   await ensureDataDir();
-  await fs.writeFile(FOOTER_FILE, JSON.stringify(content, null, 2), "utf8");
+  await dbWriteFile(FOOTER_FILE, JSON.stringify(content, null, 2));
 }
 
 function mergeContact(stored: Partial<ContactPageContent> | null): ContactPageContent {
@@ -607,7 +619,7 @@ function mergeContact(stored: Partial<ContactPageContent> | null): ContactPageCo
 
 export async function getContactContent(): Promise<ContactPageContent> {
   try {
-    const raw = await fs.readFile(CONTACT_FILE, "utf8");
+    const raw = await dbReadFile(CONTACT_FILE);
     return mergeContact(JSON.parse(raw) as Partial<ContactPageContent>);
   } catch {
     return DEFAULT_CONTACT;
@@ -616,7 +628,7 @@ export async function getContactContent(): Promise<ContactPageContent> {
 
 export async function saveContactContent(content: ContactPageContent): Promise<void> {
   await ensureDataDir();
-  await fs.writeFile(CONTACT_FILE, JSON.stringify(content, null, 2), "utf8");
+  await dbWriteFile(CONTACT_FILE, JSON.stringify(content, null, 2));
 }
 
 function mergeBlogPost(stored: Partial<BlogPost>, fallback: BlogPost, index: number): BlogPost {
@@ -680,7 +692,7 @@ function mergeBlog(stored: Partial<BlogPageContent> | null): BlogPageContent {
 
 export async function getBlogContent(): Promise<BlogPageContent> {
   try {
-    const raw = await fs.readFile(BLOG_FILE, "utf8");
+    const raw = await dbReadFile(BLOG_FILE);
     return mergeBlog(JSON.parse(raw) as Partial<BlogPageContent>);
   } catch {
     return DEFAULT_BLOG;
@@ -689,7 +701,7 @@ export async function getBlogContent(): Promise<BlogPageContent> {
 
 export async function saveBlogContent(content: BlogPageContent): Promise<void> {
   await ensureDataDir();
-  await fs.writeFile(BLOG_FILE, JSON.stringify(content, null, 2), "utf8");
+  await dbWriteFile(BLOG_FILE, JSON.stringify(content, null, 2));
 }
 
 export async function getBlogPostBySlug(slug: string): Promise<BlogPost | null> {
@@ -785,7 +797,7 @@ function mergeAboutPage(stored: Partial<AboutPageContent> | null): AboutPageCont
 
 export async function getAboutPageContent(): Promise<AboutPageContent> {
   try {
-    const raw = await fs.readFile(ABOUT_PAGE_FILE, "utf8");
+    const raw = await dbReadFile(ABOUT_PAGE_FILE);
     return mergeAboutPage(JSON.parse(raw) as Partial<AboutPageContent>);
   } catch {
     return DEFAULT_ABOUT_PAGE;
@@ -794,7 +806,7 @@ export async function getAboutPageContent(): Promise<AboutPageContent> {
 
 export async function saveAboutPageContent(content: AboutPageContent): Promise<void> {
   await ensureDataDir();
-  await fs.writeFile(ABOUT_PAGE_FILE, JSON.stringify(content, null, 2), "utf8");
+  await dbWriteFile(ABOUT_PAGE_FILE, JSON.stringify(content, null, 2));
 }
 
 function mergeLegalPage(stored: Partial<LegalPageContent> | null): LegalPageContent {
@@ -826,7 +838,7 @@ function mergeLegalPage(stored: Partial<LegalPageContent> | null): LegalPageCont
 
 export async function getLegalContent(): Promise<LegalPageContent> {
   try {
-    const raw = await fs.readFile(LEGAL_FILE, "utf8");
+    const raw = await dbReadFile(LEGAL_FILE);
     return mergeLegalPage(JSON.parse(raw) as Partial<LegalPageContent>);
   } catch {
     return DEFAULT_LEGAL_PAGE;
@@ -835,7 +847,7 @@ export async function getLegalContent(): Promise<LegalPageContent> {
 
 export async function saveLegalContent(content: LegalPageContent): Promise<void> {
   await ensureDataDir();
-  await fs.writeFile(LEGAL_FILE, JSON.stringify(content, null, 2), "utf8");
+  await dbWriteFile(LEGAL_FILE, JSON.stringify(content, null, 2));
 }
 
 function mergeWhySummitSeek(
@@ -879,7 +891,7 @@ function mergeWhySummitSeek(
 
 export async function getWhySummitSeekContent(): Promise<WhySummitSeekContent> {
   try {
-    const raw = await fs.readFile(WHY_SUMMIT_SEEK_FILE, "utf8");
+    const raw = await dbReadFile(WHY_SUMMIT_SEEK_FILE);
     return mergeWhySummitSeek(JSON.parse(raw) as Partial<WhySummitSeekContent>);
   } catch {
     return DEFAULT_WHY_SUMMIT_SEEK;
@@ -890,7 +902,7 @@ export async function saveWhySummitSeekContent(
   content: WhySummitSeekContent,
 ): Promise<void> {
   await ensureDataDir();
-  await fs.writeFile(WHY_SUMMIT_SEEK_FILE, JSON.stringify(content, null, 2), "utf8");
+  await dbWriteFile(WHY_SUMMIT_SEEK_FILE, JSON.stringify(content, null, 2));
 }
 
 function mergePracticeList(
@@ -941,7 +953,7 @@ function mergeResponsibleTravel(
 
 export async function getResponsibleTravelContent(): Promise<ResponsibleTravelContent> {
   try {
-    const raw = await fs.readFile(RESPONSIBLE_TRAVEL_FILE, "utf8");
+    const raw = await dbReadFile(RESPONSIBLE_TRAVEL_FILE);
     return mergeResponsibleTravel(JSON.parse(raw) as Partial<ResponsibleTravelContent>);
   } catch {
     return DEFAULT_RESPONSIBLE_TRAVEL;
@@ -952,7 +964,7 @@ export async function saveResponsibleTravelContent(
   content: ResponsibleTravelContent,
 ): Promise<void> {
   await ensureDataDir();
-  await fs.writeFile(RESPONSIBLE_TRAVEL_FILE, JSON.stringify(content, null, 2), "utf8");
+  await dbWriteFile(RESPONSIBLE_TRAVEL_FILE, JSON.stringify(content, null, 2));
 }
 
 function mergeAffiliateCards(
@@ -1003,7 +1015,7 @@ function mergeAffiliate(stored: Partial<AffiliateContent> | null): AffiliateCont
 
 export async function getAffiliateContent(): Promise<AffiliateContent> {
   try {
-    const raw = await fs.readFile(AFFILIATE_FILE, "utf8");
+    const raw = await dbReadFile(AFFILIATE_FILE);
     return mergeAffiliate(JSON.parse(raw) as Partial<AffiliateContent>);
   } catch {
     return DEFAULT_AFFILIATE;
@@ -1012,7 +1024,7 @@ export async function getAffiliateContent(): Promise<AffiliateContent> {
 
 export async function saveAffiliateContent(content: AffiliateContent): Promise<void> {
   await ensureDataDir();
-  await fs.writeFile(AFFILIATE_FILE, JSON.stringify(content, null, 2), "utf8");
+  await dbWriteFile(AFFILIATE_FILE, JSON.stringify(content, null, 2));
 }
 
 function mergeTerms(stored: Partial<TermsContent> | null): TermsContent {
@@ -1044,7 +1056,7 @@ function mergeTerms(stored: Partial<TermsContent> | null): TermsContent {
 
 export async function getTermsContent(): Promise<TermsContent> {
   try {
-    const raw = await fs.readFile(TERMS_FILE, "utf8");
+    const raw = await dbReadFile(TERMS_FILE);
     return mergeTerms(JSON.parse(raw) as Partial<TermsContent>);
   } catch {
     return DEFAULT_TERMS;
@@ -1053,7 +1065,7 @@ export async function getTermsContent(): Promise<TermsContent> {
 
 export async function saveTermsContent(content: TermsContent): Promise<void> {
   await ensureDataDir();
-  await fs.writeFile(TERMS_FILE, JSON.stringify(content, null, 2), "utf8");
+  await dbWriteFile(TERMS_FILE, JSON.stringify(content, null, 2));
 }
 
 function mergePaymentMethods(
@@ -1110,7 +1122,7 @@ function mergePayment(stored: Partial<PaymentContent> | null): PaymentContent {
 
 export async function getPaymentContent(): Promise<PaymentContent> {
   try {
-    const raw = await fs.readFile(PAYMENT_FILE, "utf8");
+    const raw = await dbReadFile(PAYMENT_FILE);
     return mergePayment(JSON.parse(raw) as Partial<PaymentContent>);
   } catch {
     return DEFAULT_PAYMENT;
@@ -1119,7 +1131,7 @@ export async function getPaymentContent(): Promise<PaymentContent> {
 
 export async function savePaymentContent(content: PaymentContent): Promise<void> {
   await ensureDataDir();
-  await fs.writeFile(PAYMENT_FILE, JSON.stringify(content, null, 2), "utf8");
+  await dbWriteFile(PAYMENT_FILE, JSON.stringify(content, null, 2));
 }
 
 function mergePrivacy(stored: Partial<PrivacyContent> | null): PrivacyContent {
@@ -1151,7 +1163,7 @@ function mergePrivacy(stored: Partial<PrivacyContent> | null): PrivacyContent {
 
 export async function getPrivacyContent(): Promise<PrivacyContent> {
   try {
-    const raw = await fs.readFile(PRIVACY_FILE, "utf8");
+    const raw = await dbReadFile(PRIVACY_FILE);
     return mergePrivacy(JSON.parse(raw) as Partial<PrivacyContent>);
   } catch {
     return DEFAULT_PRIVACY;
@@ -1160,7 +1172,7 @@ export async function getPrivacyContent(): Promise<PrivacyContent> {
 
 export async function savePrivacyContent(content: PrivacyContent): Promise<void> {
   await ensureDataDir();
-  await fs.writeFile(PRIVACY_FILE, JSON.stringify(content, null, 2), "utf8");
+  await dbWriteFile(PRIVACY_FILE, JSON.stringify(content, null, 2));
 }
 
 function mergeNepalVisa(stored: Partial<NepalVisaContent> | null): NepalVisaContent {
@@ -1213,7 +1225,7 @@ function mergeNepalVisa(stored: Partial<NepalVisaContent> | null): NepalVisaCont
 
 export async function getNepalVisaContent(): Promise<NepalVisaContent> {
   try {
-    const raw = await fs.readFile(NEPAL_VISA_FILE, "utf8");
+    const raw = await dbReadFile(NEPAL_VISA_FILE);
     return mergeNepalVisa(JSON.parse(raw) as Partial<NepalVisaContent>);
   } catch {
     return DEFAULT_NEPAL_VISA;
@@ -1222,7 +1234,7 @@ export async function getNepalVisaContent(): Promise<NepalVisaContent> {
 
 export async function saveNepalVisaContent(content: NepalVisaContent): Promise<void> {
   await ensureDataDir();
-  await fs.writeFile(NEPAL_VISA_FILE, JSON.stringify(content, null, 2), "utf8");
+  await dbWriteFile(NEPAL_VISA_FILE, JSON.stringify(content, null, 2));
 }
 
 function mergePermitsTims(stored: Partial<PermitsTimsContent> | null): PermitsTimsContent {
@@ -1274,7 +1286,7 @@ function mergePermitsTims(stored: Partial<PermitsTimsContent> | null): PermitsTi
 
 export async function getPermitsTimsContent(): Promise<PermitsTimsContent> {
   try {
-    const raw = await fs.readFile(PERMITS_TIMS_FILE, "utf8");
+    const raw = await dbReadFile(PERMITS_TIMS_FILE);
     return mergePermitsTims(JSON.parse(raw) as Partial<PermitsTimsContent>);
   } catch {
     return DEFAULT_PERMITS_TIMS;
@@ -1283,7 +1295,7 @@ export async function getPermitsTimsContent(): Promise<PermitsTimsContent> {
 
 export async function savePermitsTimsContent(content: PermitsTimsContent): Promise<void> {
   await ensureDataDir();
-  await fs.writeFile(PERMITS_TIMS_FILE, JSON.stringify(content, null, 2), "utf8");
+  await dbWriteFile(PERMITS_TIMS_FILE, JSON.stringify(content, null, 2));
 }
 
 function mergeBestTime(stored: Partial<BestTimeContent> | null): BestTimeContent {
@@ -1327,7 +1339,7 @@ function mergeBestTime(stored: Partial<BestTimeContent> | null): BestTimeContent
 
 export async function getBestTimeContent(): Promise<BestTimeContent> {
   try {
-    const raw = await fs.readFile(BEST_TIME_FILE, "utf8");
+    const raw = await dbReadFile(BEST_TIME_FILE);
     return mergeBestTime(JSON.parse(raw) as Partial<BestTimeContent>);
   } catch {
     return DEFAULT_BEST_TIME;
@@ -1336,7 +1348,7 @@ export async function getBestTimeContent(): Promise<BestTimeContent> {
 
 export async function saveBestTimeContent(content: BestTimeContent): Promise<void> {
   await ensureDataDir();
-  await fs.writeFile(BEST_TIME_FILE, JSON.stringify(content, null, 2), "utf8");
+  await dbWriteFile(BEST_TIME_FILE, JSON.stringify(content, null, 2));
 }
 
 function mergeTravelInsurance(
@@ -1386,7 +1398,7 @@ function mergeTravelInsurance(
 
 export async function getTravelInsuranceContent(): Promise<TravelInsuranceContent> {
   try {
-    const raw = await fs.readFile(TRAVEL_INSURANCE_FILE, "utf8");
+    const raw = await dbReadFile(TRAVEL_INSURANCE_FILE);
     return mergeTravelInsurance(JSON.parse(raw) as Partial<TravelInsuranceContent>);
   } catch {
     return DEFAULT_TRAVEL_INSURANCE;
@@ -1397,7 +1409,7 @@ export async function saveTravelInsuranceContent(
   content: TravelInsuranceContent,
 ): Promise<void> {
   await ensureDataDir();
-  await fs.writeFile(TRAVEL_INSURANCE_FILE, JSON.stringify(content, null, 2), "utf8");
+  await dbWriteFile(TRAVEL_INSURANCE_FILE, JSON.stringify(content, null, 2));
 }
 
 function mergeHealthSafety(stored: Partial<HealthSafetyContent> | null): HealthSafetyContent {
@@ -1441,7 +1453,7 @@ function mergeHealthSafety(stored: Partial<HealthSafetyContent> | null): HealthS
 
 export async function getHealthSafetyContent(): Promise<HealthSafetyContent> {
   try {
-    const raw = await fs.readFile(HEALTH_SAFETY_FILE, "utf8");
+    const raw = await dbReadFile(HEALTH_SAFETY_FILE);
     return mergeHealthSafety(JSON.parse(raw) as Partial<HealthSafetyContent>);
   } catch {
     return DEFAULT_HEALTH_SAFETY;
@@ -1450,7 +1462,7 @@ export async function getHealthSafetyContent(): Promise<HealthSafetyContent> {
 
 export async function saveHealthSafetyContent(content: HealthSafetyContent): Promise<void> {
   await ensureDataDir();
-  await fs.writeFile(HEALTH_SAFETY_FILE, JSON.stringify(content, null, 2), "utf8");
+  await dbWriteFile(HEALTH_SAFETY_FILE, JSON.stringify(content, null, 2));
 }
 
 function mergeMoneyCurrency(
@@ -1493,7 +1505,7 @@ function mergeMoneyCurrency(
 
 export async function getMoneyCurrencyContent(): Promise<MoneyCurrencyContent> {
   try {
-    const raw = await fs.readFile(MONEY_CURRENCY_FILE, "utf8");
+    const raw = await dbReadFile(MONEY_CURRENCY_FILE);
     return mergeMoneyCurrency(JSON.parse(raw) as Partial<MoneyCurrencyContent>);
   } catch {
     return DEFAULT_MONEY_CURRENCY;
@@ -1502,7 +1514,7 @@ export async function getMoneyCurrencyContent(): Promise<MoneyCurrencyContent> {
 
 export async function saveMoneyCurrencyContent(content: MoneyCurrencyContent): Promise<void> {
   await ensureDataDir();
-  await fs.writeFile(MONEY_CURRENCY_FILE, JSON.stringify(content, null, 2), "utf8");
+  await dbWriteFile(MONEY_CURRENCY_FILE, JSON.stringify(content, null, 2));
 }
 
 function mergePackingChecklist(
@@ -1548,7 +1560,7 @@ function mergePackingChecklist(
 
 export async function getPackingChecklistContent(): Promise<PackingChecklistContent> {
   try {
-    const raw = await fs.readFile(PACKING_CHECKLIST_FILE, "utf8");
+    const raw = await dbReadFile(PACKING_CHECKLIST_FILE);
     return mergePackingChecklist(JSON.parse(raw) as Partial<PackingChecklistContent>);
   } catch {
     return DEFAULT_PACKING_CHECKLIST;
@@ -1559,7 +1571,7 @@ export async function savePackingChecklistContent(
   content: PackingChecklistContent,
 ): Promise<void> {
   await ensureDataDir();
-  await fs.writeFile(PACKING_CHECKLIST_FILE, JSON.stringify(content, null, 2), "utf8");
+  await dbWriteFile(PACKING_CHECKLIST_FILE, JSON.stringify(content, null, 2));
 }
 
 function mergeTrekPage(
@@ -1715,7 +1727,7 @@ function mergeTrekPage(
 
 export async function getPoonHillContent(): Promise<TrekPageContent> {
   try {
-    const raw = await fs.readFile(POON_HILL_FILE, "utf8");
+    const raw = await dbReadFile(POON_HILL_FILE);
     return mergeTrekPage(JSON.parse(raw) as Partial<TrekPageContent>, DEFAULT_POON_HILL);
   } catch {
     return DEFAULT_POON_HILL;
@@ -1724,7 +1736,7 @@ export async function getPoonHillContent(): Promise<TrekPageContent> {
 
 export async function savePoonHillContent(content: TrekPageContent): Promise<void> {
   await ensureDataDir();
-  await fs.writeFile(POON_HILL_FILE, JSON.stringify(content, null, 2), "utf8");
+  await dbWriteFile(POON_HILL_FILE, JSON.stringify(content, null, 2));
 }
 
 function mergeDestinationRegion(
@@ -1788,7 +1800,7 @@ function mergeDestinationRegion(
 
 export async function getEverestRegionContent(): Promise<DestinationRegionContent> {
   try {
-    const raw = await fs.readFile(EVEREST_REGION_FILE, "utf8");
+    const raw = await dbReadFile(EVEREST_REGION_FILE);
     return mergeDestinationRegion(
       JSON.parse(raw) as Partial<DestinationRegionContent>,
       DEFAULT_EVEREST_REGION,
@@ -1802,12 +1814,12 @@ export async function saveEverestRegionContent(
   content: DestinationRegionContent,
 ): Promise<void> {
   await ensureDataDir();
-  await fs.writeFile(EVEREST_REGION_FILE, JSON.stringify(content, null, 2), "utf8");
+  await dbWriteFile(EVEREST_REGION_FILE, JSON.stringify(content, null, 2));
 }
 
 export async function getAnnapurnaRegionContent(): Promise<DestinationRegionContent> {
   try {
-    const raw = await fs.readFile(ANNAPURNA_REGION_FILE, "utf8");
+    const raw = await dbReadFile(ANNAPURNA_REGION_FILE);
     return mergeDestinationRegion(
       JSON.parse(raw) as Partial<DestinationRegionContent>,
       DEFAULT_ANNAPURNA_REGION,
@@ -1821,12 +1833,12 @@ export async function saveAnnapurnaRegionContent(
   content: DestinationRegionContent,
 ): Promise<void> {
   await ensureDataDir();
-  await fs.writeFile(ANNAPURNA_REGION_FILE, JSON.stringify(content, null, 2), "utf8");
+  await dbWriteFile(ANNAPURNA_REGION_FILE, JSON.stringify(content, null, 2));
 }
 
 export async function getLangtangRegionContent(): Promise<DestinationRegionContent> {
   try {
-    const raw = await fs.readFile(LANGTANG_REGION_FILE, "utf8");
+    const raw = await dbReadFile(LANGTANG_REGION_FILE);
     return mergeDestinationRegion(
       JSON.parse(raw) as Partial<DestinationRegionContent>,
       DEFAULT_LANGTANG_REGION,
@@ -1840,7 +1852,7 @@ export async function saveLangtangRegionContent(
   content: DestinationRegionContent,
 ): Promise<void> {
   await ensureDataDir();
-  await fs.writeFile(LANGTANG_REGION_FILE, JSON.stringify(content, null, 2), "utf8");
+  await dbWriteFile(LANGTANG_REGION_FILE, JSON.stringify(content, null, 2));
 }
 
 const LIBRARY_EXT_MIME: Record<string, string> = {
@@ -1907,7 +1919,7 @@ export async function getMediaLibrary(): Promise<MediaItem[]> {
   await ensureMediaDirs();
   let items: MediaItem[] = [];
   try {
-    const raw = await fs.readFile(MEDIA_FILE, "utf8");
+    const raw = await dbReadFile(MEDIA_FILE);
     items = JSON.parse(raw) as MediaItem[];
     if (!Array.isArray(items)) items = [];
   } catch {
@@ -1917,8 +1929,40 @@ export async function getMediaLibrary(): Promise<MediaItem[]> {
 }
 
 export async function saveMediaLibrary(items: MediaItem[]): Promise<void> {
-  await ensureDataDir();
-  await fs.writeFile(MEDIA_FILE, JSON.stringify(items, null, 2), "utf8");
+  await dbWriteFile(MEDIA_FILE, JSON.stringify(items, null, 2));
+
+  // Keep Media table metadata aligned with the CMS library index.
+  const filenames = new Set(
+    items.map((item) => item.filename).filter((name): name is string => Boolean(name)),
+  );
+  const existing = await prisma.media.findMany({ select: { filename: true } });
+  const stale = existing
+    .map((row) => row.filename)
+    .filter((filename) => !filenames.has(filename));
+  if (stale.length) {
+    await prisma.media.deleteMany({ where: { filename: { in: stale } } });
+  }
+  for (const item of items) {
+    if (!item.filename) continue;
+    const mediaPath = path.posix.join("storage/media/library", item.filename);
+    await prisma.media.upsert({
+      where: { filename: item.filename },
+      update: {
+        originalName: item.name || item.filename,
+        mimeType: item.mimeType || null,
+        size: typeof item.size === "number" ? item.size : null,
+        path: mediaPath,
+      },
+      create: {
+        ...(item.id ? { id: item.id } : {}),
+        filename: item.filename,
+        originalName: item.name || item.filename,
+        mimeType: item.mimeType || null,
+        size: typeof item.size === "number" ? item.size : null,
+        path: mediaPath,
+      },
+    });
+  }
 }
 
 export function cleanMediaUrl(url: string): string {
