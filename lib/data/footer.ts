@@ -42,7 +42,7 @@ export const footerDestinations = [
   { label: "Langtang", href: "/destinations/langtang" },
   { label: "Manaslu", href: "/destinations/manaslu-region" },
   { label: "Mustang", href: "/destinations/mustang-region" },
-  { label: "Dolpo", href: "/destinations/dolpo" },
+  { label: "Dolpo", href: "/destinations/dolpo-region" },
   { label: "Makalu", href: "/destinations/makalu" },
   { label: "Kanchenjunga", href: "/destinations/kanchenjunga" },
 ] as const;

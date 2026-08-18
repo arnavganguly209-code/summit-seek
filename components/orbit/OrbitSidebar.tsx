@@ -81,6 +81,11 @@ const nav = [
         label: "Mustang Region",
         icon: Mountain,
       },
+      {
+        href: "/orbit/dashboard/website/dolpo-region",
+        label: "Dolpo Region",
+        icon: Mountain,
+      },
       { href: "/orbit/dashboard/website/best-selling", label: "Best Selling Packages", icon: Package },
       { href: "/orbit/dashboard/website/services", label: "What We Offer", icon: BriefcaseBusiness },
       {

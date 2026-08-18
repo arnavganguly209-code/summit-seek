@@ -109,13 +109,14 @@ export const destinationRegions: DestinationRegion[] = [
   {
     id: "dolpo",
     label: "Dolpo",
-    href: "/destinations/dolpo",
+    href: "/destinations/dolpo-region",
     icon: "remote",
     description: "Trans-Himalayan mystique and high plateaus",
     packages: [
-      { title: "Upper Dolpo", href: "/treks/upper-dolpo", duration: "24 Days" },
-      { title: "Lower Dolpo Circuit", href: "/treks/lower-dolpo", duration: "18 Days" },
-      { title: "Phoksundo Lake", href: "/treks/phoksundo", duration: "12 Days" },
+      { title: "Upper Dolpo Trek", href: "/treks/upper-dolpo", duration: "24 Days" },
+      { title: "Lower Dolpo Trek", href: "/treks/lower-dolpo", duration: "18 Days" },
+      { title: "Shey Gompa Trek", href: "/treks/shey-gompa", duration: "21 Days" },
+      { title: "Phoksundo Lake Trek", href: "/treks/phoksundo", duration: "12 Days" },
     ],
   },
   {
@@ -271,12 +272,13 @@ export const trekkingColumns: TrekkingColumn[] = [
   {
     id: "dolpo",
     heading: "Dolpo Region",
-    href: "/destinations/dolpo",
+    href: "/destinations/dolpo-region",
     subtitle: "Wild highlands and timeless Tibetan culture.",
     links: [
       { title: "Upper Dolpo Trek", href: "/treks/upper-dolpo", duration: "24 Days", difficulty: "Strenuous" },
       { title: "Lower Dolpo Trek", href: "/treks/lower-dolpo", duration: "18 Days", difficulty: "Challenging" },
       { title: "Shey Gompa Trek", href: "/treks/shey-gompa", duration: "21 Days", difficulty: "Strenuous" },
+      { title: "Phoksundo Lake Trek", href: "/treks/phoksundo", duration: "12 Days", difficulty: "Moderate" },
     ],
   },
   {
