@@ -65,6 +65,7 @@ import { DEFAULT_LANGTANG_REGION } from "@/lib/orbit/langtang-region-defaults";
 import { DEFAULT_MANASLU_REGION } from "@/lib/orbit/manaslu-region-defaults";
 import { DEFAULT_MUSTANG_REGION } from "@/lib/orbit/mustang-region-defaults";
 import { DEFAULT_DOLPO_REGION } from "@/lib/orbit/dolpo-region-defaults";
+import { DEFAULT_KANCHENJUNGA_REGION } from "@/lib/orbit/kanchenjunga-region-defaults";
 
 const DATA_DIR = path.join(process.cwd(), "data");
 const HERO_FILE = path.join(DATA_DIR, "hero.json");
@@ -100,6 +101,7 @@ const LANGTANG_REGION_FILE = path.join(DATA_DIR, "langtang-region.json");
 const MANASLU_REGION_FILE = path.join(DATA_DIR, "manaslu-region.json");
 const MUSTANG_REGION_FILE = path.join(DATA_DIR, "mustang-region.json");
 const DOLPO_REGION_FILE = path.join(DATA_DIR, "dolpo-region.json");
+const KANCHENJUNGA_REGION_FILE = path.join(DATA_DIR, "kanchenjunga-region.json");
 const MEDIA_FILE = path.join(DATA_DIR, "media-library.json");
 
 /** Durable upload root — survives `git reset --hard` (unlike public/). */
@@ -1916,6 +1918,25 @@ export async function saveDolpoRegionContent(
 ): Promise<void> {
   await ensureDataDir();
   await dbWriteFile(DOLPO_REGION_FILE, JSON.stringify(content, null, 2));
+}
+
+export async function getKanchenjungaRegionContent(): Promise<DestinationRegionContent> {
+  try {
+    const raw = await dbReadFile(KANCHENJUNGA_REGION_FILE);
+    return mergeDestinationRegion(
+      JSON.parse(raw) as Partial<DestinationRegionContent>,
+      DEFAULT_KANCHENJUNGA_REGION,
+    );
+  } catch {
+    return DEFAULT_KANCHENJUNGA_REGION;
+  }
+}
+
+export async function saveKanchenjungaRegionContent(
+  content: DestinationRegionContent,
+): Promise<void> {
+  await ensureDataDir();
+  await dbWriteFile(KANCHENJUNGA_REGION_FILE, JSON.stringify(content, null, 2));
 }
 
 const LIBRARY_EXT_MIME: Record<string, string> = {

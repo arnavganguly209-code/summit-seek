@@ -122,13 +122,14 @@ export const destinationRegions: DestinationRegion[] = [
   {
     id: "kanchenjunga",
     label: "Kanchenjunga",
-    href: "/destinations/kanchenjunga",
+    href: "/destinations/kanchenjunga-region",
     icon: "summit",
     description: "Remote eastern Himalaya wilderness",
     packages: [
-      { title: "Kanchenjunga Base Camp", href: "/treks/kanchenjunga-bc", duration: "22 Days" },
+      { title: "Kanchenjunga Circuit", href: "/treks/kanchenjunga-circuit", duration: "22 Days" },
       { title: "North Base Camp", href: "/treks/kanchenjunga-north", duration: "18 Days" },
-      { title: "South Base Camp", href: "/treks/kanchenjunga-south", duration: "20 Days" },
+      { title: "South Base Camp", href: "/treks/kanchenjunga-south", duration: "17 Days" },
+      { title: "Kanchenjunga Base Camp", href: "/treks/kanchenjunga-bc", duration: "22 Days" },
     ],
   },
   {
@@ -284,12 +285,13 @@ export const trekkingColumns: TrekkingColumn[] = [
   {
     id: "kanchenjunga",
     heading: "Kanchenjunga Region",
-    href: "/destinations/kanchenjunga",
+    href: "/destinations/kanchenjunga-region",
     subtitle: "Expedition trails to the world's third-highest peak.",
     links: [
       { title: "Kanchenjunga Circuit", href: "/treks/kanchenjunga-circuit", duration: "22 Days", difficulty: "Strenuous" },
       { title: "North Base Camp", href: "/treks/kanchenjunga-north", duration: "18 Days", difficulty: "Challenging" },
       { title: "South Base Camp", href: "/treks/kanchenjunga-south", duration: "17 Days", difficulty: "Challenging" },
+      { title: "Kanchenjunga Base Camp", href: "/treks/kanchenjunga-bc", duration: "22 Days", difficulty: "Strenuous" },
     ],
   },
   {

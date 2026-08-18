@@ -44,7 +44,7 @@ export const footerDestinations = [
   { label: "Mustang", href: "/destinations/mustang-region" },
   { label: "Dolpo", href: "/destinations/dolpo-region" },
   { label: "Makalu", href: "/destinations/makalu" },
-  { label: "Kanchenjunga", href: "/destinations/kanchenjunga" },
+  { label: "Kanchenjunga", href: "/destinations/kanchenjunga-region" },
 ] as const;
 
 export const footerTrekking = [
