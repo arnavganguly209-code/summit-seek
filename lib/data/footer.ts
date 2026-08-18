@@ -41,7 +41,7 @@ export const footerDestinations = [
   { label: "Annapurna", href: "/destinations/annapurna-region" },
   { label: "Langtang", href: "/destinations/langtang" },
   { label: "Manaslu", href: "/destinations/manaslu-region" },
-  { label: "Mustang", href: "/destinations/mustang" },
+  { label: "Mustang", href: "/destinations/mustang-region" },
   { label: "Dolpo", href: "/destinations/dolpo" },
   { label: "Makalu", href: "/destinations/makalu" },
   { label: "Kanchenjunga", href: "/destinations/kanchenjunga" },

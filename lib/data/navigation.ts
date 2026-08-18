@@ -96,14 +96,14 @@ export const destinationRegions: DestinationRegion[] = [
   {
     id: "mustang",
     label: "Mustang",
-    href: "/destinations/mustang",
+    href: "/destinations/mustang-region",
     icon: "desert",
     description: "Ancient kingdoms and wind-sculpted cliffs",
     packages: [
-      { title: "Upper Mustang", href: "/treks/upper-mustang", duration: "14 Days" },
-      { title: "Lower Mustang", href: "/treks/lower-mustang", duration: "10 Days" },
-      { title: "Mustang Helicopter", href: "/tours/mustang-heli", duration: "1 Day" },
-      { title: "Lo Manthang Journey", href: "/treks/lo-manthang", duration: "12 Days" },
+      { title: "Upper Mustang Trek", href: "/treks/upper-mustang", duration: "14 Days" },
+      { title: "Lower Mustang Trek", href: "/treks/lower-mustang", duration: "8 Days" },
+      { title: "Lo Manthang Trek", href: "/treks/lo-manthang", duration: "12 Days" },
+      { title: "Mustang Jeep Tour", href: "/tours/mustang-jeep", duration: "7 Days" },
     ],
   },
   {
@@ -259,7 +259,7 @@ export const trekkingColumns: TrekkingColumn[] = [
   {
     id: "mustang",
     heading: "Mustang Region",
-    href: "/destinations/mustang",
+    href: "/destinations/mustang-region",
     subtitle: "Ancient kingdoms beyond the Annapurna range.",
     links: [
       { title: "Upper Mustang Trek", href: "/treks/upper-mustang", duration: "14 Days", difficulty: "Moderate" },
