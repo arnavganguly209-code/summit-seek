@@ -7,8 +7,4 @@ export const destinationNavItems = [
   { label: "Dolpo Region", href: "/destinations/dolpo-region" },
   { label: "Kanchenjunga Region", href: "/destinations/kanchenjunga-region" },
   { label: "Makalu Region", href: "/destinations/makalu-region" },
-  { label: "Dhaulagiri Region", href: "/destinations/dhaulagiri-region" },
-  { label: "Rolwaling Region", href: "/destinations/rolwaling-region" },
-  { label: "Rara Lake Region", href: "/destinations/rara-lake-region" },
-  { label: "Hidden Himalayas", href: "/destinations/hidden-himalayas" },
 ] as const;
