@@ -71,6 +71,11 @@ const nav = [
         label: "Langtang Region",
         icon: Mountain,
       },
+      {
+        href: "/orbit/dashboard/website/manaslu-region",
+        label: "Manaslu Region",
+        icon: Mountain,
+      },
       { href: "/orbit/dashboard/website/best-selling", label: "Best Selling Packages", icon: Package },
       { href: "/orbit/dashboard/website/services", label: "What We Offer", icon: BriefcaseBusiness },
       {

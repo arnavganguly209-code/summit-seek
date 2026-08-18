@@ -83,14 +83,14 @@ export const destinationRegions: DestinationRegion[] = [
   {
     id: "manaslu",
     label: "Manaslu",
-    href: "/destinations/manaslu",
+    href: "/destinations/manaslu-region",
     icon: "trail",
     description: "Restricted circuit around the eighth-highest peak",
     packages: [
-      { title: "Manaslu Circuit", href: "/treks/manaslu-circuit", duration: "16 Days" },
-      { title: "Manaslu with Tsum Valley", href: "/treks/manaslu-tsum", duration: "20 Days" },
-      { title: "Manaslu Luxury Lodge", href: "/treks/manaslu-luxury", duration: "14 Days" },
-      { title: "Tsum Valley Trek", href: "/treks/tsum-valley", duration: "14 Days" },
+      { title: "Manaslu Circuit", href: "/treks/manaslu-circuit", duration: "14 Days" },
+      { title: "Manaslu Tsum Valley", href: "/treks/manaslu-tsum", duration: "21 Days" },
+      { title: "Tsum Valley", href: "/treks/tsum-valley", duration: "17 Days" },
+      { title: "Rupina La", href: "/treks/rupina-la", duration: "18 Days" },
     ],
   },
   {
@@ -247,7 +247,7 @@ export const trekkingColumns: TrekkingColumn[] = [
   {
     id: "manaslu",
     heading: "Manaslu Region",
-    href: "/destinations/manaslu",
+    href: "/destinations/manaslu-region",
     subtitle: "Remote circuits around the eighth-highest peak.",
     links: [
       { title: "Manaslu Circuit", href: "/treks/manaslu-circuit", duration: "14 Days", difficulty: "Challenging" },
