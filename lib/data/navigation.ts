@@ -135,12 +135,13 @@ export const destinationRegions: DestinationRegion[] = [
   {
     id: "makalu",
     label: "Makalu",
-    href: "/destinations/makalu",
+    href: "/destinations/makalu-region",
     icon: "ridge",
     description: "Wild trails beneath the fifth-highest mountain",
     packages: [
       { title: "Makalu Base Camp", href: "/treks/makalu-bc", duration: "20 Days" },
-      { title: "Makalu Barun Valley", href: "/treks/makalu-barun", duration: "16 Days" },
+      { title: "Makalu Barun Valley", href: "/treks/makalu-barun", duration: "18 Days" },
+      { title: "Arun Valley Trek", href: "/treks/arun-valley", duration: "12 Days" },
       { title: "Sherpani Col", href: "/treks/sherpani-col", duration: "24 Days" },
     ],
   },
@@ -297,12 +298,13 @@ export const trekkingColumns: TrekkingColumn[] = [
   {
     id: "makalu",
     heading: "Makalu Region",
-    href: "/destinations/makalu",
+    href: "/destinations/makalu-region",
     subtitle: "Wild approaches to the fifth-highest mountain.",
     links: [
       { title: "Makalu Base Camp", href: "/treks/makalu-bc", duration: "20 Days", difficulty: "Strenuous" },
       { title: "Makalu Barun Valley", href: "/treks/makalu-barun", duration: "18 Days", difficulty: "Challenging" },
       { title: "Arun Valley Trek", href: "/treks/arun-valley", duration: "12 Days", difficulty: "Moderate" },
+      { title: "Sherpani Col Trek", href: "/treks/sherpani-col", duration: "24 Days", difficulty: "Strenuous" },
     ],
   },
 ];

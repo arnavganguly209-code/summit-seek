@@ -43,7 +43,7 @@ export const footerDestinations = [
   { label: "Manaslu", href: "/destinations/manaslu-region" },
   { label: "Mustang", href: "/destinations/mustang-region" },
   { label: "Dolpo", href: "/destinations/dolpo-region" },
-  { label: "Makalu", href: "/destinations/makalu" },
+  { label: "Makalu", href: "/destinations/makalu-region" },
   { label: "Kanchenjunga", href: "/destinations/kanchenjunga-region" },
 ] as const;
 

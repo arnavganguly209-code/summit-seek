@@ -91,6 +91,11 @@ const nav = [
         label: "Kanchenjunga Region",
         icon: Mountain,
       },
+      {
+        href: "/orbit/dashboard/website/makalu-region",
+        label: "Makalu Region",
+        icon: Mountain,
+      },
       { href: "/orbit/dashboard/website/best-selling", label: "Best Selling Packages", icon: Package },
       { href: "/orbit/dashboard/website/services", label: "What We Offer", icon: BriefcaseBusiness },
       {
