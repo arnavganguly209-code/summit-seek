@@ -16,7 +16,12 @@ import type {
 } from "@/types/trek-page-cms";
 import { OrbitImageField } from "@/components/orbit/OrbitImageField";
 
-type Props = { initial: TrekPageContent };
+type Props = {
+  initial: TrekPageContent;
+  title?: string;
+  pathLabel?: string;
+  apiPath?: string;
+};
 
 const field =
   "w-full rounded-lg border border-white/15 bg-black/30 px-3 py-2.5 text-[13px] text-white outline-none focus:border-[#F58220]/60";
@@ -69,7 +74,12 @@ function LineList({
   );
 }
 
-export function PoonHillEditor({ initial }: Props) {
+export function PoonHillEditor({
+  initial,
+  title = "Poon Hill Trek",
+  pathLabel = "/treks/poon-hill",
+  apiPath = "/api/orbit/poon-hill",
+}: Props) {
   const router = useRouter();
   const [content, setContent] = useState(initial);
   const [saving, setSaving] = useState(false);
@@ -87,7 +97,7 @@ export function PoonHillEditor({ initial }: Props) {
     setError("");
     setToast("");
     try {
-      const res = await fetch("/api/orbit/poon-hill", {
+      const res = await fetch(apiPath, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload),
@@ -100,7 +110,7 @@ export function PoonHillEditor({ initial }: Props) {
       }
       setContent(payload);
       contentRef.current = payload;
-      setToast("Poon Hill trek page saved. Live site updated.");
+      setToast(`${title} page saved. Live site updated.`);
       setSaving(false);
       router.refresh();
       return true;
@@ -126,9 +136,9 @@ export function PoonHillEditor({ initial }: Props) {
       <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
         <div>
           <p className="text-[11px] font-bold uppercase tracking-[0.2em] text-[#F58220]">Trek Pages</p>
-          <h1 className="mt-1 text-2xl font-bold text-white">Poon Hill Trek</h1>
+          <h1 className="mt-1 text-2xl font-bold text-white">{title}</h1>
           <p className="mt-1.5 max-w-xl text-[14px] text-white/55">
-            Full control of `/treks/poon-hill` — hero mosaic, group discounts, booking, itinerary,
+            Full control of `{pathLabel}` — hero mosaic, group discounts, booking, itinerary,
             gallery, FAQs & more.
           </p>
         </div>
