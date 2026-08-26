@@ -61,6 +61,7 @@ import { DEFAULT_PACKING_CHECKLIST } from "@/lib/orbit/packing-checklist-default
 import { DEFAULT_POON_HILL } from "@/lib/orbit/poon-hill-defaults";
 import { DEFAULT_ANNAPURNA_BASE_CAMP } from "@/lib/orbit/annapurna-base-camp-defaults";
 import { DEFAULT_EVEREST_BASE_CAMP } from "@/lib/orbit/everest-base-camp-defaults";
+import { DEFAULT_MARDI_HIMAL } from "@/lib/orbit/mardi-himal-defaults";
 import { DEFAULT_EVEREST_REGION } from "@/lib/orbit/everest-region-defaults";
 import { DEFAULT_ANNAPURNA_REGION } from "@/lib/orbit/annapurna-region-defaults";
 import { DEFAULT_LANGTANG_REGION } from "@/lib/orbit/langtang-region-defaults";
@@ -100,6 +101,7 @@ const PACKING_CHECKLIST_FILE = path.join(DATA_DIR, "packing-checklist.json");
 const POON_HILL_FILE = path.join(DATA_DIR, "poon-hill.json");
 const ANNAPURNA_BASE_CAMP_FILE = path.join(DATA_DIR, "annapurna-base-camp.json");
 const EVEREST_BASE_CAMP_FILE = path.join(DATA_DIR, "everest-base-camp.json");
+const MARDI_HIMAL_FILE = path.join(DATA_DIR, "mardi-himal.json");
 const EVEREST_REGION_FILE = path.join(DATA_DIR, "everest-region.json");
 const ANNAPURNA_REGION_FILE = path.join(DATA_DIR, "annapurna-region.json");
 const LANGTANG_REGION_FILE = path.join(DATA_DIR, "langtang-region.json");
@@ -1789,6 +1791,20 @@ export async function saveEverestBaseCampContent(
 ): Promise<void> {
   await ensureDataDir();
   await dbWriteFile(EVEREST_BASE_CAMP_FILE, JSON.stringify(content, null, 2));
+}
+
+export async function getMardiHimalContent(): Promise<TrekPageContent> {
+  try {
+    const raw = await dbReadFile(MARDI_HIMAL_FILE);
+    return mergeTrekPage(JSON.parse(raw) as Partial<TrekPageContent>, DEFAULT_MARDI_HIMAL);
+  } catch {
+    return DEFAULT_MARDI_HIMAL;
+  }
+}
+
+export async function saveMardiHimalContent(content: TrekPageContent): Promise<void> {
+  await ensureDataDir();
+  await dbWriteFile(MARDI_HIMAL_FILE, JSON.stringify(content, null, 2));
 }
 
 function mergeDestinationRegion(
