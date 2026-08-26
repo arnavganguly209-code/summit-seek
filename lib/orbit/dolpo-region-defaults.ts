@@ -35,7 +35,7 @@ export const DEFAULT_DOLPO_REGION: DestinationRegionContent = {
       rating: 5,
       reviewCount: 9,
       startLocation: "Kathmandu",
-      price: 2190,
+      price: 2200,
       compareAtPrice: 2490,
       href: "/treks/lower-dolpo",
       imageUrl: img("photo-1486870591958-9b9d0d1dda99"),

@@ -79,6 +79,7 @@ import { DEFAULT_LOWER_MUSTANG } from "@/lib/orbit/lower-mustang-defaults";
 import { DEFAULT_LO_MANTHANG } from "@/lib/orbit/lo-manthang-defaults";
 import { DEFAULT_MUSTANG_JEEP } from "@/lib/orbit/mustang-jeep-defaults";
 import { DEFAULT_UPPER_DOLPO } from "@/lib/orbit/upper-dolpo-defaults";
+import { DEFAULT_LOWER_DOLPO } from "@/lib/orbit/lower-dolpo-defaults";
 import { DEFAULT_EVEREST_REGION } from "@/lib/orbit/everest-region-defaults";
 import { DEFAULT_ANNAPURNA_REGION } from "@/lib/orbit/annapurna-region-defaults";
 import { DEFAULT_LANGTANG_REGION } from "@/lib/orbit/langtang-region-defaults";
@@ -136,6 +137,7 @@ const LOWER_MUSTANG_FILE = path.join(DATA_DIR, "lower-mustang.json");
 const LO_MANTHANG_FILE = path.join(DATA_DIR, "lo-manthang.json");
 const MUSTANG_JEEP_FILE = path.join(DATA_DIR, "mustang-jeep.json");
 const UPPER_DOLPO_FILE = path.join(DATA_DIR, "upper-dolpo.json");
+const LOWER_DOLPO_FILE = path.join(DATA_DIR, "lower-dolpo.json");
 const EVEREST_REGION_FILE = path.join(DATA_DIR, "everest-region.json");
 const ANNAPURNA_REGION_FILE = path.join(DATA_DIR, "annapurna-region.json");
 const LANGTANG_REGION_FILE = path.join(DATA_DIR, "langtang-region.json");
@@ -2077,6 +2079,20 @@ export async function getUpperDolpoContent(): Promise<TrekPageContent> {
 export async function saveUpperDolpoContent(content: TrekPageContent): Promise<void> {
   await ensureDataDir();
   await dbWriteFile(UPPER_DOLPO_FILE, JSON.stringify(content, null, 2));
+}
+
+export async function getLowerDolpoContent(): Promise<TrekPageContent> {
+  try {
+    const raw = await dbReadFile(LOWER_DOLPO_FILE);
+    return mergeTrekPage(JSON.parse(raw) as Partial<TrekPageContent>, DEFAULT_LOWER_DOLPO);
+  } catch {
+    return DEFAULT_LOWER_DOLPO;
+  }
+}
+
+export async function saveLowerDolpoContent(content: TrekPageContent): Promise<void> {
+  await ensureDataDir();
+  await dbWriteFile(LOWER_DOLPO_FILE, JSON.stringify(content, null, 2));
 }
 
 function mergeDestinationRegion(
