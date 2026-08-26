@@ -72,6 +72,7 @@ import { DEFAULT_HELAMBU } from "@/lib/orbit/helambu-defaults";
 import { DEFAULT_TAMANG_HERITAGE } from "@/lib/orbit/tamang-heritage-defaults";
 import { DEFAULT_MANASLU_CIRCUIT } from "@/lib/orbit/manaslu-circuit-defaults";
 import { DEFAULT_MANASLU_TSUM } from "@/lib/orbit/manaslu-tsum-defaults";
+import { DEFAULT_TSUM_VALLEY } from "@/lib/orbit/tsum-valley-defaults";
 import { DEFAULT_EVEREST_REGION } from "@/lib/orbit/everest-region-defaults";
 import { DEFAULT_ANNAPURNA_REGION } from "@/lib/orbit/annapurna-region-defaults";
 import { DEFAULT_LANGTANG_REGION } from "@/lib/orbit/langtang-region-defaults";
@@ -122,6 +123,7 @@ const HELAMBU_FILE = path.join(DATA_DIR, "helambu.json");
 const TAMANG_HERITAGE_FILE = path.join(DATA_DIR, "tamang-heritage.json");
 const MANASLU_CIRCUIT_FILE = path.join(DATA_DIR, "manaslu-circuit.json");
 const MANASLU_TSUM_FILE = path.join(DATA_DIR, "manaslu-tsum.json");
+const TSUM_VALLEY_FILE = path.join(DATA_DIR, "tsum-valley.json");
 const EVEREST_REGION_FILE = path.join(DATA_DIR, "everest-region.json");
 const ANNAPURNA_REGION_FILE = path.join(DATA_DIR, "annapurna-region.json");
 const LANGTANG_REGION_FILE = path.join(DATA_DIR, "langtang-region.json");
@@ -1965,6 +1967,20 @@ export async function getManasluTsumContent(): Promise<TrekPageContent> {
 export async function saveManasluTsumContent(content: TrekPageContent): Promise<void> {
   await ensureDataDir();
   await dbWriteFile(MANASLU_TSUM_FILE, JSON.stringify(content, null, 2));
+}
+
+export async function getTsumValleyContent(): Promise<TrekPageContent> {
+  try {
+    const raw = await dbReadFile(TSUM_VALLEY_FILE);
+    return mergeTrekPage(JSON.parse(raw) as Partial<TrekPageContent>, DEFAULT_TSUM_VALLEY);
+  } catch {
+    return DEFAULT_TSUM_VALLEY;
+  }
+}
+
+export async function saveTsumValleyContent(content: TrekPageContent): Promise<void> {
+  await ensureDataDir();
+  await dbWriteFile(TSUM_VALLEY_FILE, JSON.stringify(content, null, 2));
 }
 
 function mergeDestinationRegion(
