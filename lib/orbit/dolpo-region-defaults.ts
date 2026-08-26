@@ -63,7 +63,7 @@ export const DEFAULT_DOLPO_REGION: DestinationRegionContent = {
       rating: 5,
       reviewCount: 8,
       startLocation: "Kathmandu",
-      price: 1390,
+      price: 1475,
       compareAtPrice: 1690,
       href: "/treks/phoksundo",
       imageUrl: img("photo-1464822759023-fed622ff2c3b"),

@@ -167,6 +167,11 @@ const nav = [
         icon: Mountain,
       },
       {
+        href: "/orbit/dashboard/website/phoksundo",
+        label: "Phoksundo Lake Trek",
+        icon: Mountain,
+      },
+      {
         href: "/orbit/dashboard/website/everest-region",
         label: "Everest Region",
         icon: Mountain,
