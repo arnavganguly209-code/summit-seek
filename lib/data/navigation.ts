@@ -242,7 +242,7 @@ export const trekkingColumns: TrekkingColumn[] = [
     subtitle: "Alpine valleys close to Kathmandu.",
     links: [
       { title: "Langtang Valley", href: "/treks/langtang-valley", duration: "10 Days", difficulty: "Moderate" },
-      { title: "Gosainkunda", href: "/treks/gosaikunda", duration: "8 Days", difficulty: "Moderate" },
+      { title: "Gosainkunda", href: "/treks/gosainkunda", duration: "8 Days", difficulty: "Moderate" },
       { title: "Helambu", href: "/treks/helambu", duration: "7 Days", difficulty: "Easy" },
       { title: "Tamang Heritage", href: "/treks/tamang-heritage", duration: "11 Days", difficulty: "Moderate" },
     ],
