@@ -70,6 +70,7 @@ import { DEFAULT_LANGTANG_VALLEY } from "@/lib/orbit/langtang-valley-defaults";
 import { DEFAULT_GOSAINKUNDA } from "@/lib/orbit/gosainkunda-defaults";
 import { DEFAULT_HELAMBU } from "@/lib/orbit/helambu-defaults";
 import { DEFAULT_TAMANG_HERITAGE } from "@/lib/orbit/tamang-heritage-defaults";
+import { DEFAULT_MANASLU_CIRCUIT } from "@/lib/orbit/manaslu-circuit-defaults";
 import { DEFAULT_EVEREST_REGION } from "@/lib/orbit/everest-region-defaults";
 import { DEFAULT_ANNAPURNA_REGION } from "@/lib/orbit/annapurna-region-defaults";
 import { DEFAULT_LANGTANG_REGION } from "@/lib/orbit/langtang-region-defaults";
@@ -118,6 +119,7 @@ const LANGTANG_VALLEY_FILE = path.join(DATA_DIR, "langtang-valley.json");
 const GOSAINKUNDA_FILE = path.join(DATA_DIR, "gosainkunda.json");
 const HELAMBU_FILE = path.join(DATA_DIR, "helambu.json");
 const TAMANG_HERITAGE_FILE = path.join(DATA_DIR, "tamang-heritage.json");
+const MANASLU_CIRCUIT_FILE = path.join(DATA_DIR, "manaslu-circuit.json");
 const EVEREST_REGION_FILE = path.join(DATA_DIR, "everest-region.json");
 const ANNAPURNA_REGION_FILE = path.join(DATA_DIR, "annapurna-region.json");
 const LANGTANG_REGION_FILE = path.join(DATA_DIR, "langtang-region.json");
@@ -1933,6 +1935,20 @@ export async function getTamangHeritageContent(): Promise<TrekPageContent> {
 export async function saveTamangHeritageContent(content: TrekPageContent): Promise<void> {
   await ensureDataDir();
   await dbWriteFile(TAMANG_HERITAGE_FILE, JSON.stringify(content, null, 2));
+}
+
+export async function getManasluCircuitContent(): Promise<TrekPageContent> {
+  try {
+    const raw = await dbReadFile(MANASLU_CIRCUIT_FILE);
+    return mergeTrekPage(JSON.parse(raw) as Partial<TrekPageContent>, DEFAULT_MANASLU_CIRCUIT);
+  } catch {
+    return DEFAULT_MANASLU_CIRCUIT;
+  }
+}
+
+export async function saveManasluCircuitContent(content: TrekPageContent): Promise<void> {
+  await ensureDataDir();
+  await dbWriteFile(MANASLU_CIRCUIT_FILE, JSON.stringify(content, null, 2));
 }
 
 function mergeDestinationRegion(
