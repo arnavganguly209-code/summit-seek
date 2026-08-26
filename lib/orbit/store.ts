@@ -65,6 +65,7 @@ import { DEFAULT_MARDI_HIMAL } from "@/lib/orbit/mardi-himal-defaults";
 import { DEFAULT_THREE_PASSES } from "@/lib/orbit/three-passes-defaults";
 import { DEFAULT_GOKYO_LAKES } from "@/lib/orbit/gokyo-lakes-defaults";
 import { DEFAULT_EVEREST_VIEW } from "@/lib/orbit/everest-view-defaults";
+import { DEFAULT_ANNAPURNA_CIRCUIT } from "@/lib/orbit/annapurna-circuit-defaults";
 import { DEFAULT_EVEREST_REGION } from "@/lib/orbit/everest-region-defaults";
 import { DEFAULT_ANNAPURNA_REGION } from "@/lib/orbit/annapurna-region-defaults";
 import { DEFAULT_LANGTANG_REGION } from "@/lib/orbit/langtang-region-defaults";
@@ -108,6 +109,7 @@ const MARDI_HIMAL_FILE = path.join(DATA_DIR, "mardi-himal.json");
 const THREE_PASSES_FILE = path.join(DATA_DIR, "three-passes.json");
 const GOKYO_LAKES_FILE = path.join(DATA_DIR, "gokyo-lakes.json");
 const EVEREST_VIEW_FILE = path.join(DATA_DIR, "everest-view.json");
+const ANNAPURNA_CIRCUIT_FILE = path.join(DATA_DIR, "annapurna-circuit.json");
 const EVEREST_REGION_FILE = path.join(DATA_DIR, "everest-region.json");
 const ANNAPURNA_REGION_FILE = path.join(DATA_DIR, "annapurna-region.json");
 const LANGTANG_REGION_FILE = path.join(DATA_DIR, "langtang-region.json");
@@ -1853,6 +1855,20 @@ export async function getEverestViewContent(): Promise<TrekPageContent> {
 export async function saveEverestViewContent(content: TrekPageContent): Promise<void> {
   await ensureDataDir();
   await dbWriteFile(EVEREST_VIEW_FILE, JSON.stringify(content, null, 2));
+}
+
+export async function getAnnapurnaCircuitContent(): Promise<TrekPageContent> {
+  try {
+    const raw = await dbReadFile(ANNAPURNA_CIRCUIT_FILE);
+    return mergeTrekPage(JSON.parse(raw) as Partial<TrekPageContent>, DEFAULT_ANNAPURNA_CIRCUIT);
+  } catch {
+    return DEFAULT_ANNAPURNA_CIRCUIT;
+  }
+}
+
+export async function saveAnnapurnaCircuitContent(content: TrekPageContent): Promise<void> {
+  await ensureDataDir();
+  await dbWriteFile(ANNAPURNA_CIRCUIT_FILE, JSON.stringify(content, null, 2));
 }
 
 function mergeDestinationRegion(

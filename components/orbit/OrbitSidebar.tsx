@@ -87,6 +87,11 @@ const nav = [
         icon: Mountain,
       },
       {
+        href: "/orbit/dashboard/website/annapurna-circuit",
+        label: "Annapurna Circuit",
+        icon: Mountain,
+      },
+      {
         href: "/orbit/dashboard/website/everest-region",
         label: "Everest Region",
         icon: Mountain,
