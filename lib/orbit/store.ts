@@ -68,6 +68,7 @@ import { DEFAULT_EVEREST_VIEW } from "@/lib/orbit/everest-view-defaults";
 import { DEFAULT_ANNAPURNA_CIRCUIT } from "@/lib/orbit/annapurna-circuit-defaults";
 import { DEFAULT_LANGTANG_VALLEY } from "@/lib/orbit/langtang-valley-defaults";
 import { DEFAULT_GOSAINKUNDA } from "@/lib/orbit/gosainkunda-defaults";
+import { DEFAULT_HELAMBU } from "@/lib/orbit/helambu-defaults";
 import { DEFAULT_EVEREST_REGION } from "@/lib/orbit/everest-region-defaults";
 import { DEFAULT_ANNAPURNA_REGION } from "@/lib/orbit/annapurna-region-defaults";
 import { DEFAULT_LANGTANG_REGION } from "@/lib/orbit/langtang-region-defaults";
@@ -114,6 +115,7 @@ const EVEREST_VIEW_FILE = path.join(DATA_DIR, "everest-view.json");
 const ANNAPURNA_CIRCUIT_FILE = path.join(DATA_DIR, "annapurna-circuit.json");
 const LANGTANG_VALLEY_FILE = path.join(DATA_DIR, "langtang-valley.json");
 const GOSAINKUNDA_FILE = path.join(DATA_DIR, "gosainkunda.json");
+const HELAMBU_FILE = path.join(DATA_DIR, "helambu.json");
 const EVEREST_REGION_FILE = path.join(DATA_DIR, "everest-region.json");
 const ANNAPURNA_REGION_FILE = path.join(DATA_DIR, "annapurna-region.json");
 const LANGTANG_REGION_FILE = path.join(DATA_DIR, "langtang-region.json");
@@ -1901,6 +1903,20 @@ export async function getGosainkundaContent(): Promise<TrekPageContent> {
 export async function saveGosainkundaContent(content: TrekPageContent): Promise<void> {
   await ensureDataDir();
   await dbWriteFile(GOSAINKUNDA_FILE, JSON.stringify(content, null, 2));
+}
+
+export async function getHelambuContent(): Promise<TrekPageContent> {
+  try {
+    const raw = await dbReadFile(HELAMBU_FILE);
+    return mergeTrekPage(JSON.parse(raw) as Partial<TrekPageContent>, DEFAULT_HELAMBU);
+  } catch {
+    return DEFAULT_HELAMBU;
+  }
+}
+
+export async function saveHelambuContent(content: TrekPageContent): Promise<void> {
+  await ensureDataDir();
+  await dbWriteFile(HELAMBU_FILE, JSON.stringify(content, null, 2));
 }
 
 function mergeDestinationRegion(
