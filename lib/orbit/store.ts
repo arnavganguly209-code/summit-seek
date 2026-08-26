@@ -76,6 +76,7 @@ import { DEFAULT_TSUM_VALLEY } from "@/lib/orbit/tsum-valley-defaults";
 import { DEFAULT_RUPINA_LA } from "@/lib/orbit/rupina-la-defaults";
 import { DEFAULT_UPPER_MUSTANG } from "@/lib/orbit/upper-mustang-defaults";
 import { DEFAULT_LOWER_MUSTANG } from "@/lib/orbit/lower-mustang-defaults";
+import { DEFAULT_LO_MANTHANG } from "@/lib/orbit/lo-manthang-defaults";
 import { DEFAULT_EVEREST_REGION } from "@/lib/orbit/everest-region-defaults";
 import { DEFAULT_ANNAPURNA_REGION } from "@/lib/orbit/annapurna-region-defaults";
 import { DEFAULT_LANGTANG_REGION } from "@/lib/orbit/langtang-region-defaults";
@@ -130,6 +131,7 @@ const TSUM_VALLEY_FILE = path.join(DATA_DIR, "tsum-valley.json");
 const RUPINA_LA_FILE = path.join(DATA_DIR, "rupina-la.json");
 const UPPER_MUSTANG_FILE = path.join(DATA_DIR, "upper-mustang.json");
 const LOWER_MUSTANG_FILE = path.join(DATA_DIR, "lower-mustang.json");
+const LO_MANTHANG_FILE = path.join(DATA_DIR, "lo-manthang.json");
 const EVEREST_REGION_FILE = path.join(DATA_DIR, "everest-region.json");
 const ANNAPURNA_REGION_FILE = path.join(DATA_DIR, "annapurna-region.json");
 const LANGTANG_REGION_FILE = path.join(DATA_DIR, "langtang-region.json");
@@ -2029,6 +2031,20 @@ export async function getLowerMustangContent(): Promise<TrekPageContent> {
 export async function saveLowerMustangContent(content: TrekPageContent): Promise<void> {
   await ensureDataDir();
   await dbWriteFile(LOWER_MUSTANG_FILE, JSON.stringify(content, null, 2));
+}
+
+export async function getLoManthangContent(): Promise<TrekPageContent> {
+  try {
+    const raw = await dbReadFile(LO_MANTHANG_FILE);
+    return mergeTrekPage(JSON.parse(raw) as Partial<TrekPageContent>, DEFAULT_LO_MANTHANG);
+  } catch {
+    return DEFAULT_LO_MANTHANG;
+  }
+}
+
+export async function saveLoManthangContent(content: TrekPageContent): Promise<void> {
+  await ensureDataDir();
+  await dbWriteFile(LO_MANTHANG_FILE, JSON.stringify(content, null, 2));
 }
 
 function mergeDestinationRegion(

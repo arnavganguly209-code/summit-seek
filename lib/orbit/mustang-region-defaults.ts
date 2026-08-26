@@ -49,7 +49,7 @@ export const DEFAULT_MUSTANG_REGION: DestinationRegionContent = {
       rating: 5,
       reviewCount: 8,
       startLocation: "Pokhara",
-      price: 1490,
+      price: 1600,
       compareAtPrice: 1790,
       href: "/treks/lo-manthang",
       imageUrl: img("photo-1464822759023-fed622ff2c3b"),
