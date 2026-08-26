@@ -21,7 +21,7 @@ export const DEFAULT_MUSTANG_REGION: DestinationRegionContent = {
       rating: 5,
       reviewCount: 18,
       startLocation: "Pokhara",
-      price: 1850,
+      price: 1795,
       compareAtPrice: 2150,
       href: "/treks/upper-mustang",
       imageUrl: img("photo-1483728642387-6c3bdd6c93e5"),

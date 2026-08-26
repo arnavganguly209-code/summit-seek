@@ -132,6 +132,11 @@ const nav = [
         icon: Mountain,
       },
       {
+        href: "/orbit/dashboard/website/upper-mustang",
+        label: "Upper Mustang Trek",
+        icon: Mountain,
+      },
+      {
         href: "/orbit/dashboard/website/everest-region",
         label: "Everest Region",
         icon: Mountain,
