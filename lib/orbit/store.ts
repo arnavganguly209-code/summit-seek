@@ -62,6 +62,7 @@ import { DEFAULT_POON_HILL } from "@/lib/orbit/poon-hill-defaults";
 import { DEFAULT_ANNAPURNA_BASE_CAMP } from "@/lib/orbit/annapurna-base-camp-defaults";
 import { DEFAULT_EVEREST_BASE_CAMP } from "@/lib/orbit/everest-base-camp-defaults";
 import { DEFAULT_MARDI_HIMAL } from "@/lib/orbit/mardi-himal-defaults";
+import { DEFAULT_THREE_PASSES } from "@/lib/orbit/three-passes-defaults";
 import { DEFAULT_EVEREST_REGION } from "@/lib/orbit/everest-region-defaults";
 import { DEFAULT_ANNAPURNA_REGION } from "@/lib/orbit/annapurna-region-defaults";
 import { DEFAULT_LANGTANG_REGION } from "@/lib/orbit/langtang-region-defaults";
@@ -102,6 +103,7 @@ const POON_HILL_FILE = path.join(DATA_DIR, "poon-hill.json");
 const ANNAPURNA_BASE_CAMP_FILE = path.join(DATA_DIR, "annapurna-base-camp.json");
 const EVEREST_BASE_CAMP_FILE = path.join(DATA_DIR, "everest-base-camp.json");
 const MARDI_HIMAL_FILE = path.join(DATA_DIR, "mardi-himal.json");
+const THREE_PASSES_FILE = path.join(DATA_DIR, "three-passes.json");
 const EVEREST_REGION_FILE = path.join(DATA_DIR, "everest-region.json");
 const ANNAPURNA_REGION_FILE = path.join(DATA_DIR, "annapurna-region.json");
 const LANGTANG_REGION_FILE = path.join(DATA_DIR, "langtang-region.json");
@@ -1805,6 +1807,20 @@ export async function getMardiHimalContent(): Promise<TrekPageContent> {
 export async function saveMardiHimalContent(content: TrekPageContent): Promise<void> {
   await ensureDataDir();
   await dbWriteFile(MARDI_HIMAL_FILE, JSON.stringify(content, null, 2));
+}
+
+export async function getThreePassesContent(): Promise<TrekPageContent> {
+  try {
+    const raw = await dbReadFile(THREE_PASSES_FILE);
+    return mergeTrekPage(JSON.parse(raw) as Partial<TrekPageContent>, DEFAULT_THREE_PASSES);
+  } catch {
+    return DEFAULT_THREE_PASSES;
+  }
+}
+
+export async function saveThreePassesContent(content: TrekPageContent): Promise<void> {
+  await ensureDataDir();
+  await dbWriteFile(THREE_PASSES_FILE, JSON.stringify(content, null, 2));
 }
 
 function mergeDestinationRegion(
