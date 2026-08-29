@@ -262,6 +262,11 @@ const nav = [
         icon: Mountain,
       },
       {
+        href: "/orbit/dashboard/website/annapurna-luxury-lodge",
+        label: "Annapurna Luxury Lodge",
+        icon: Mountain,
+      },
+      {
         href: "/orbit/dashboard/website/everest-region",
         label: "Everest Region",
         icon: Mountain,

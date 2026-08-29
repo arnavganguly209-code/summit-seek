@@ -100,6 +100,7 @@ import { DEFAULT_JANAKPUR_CITY } from "@/lib/orbit/janakpur-city-defaults";
 import { DEFAULT_KATHMANDU_CITY } from "@/lib/orbit/kathmandu-city-defaults";
 import { DEFAULT_EVEREST_HELI_VIEW } from "@/lib/orbit/everest-heli-view-defaults";
 import { DEFAULT_LUXURY_EVEREST_BASE_CAMP } from "@/lib/orbit/luxury-everest-base-camp-defaults";
+import { DEFAULT_ANNAPURNA_LUXURY_LODGE } from "@/lib/orbit/annapurna-luxury-lodge-defaults";
 import { DEFAULT_EVEREST_REGION } from "@/lib/orbit/everest-region-defaults";
 import { DEFAULT_ANNAPURNA_REGION } from "@/lib/orbit/annapurna-region-defaults";
 import { DEFAULT_LANGTANG_REGION } from "@/lib/orbit/langtang-region-defaults";
@@ -180,6 +181,10 @@ const EVEREST_HELI_VIEW_FILE = path.join(DATA_DIR, "everest-heli-view.json");
 const LUXURY_EVEREST_BASE_CAMP_FILE = path.join(
   DATA_DIR,
   "luxury-everest-base-camp.json",
+);
+const ANNAPURNA_LUXURY_LODGE_FILE = path.join(
+  DATA_DIR,
+  "annapurna-luxury-lodge.json",
 );
 const EVEREST_REGION_FILE = path.join(DATA_DIR, "everest-region.json");
 const ANNAPURNA_REGION_FILE = path.join(DATA_DIR, "annapurna-region.json");
@@ -2502,6 +2507,28 @@ export async function saveLuxuryEverestBaseCampContent(
   await ensureDataDir();
   await dbWriteFile(
     LUXURY_EVEREST_BASE_CAMP_FILE,
+    JSON.stringify(content, null, 2),
+  );
+}
+
+export async function getAnnapurnaLuxuryLodgeContent(): Promise<TrekPageContent> {
+  try {
+    const raw = await dbReadFile(ANNAPURNA_LUXURY_LODGE_FILE);
+    return mergeTrekPage(
+      JSON.parse(raw) as Partial<TrekPageContent>,
+      DEFAULT_ANNAPURNA_LUXURY_LODGE,
+    );
+  } catch {
+    return DEFAULT_ANNAPURNA_LUXURY_LODGE;
+  }
+}
+
+export async function saveAnnapurnaLuxuryLodgeContent(
+  content: TrekPageContent,
+): Promise<void> {
+  await ensureDataDir();
+  await dbWriteFile(
+    ANNAPURNA_LUXURY_LODGE_FILE,
     JSON.stringify(content, null, 2),
   );
 }
