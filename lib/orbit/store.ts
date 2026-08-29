@@ -86,6 +86,7 @@ import { DEFAULT_KANCHENJUNGA_CIRCUIT } from "@/lib/orbit/kanchenjunga-circuit-d
 import { DEFAULT_KANCHENJUNGA_NORTH } from "@/lib/orbit/kanchenjunga-north-defaults";
 import { DEFAULT_KANCHENJUNGA_SOUTH } from "@/lib/orbit/kanchenjunga-south-defaults";
 import { DEFAULT_KANCHENJUNGA_BC } from "@/lib/orbit/kanchenjunga-bc-defaults";
+import { DEFAULT_MAKALU_BC } from "@/lib/orbit/makalu-bc-defaults";
 import { DEFAULT_EVEREST_REGION } from "@/lib/orbit/everest-region-defaults";
 import { DEFAULT_ANNAPURNA_REGION } from "@/lib/orbit/annapurna-region-defaults";
 import { DEFAULT_LANGTANG_REGION } from "@/lib/orbit/langtang-region-defaults";
@@ -150,6 +151,7 @@ const KANCHENJUNGA_CIRCUIT_FILE = path.join(DATA_DIR, "kanchenjunga-circuit.json
 const KANCHENJUNGA_NORTH_FILE = path.join(DATA_DIR, "kanchenjunga-north.json");
 const KANCHENJUNGA_SOUTH_FILE = path.join(DATA_DIR, "kanchenjunga-south.json");
 const KANCHENJUNGA_BC_FILE = path.join(DATA_DIR, "kanchenjunga-bc.json");
+const MAKALU_BC_FILE = path.join(DATA_DIR, "makalu-bc.json");
 const EVEREST_REGION_FILE = path.join(DATA_DIR, "everest-region.json");
 const ANNAPURNA_REGION_FILE = path.join(DATA_DIR, "annapurna-region.json");
 const LANGTANG_REGION_FILE = path.join(DATA_DIR, "langtang-region.json");
@@ -2209,6 +2211,20 @@ export async function saveKanchenjungaBcContent(
 ): Promise<void> {
   await ensureDataDir();
   await dbWriteFile(KANCHENJUNGA_BC_FILE, JSON.stringify(content, null, 2));
+}
+
+export async function getMakaluBcContent(): Promise<TrekPageContent> {
+  try {
+    const raw = await dbReadFile(MAKALU_BC_FILE);
+    return mergeTrekPage(JSON.parse(raw) as Partial<TrekPageContent>, DEFAULT_MAKALU_BC);
+  } catch {
+    return DEFAULT_MAKALU_BC;
+  }
+}
+
+export async function saveMakaluBcContent(content: TrekPageContent): Promise<void> {
+  await ensureDataDir();
+  await dbWriteFile(MAKALU_BC_FILE, JSON.stringify(content, null, 2));
 }
 
 function mergeDestinationRegion(
