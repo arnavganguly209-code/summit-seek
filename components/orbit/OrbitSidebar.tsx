@@ -187,6 +187,11 @@ const nav = [
         icon: Mountain,
       },
       {
+        href: "/orbit/dashboard/website/kanchenjunga-bc",
+        label: "Kanchenjunga Base Camp Trek",
+        icon: Mountain,
+      },
+      {
         href: "/orbit/dashboard/website/everest-region",
         label: "Everest Region",
         icon: Mountain,
