@@ -96,6 +96,7 @@ import { DEFAULT_POKALDE_PEAK } from "@/lib/orbit/pokalde-peak-defaults";
 import { DEFAULT_LOBUCHE_PEAK } from "@/lib/orbit/lobuche-peak-defaults";
 import { DEFAULT_SHIVAPURI_YOGA_HIKE } from "@/lib/orbit/shivapuri-yoga-hike-defaults";
 import { DEFAULT_BHAKTAPUR_CITY } from "@/lib/orbit/bhaktapur-city-defaults";
+import { DEFAULT_JANAKPUR_CITY } from "@/lib/orbit/janakpur-city-defaults";
 import { DEFAULT_EVEREST_REGION } from "@/lib/orbit/everest-region-defaults";
 import { DEFAULT_ANNAPURNA_REGION } from "@/lib/orbit/annapurna-region-defaults";
 import { DEFAULT_LANGTANG_REGION } from "@/lib/orbit/langtang-region-defaults";
@@ -170,6 +171,7 @@ const POKALDE_PEAK_FILE = path.join(DATA_DIR, "pokalde-peak.json");
 const LOBUCHE_PEAK_FILE = path.join(DATA_DIR, "lobuche-peak.json");
 const SHIVAPURI_YOGA_HIKE_FILE = path.join(DATA_DIR, "shivapuri-yoga-hike.json");
 const BHAKTAPUR_CITY_FILE = path.join(DATA_DIR, "bhaktapur-city.json");
+const JANAKPUR_CITY_FILE = path.join(DATA_DIR, "janakpur-city.json");
 const EVEREST_REGION_FILE = path.join(DATA_DIR, "everest-region.json");
 const ANNAPURNA_REGION_FILE = path.join(DATA_DIR, "annapurna-region.json");
 const LANGTANG_REGION_FILE = path.join(DATA_DIR, "langtang-region.json");
@@ -2414,6 +2416,25 @@ export async function saveBhaktapurCityContent(
 ): Promise<void> {
   await ensureDataDir();
   await dbWriteFile(BHAKTAPUR_CITY_FILE, JSON.stringify(content, null, 2));
+}
+
+export async function getJanakpurCityContent(): Promise<TrekPageContent> {
+  try {
+    const raw = await dbReadFile(JANAKPUR_CITY_FILE);
+    return mergeTrekPage(
+      JSON.parse(raw) as Partial<TrekPageContent>,
+      DEFAULT_JANAKPUR_CITY,
+    );
+  } catch {
+    return DEFAULT_JANAKPUR_CITY;
+  }
+}
+
+export async function saveJanakpurCityContent(
+  content: TrekPageContent,
+): Promise<void> {
+  await ensureDataDir();
+  await dbWriteFile(JANAKPUR_CITY_FILE, JSON.stringify(content, null, 2));
 }
 
 function mergeDestinationRegion(
