@@ -152,6 +152,11 @@ const nav = [
         icon: Mountain,
       },
       {
+        href: "/orbit/dashboard/website/shivapuri-yoga-hike",
+        label: "Shivapuri Yoga Hike",
+        icon: Mountain,
+      },
+      {
         href: "/orbit/dashboard/website/upper-dolpo",
         label: "Upper Dolpo Trek",
         icon: Mountain,

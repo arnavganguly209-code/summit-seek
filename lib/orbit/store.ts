@@ -94,6 +94,7 @@ import { DEFAULT_YALA_PEAK } from "@/lib/orbit/yala-peak-defaults";
 import { DEFAULT_MERA_PEAK } from "@/lib/orbit/mera-peak-defaults";
 import { DEFAULT_POKALDE_PEAK } from "@/lib/orbit/pokalde-peak-defaults";
 import { DEFAULT_LOBUCHE_PEAK } from "@/lib/orbit/lobuche-peak-defaults";
+import { DEFAULT_SHIVAPURI_YOGA_HIKE } from "@/lib/orbit/shivapuri-yoga-hike-defaults";
 import { DEFAULT_EVEREST_REGION } from "@/lib/orbit/everest-region-defaults";
 import { DEFAULT_ANNAPURNA_REGION } from "@/lib/orbit/annapurna-region-defaults";
 import { DEFAULT_LANGTANG_REGION } from "@/lib/orbit/langtang-region-defaults";
@@ -166,6 +167,7 @@ const YALA_PEAK_FILE = path.join(DATA_DIR, "yala-peak.json");
 const MERA_PEAK_FILE = path.join(DATA_DIR, "mera-peak.json");
 const POKALDE_PEAK_FILE = path.join(DATA_DIR, "pokalde-peak.json");
 const LOBUCHE_PEAK_FILE = path.join(DATA_DIR, "lobuche-peak.json");
+const SHIVAPURI_YOGA_HIKE_FILE = path.join(DATA_DIR, "shivapuri-yoga-hike.json");
 const EVEREST_REGION_FILE = path.join(DATA_DIR, "everest-region.json");
 const ANNAPURNA_REGION_FILE = path.join(DATA_DIR, "annapurna-region.json");
 const LANGTANG_REGION_FILE = path.join(DATA_DIR, "langtang-region.json");
@@ -2372,6 +2374,25 @@ export async function saveLobuchePeakContent(
 ): Promise<void> {
   await ensureDataDir();
   await dbWriteFile(LOBUCHE_PEAK_FILE, JSON.stringify(content, null, 2));
+}
+
+export async function getShivapuriYogaHikeContent(): Promise<TrekPageContent> {
+  try {
+    const raw = await dbReadFile(SHIVAPURI_YOGA_HIKE_FILE);
+    return mergeTrekPage(
+      JSON.parse(raw) as Partial<TrekPageContent>,
+      DEFAULT_SHIVAPURI_YOGA_HIKE,
+    );
+  } catch {
+    return DEFAULT_SHIVAPURI_YOGA_HIKE;
+  }
+}
+
+export async function saveShivapuriYogaHikeContent(
+  content: TrekPageContent,
+): Promise<void> {
+  await ensureDataDir();
+  await dbWriteFile(SHIVAPURI_YOGA_HIKE_FILE, JSON.stringify(content, null, 2));
 }
 
 function mergeDestinationRegion(
