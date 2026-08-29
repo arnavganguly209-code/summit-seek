@@ -1,0 +1,357 @@
+import type { TrekPageContent } from "@/types/trek-page-cms";
+import { SITE } from "@/lib/constants";
+
+const img = (id: string, w = 1600) =>
+  `https://images.unsplash.com/${id}?auto=format&fit=crop&w=${w}&q=80`;
+
+export const DEFAULT_BHAKTAPUR_CITY: TrekPageContent = {
+  coverImageUrl: img("photo-1605640840605-14ac1853827d", 2000),
+  coverTitle: "Bhaktapur City Tour - 1 Day",
+  coverSubtitle:
+    "UNESCO living museum east of Kathmandu — Durbar Square, Nyatapola Temple, Pottery Square, and Changu Narayan, with Newari architecture, crafts, and juju dhau culture.",
+  heroMainImageUrl: img("photo-1605640840605-14ac1853827d", 2000),
+  heroSideImage1Url: img("photo-1548013146-72479768bada", 900),
+  heroSideImage2Url: img("photo-1587474260584-136574528ed5", 900),
+  breadcrumbLabel: "Nepal Tours · City Day Tour",
+  title: "Bhaktapur City Tour - 1 Day",
+  regionLabel: "Kathmandu Valley",
+  rating: 5,
+  reviewCount: 8,
+  tripAdvisorRating: "4.9",
+  googleRating: "4.9",
+  trustpilotRating: "5.0",
+  price: 60,
+  compareAtPrice: 70,
+  currencyPrefix: "US$",
+  perPersonLabel: "Price Per Person",
+  discountBadge: "14% OFF",
+  shortTripBadge: "UNESCO Heritage",
+  durationLabel: "1 Day",
+  difficultyLabel: "Easy",
+  groupSizeLabel: "1+",
+  bookingNote:
+    "Private and small-group day departures from Kathmandu. Package includes hotel pickup/drop by private AC vehicle, licensed English-speaking guide, and monument entrance fees as listed. Ideal cultural day if you want Malla-era Newari heritage without a multi-day trek.",
+  groupDiscountHeading: "Group Discount Price",
+  groupDiscounts: [
+    { id: "gd1", paxLabel: "1 pax", price: 70, visible: true },
+    { id: "gd2", paxLabel: "2-3 pax", price: 60, visible: true },
+    { id: "gd3", paxLabel: "4-6 pax", price: 55, visible: true },
+    { id: "gd4", paxLabel: "7+ pax", price: 50, visible: true },
+  ],
+  bookLabel: "Book This Trip",
+  bookHref: "/contact",
+  customizeLabel: "Customize Trip",
+  customizeHref: "/contact",
+  enquireLabel: "Inquire Now",
+  enquireHref: "/contact",
+  whatsappLabel: "WhatsApp Summit Seek",
+  whatsappHref: `https://wa.me/${SITE.whatsapp.replace(/\D/g, "")}`,
+  facts: [
+    { id: "f1", label: "Duration", value: "1 Day", visible: true },
+    { id: "f2", label: "Difficulty", value: "Easy", visible: true },
+    { id: "f3", label: "Max Altitude", value: "1,401 m", visible: true },
+    { id: "f4", label: "Starts / Ends", value: "Kathmandu", visible: true },
+    { id: "f5", label: "Region", value: "Bhaktapur / Valley", visible: true },
+    { id: "f6", label: "Group Size", value: "1 onwards", visible: true },
+    { id: "f7", label: "Activities", value: "Culture & Sightseeing", visible: true },
+    {
+      id: "f8",
+      label: "Best Season",
+      value: "Year-round (best Sep–Nov & Mar–May)",
+      visible: true,
+    },
+  ],
+  overviewHeading: "Trip introduction",
+  overviewBody:
+    "Bhaktapur City Tour is a one-day immersion in one of Nepal’s most atmospheric medieval cities — also known as Bhadgaon, the “City of Rice” and “City of Devotees.” About 12 km east of Kathmandu, former Malla capital Bhaktapur keeps cobbled lanes, pagoda temples, and living Newari craft traditions that earned UNESCO World Heritage recognition in 1979.\n\nYour guide leads you through Bhaktapur Durbar Square — Golden Gate, 55-Window Palace, National Art Gallery — then to Nyatapola (Nepal’s tallest pagoda), Bhairavnath Temple, Dattatraya Square with the Peacock Window, and Pottery Square where artisans still throw clay on the wheel. After lunch in town, a short drive climbs to Changu Narayan, among Nepal’s oldest Vishnu temples (inscriptions from King Mandeva, ~464 A.D.), with valley and mountain views before returning to Kathmandu.\n\nExpect wood carvings, brick courtyards, festival energy when dates align, and famous juju dhau (king curd). Summit Seek includes private transport, licensed guide, monument fees as listed, and clear group pricing.",
+  overviewImageUrl: img("photo-1548013146-72479768bada"),
+  highlightsHeading: "Highlights",
+  highlights: [
+    "UNESCO Bhaktapur Durbar Square — living medieval museum",
+    "Golden Gate and 55-Window Palace courtyard",
+    "Nyatapola Temple — tallest pagoda-style temple in Nepal",
+    "Pottery Square — watch traditional Newari potters at work",
+    "Dattatraya Square and the famous Peacock Window",
+    "Changu Narayan Temple — ancient Vishnu shrine above the valley",
+    "Taste juju dhau and optional Newari snacks",
+    "Private hotel pickup and drop from Kathmandu",
+  ],
+  advantagesHeading: "Why book with Summit Seek",
+  advantages: [
+    "Private AC car/coach pickup and drop in Kathmandu",
+    "Licensed English-speaking local tour guide",
+    "Monument entrance fees as listed",
+    "Flexible morning or afternoon start on request",
+    "Clear private and group pricing",
+    "Support for solo travelers and families",
+    "Help with lunch restaurant suggestions in Bhaktapur",
+    "All applicable service taxes as listed",
+  ],
+  whyHeading: "Why choose Bhaktapur?",
+  whyPoints: [
+    "Best-preserved Malla-era cityscape in the Kathmandu Valley",
+    "UNESCO heritage plus living pottery and craft culture",
+    "Easy day trip — no trekking fitness required",
+    "Pairs perfectly with Patan or Kathmandu heritage days",
+    "Changu Narayan adds ancient Licchavi history and views",
+  ],
+  beginnersHeading: "Is this tour good for beginners?",
+  beginnersBody:
+    "Yes — graded Easy and suitable for all ages with basic walking ability. Expect cobbled streets, temple steps, and a few hours on foot inside Bhaktapur, plus a short uphill walk into Changu Narayan town.\n\nWear comfortable shoes with grip. The tour is cultural sightseeing, not a trek — ideal for first-time visitors to Nepal.",
+  prepHeading: "How to prepare",
+  prepPoints: [
+    "Wear comfortable walking shoes for cobblestones and temple steps",
+    "Bring sun protection, water, and a light layer",
+    "Carry small NPR cash for snacks, juju dhau, and souvenirs",
+    "Dress respectfully for temple visits (shoulders/knees covered)",
+    "Ask your guide about festival days (Bisket Jatra, etc.) if you want crowds/energy",
+    "Confirm morning (~8 a.m.) or afternoon (~12 p.m.) pickup preference",
+  ],
+  itineraryHeading: "1-day itinerary",
+  itineraryIntro:
+    "Typical timing from Kathmandu hotels. Morning (~8 a.m.) or afternoon (~12 p.m.) starts available. Pace flexes with your group, lunch preference, and traffic.",
+  days: [
+    {
+      id: "d1",
+      dayLabel: "Day 1",
+      title: "Bhaktapur Durbar Square – Pottery Square – Changu Narayan – Kathmandu",
+      maxAltitude: "1,401 m",
+      meals: "Lunch on own (guide assists)",
+      accommodation: "—",
+      description:
+        "Hotel pickup and ~1-hour drive east (~12 km) to Bhaktapur. Guided walk of Durbar Square: Golden Gate, 55-Window Palace, National Art Gallery, Nyatapola Temple, Bhairavnath Temple, Dattatraya Square / Peacock Window, and Pottery Square markets. Lunch break in a local restaurant near the square (~12–1 p.m. on morning starts). Short drive uphill to Changu Narayan Temple (Licchavi-era Vishnu shrine) for ~1 hour of exploration and valley views, then return drive to your Kathmandu hotel (typically mid/late afternoon).",
+      imageUrl: "",
+      visible: true,
+    },
+  ],
+  availabilityHeading: "Dates & availability",
+  availabilityBody:
+    "Departs daily year-round on private request. September–November and March–May usually offer the most pleasant walking weather; winter mornings can be foggy; monsoon brings lush valleys but wet streets.",
+  availabilityNotes: [
+    "Private and customizable start times (morning or afternoon)",
+    "Available for solo travelers and large groups",
+    "Book ~7 days ahead when possible for preferred guide/vehicle",
+    "Festival dates (e.g. Bisket Jatra) are spectacular but busier",
+  ],
+  addonsHeading: "Optional add-ons",
+  addons: [
+    {
+      id: "a1",
+      title: "Traditional Newari lunch",
+      description: "Pre-booked Newari set meal or juju dhau tasting stop.",
+      priceLabel: "On request",
+      visible: true,
+    },
+    {
+      id: "a2",
+      title: "Pottery workshop",
+      description: "Short hands-on clay session with a local artisan.",
+      priceLabel: "On request",
+      visible: true,
+    },
+    {
+      id: "a3",
+      title: "Combine with Patan Durbar Square",
+      description: "Extended heritage day covering Patan + Bhaktapur.",
+      priceLabel: "On request",
+      visible: true,
+    },
+  ],
+  includesHeading: "Trip includes",
+  includes: [
+    "Private AC vehicle for Kathmandu–Bhaktapur–Changu–Kathmandu transfers",
+    "Licensed English-speaking local tour guide (wages as listed)",
+    "Monument entrance fees for listed sites as arranged",
+    "Guide insurance and transport as listed",
+    "Applicable service taxes as listed",
+  ],
+  excludesHeading: "Trip excludes",
+  excludes: [
+    "Lunch and drinks (unless pre-booked as an add-on)",
+    "Kathmandu hotel accommodation",
+    "Nepal visa fees",
+    "Travel insurance",
+    "Personal shopping, laundry, and tips",
+    "Anything not listed under inclusions",
+  ],
+  galleryHeading: "Trip gallery",
+  gallery: [
+    {
+      id: "g1",
+      url: img("photo-1605640840605-14ac1853827d"),
+      caption: "Pagoda temples and brick courtyards of Bhaktapur",
+      visible: true,
+    },
+    {
+      id: "g2",
+      url: img("photo-1548013146-72479768bada"),
+      caption: "Kathmandu Valley heritage atmospheres",
+      visible: true,
+    },
+    {
+      id: "g3",
+      url: img("photo-1587474260584-136574528ed5"),
+      caption: "City and temple day touring near Kathmandu",
+      visible: true,
+    },
+    {
+      id: "g4",
+      url: img("photo-1566552881560-0be862a7c445"),
+      caption: "Cultural streets and living traditions",
+      visible: true,
+    },
+  ],
+  essentialHeading: "Essential information",
+  essentialBlocks: [
+    {
+      id: "e1",
+      title: "Best season",
+      body: "Year-round. September–November and March–May are most comfortable for walking. Winter is quieter; monsoon is green but wet underfoot.",
+      imageUrl: "",
+      visible: true,
+    },
+    {
+      id: "e2",
+      title: "Altitude & difficulty",
+      body: "Bhaktapur sits around 1,401 m. Easy walking on cobbles and temple steps — no trekking fitness required.",
+      imageUrl: "",
+      visible: true,
+    },
+    {
+      id: "e3",
+      title: "Tickets & sites",
+      body: "Bhaktapur Durbar Square and Changu Narayan require entrance tickets (included as listed). Carry ID/passport if checkpoints request it.",
+      imageUrl: "",
+      visible: true,
+    },
+    {
+      id: "e4",
+      title: "Routes",
+      body: "Kathmandu → Bhaktapur Durbar Square & Pottery Square → lunch → Changu Narayan → return Kathmandu.",
+      imageUrl: "",
+      visible: true,
+    },
+  ],
+  equipmentHeading: "What to bring",
+  equipmentIntro:
+    "Travel light — this is a city day tour. Your guide handles tickets and pacing.",
+  equipmentGroups: [
+    {
+      id: "eq1",
+      title: "Clothing",
+      items: [
+        "Comfortable day clothes",
+        "Modest layers for temple visits",
+        "Light rain shell in monsoon",
+        "Sun hat or cap",
+      ],
+      visible: true,
+    },
+    {
+      id: "eq2",
+      title: "Footwear & bag",
+      items: [
+        "Walking shoes with grip for cobbles",
+        "Small daypack or crossbody bag",
+        "Reusable water bottle",
+      ],
+      visible: true,
+    },
+    {
+      id: "eq3",
+      title: "Sun & personal",
+      items: [
+        "Sunglasses and sunscreen",
+        "Personal medications",
+        "Camera or phone",
+        "Small NPR cash for snacks and pottery souvenirs",
+      ],
+      visible: true,
+    },
+    {
+      id: "eq4",
+      title: "Documents",
+      items: [
+        "Passport or ID",
+        "Summit Seek booking confirmation",
+        "Hotel address for return drop",
+      ],
+      visible: true,
+    },
+  ],
+  companyProvidesHeading: "What Summit Seek can provide",
+  companyProvides: [
+    "Licensed local guide and private vehicle",
+    "Entrance fee handling as listed",
+    "Flexible timing and lunch restaurant tips",
+    "Combine-day planning with other valley tours",
+  ],
+  faqsHeading: "Frequently asked questions",
+  faqs: [
+    {
+      id: "q1",
+      question: "What is included in the Bhaktapur City Tour?",
+      answer:
+        "A one-day guided visit from Kathmandu covering Bhaktapur Durbar Square highlights, Pottery Square, and Changu Narayan, with private vehicle and licensed guide. Monument fees are included as listed; lunch is typically on your own unless pre-booked.",
+      visible: true,
+    },
+    {
+      id: "q2",
+      question: "How far is Bhaktapur from Kathmandu?",
+      answer:
+        "About 12 km east of central Kathmandu — roughly a 45–60 minute drive depending on traffic.",
+      visible: true,
+    },
+    {
+      id: "q3",
+      question: "How much does it cost?",
+      answer:
+        "This listing starts at US$60 for 2–3 pax (US$70 for 1; US$55 for 4–6; US$50 for 7+), matching our featured Nepal Tours pricing.",
+      visible: true,
+    },
+    {
+      id: "q4",
+      question: "What are the must-see spots?",
+      answer:
+        "Durbar Square (Golden Gate, 55-Window Palace), Nyatapola Temple, Pottery Square, Dattatraya / Peacock Window area, and Changu Narayan Temple.",
+      visible: true,
+    },
+    {
+      id: "q5",
+      question: "Is Changu Narayan included?",
+      answer:
+        "Yes — this itinerary includes a short drive and guided visit to Changu Narayan after Bhaktapur, then returns to Kathmandu.",
+      visible: true,
+    },
+    {
+      id: "q6",
+      question: "When is the best time to visit?",
+      answer:
+        "September–November and March–May are ideal. The tour runs year-round; winter mornings can be foggy and monsoon streets can be wet.",
+      visible: true,
+    },
+    {
+      id: "q7",
+      question: "Can I try juju dhau?",
+      answer:
+        "Yes — your guide can stop for Bhaktapur’s famous king curd (juju dhau) near Durbar Square. Cost is usually paid directly to the vendor.",
+      visible: true,
+    },
+    {
+      id: "q8",
+      question: "Is this suitable for children and seniors?",
+      answer:
+        "Yes, with comfortable pacing. There are temple steps and uneven cobbles — tell us about mobility needs when you book.",
+      visible: true,
+    },
+  ],
+  ctaHeading: "Ready for Bhaktapur?",
+  ctaBody: `Tell us your preferred date and group size — we will confirm pickup and a clear quote. WhatsApp ${SITE.whatsappDisplay} or email ${SITE.email}.`,
+  ctaPrimaryLabel: "Enquire now",
+  ctaPrimaryHref: "/contact",
+  ctaSecondaryLabel: "Packing checklist",
+  ctaSecondaryHref: "/travel-guide/packing-checklist",
+  metaTitle: "Bhaktapur City Tour 1 Day | Summit Seek",
+  metaDescription:
+    "Book 1-day Bhaktapur City Tour from Kathmandu — UNESCO Durbar Square, Nyatapola, Pottery Square, Changu Narayan, guide, private car & group rates from US$50.",
+};
