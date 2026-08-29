@@ -103,6 +103,7 @@ import { DEFAULT_LUXURY_EVEREST_BASE_CAMP } from "@/lib/orbit/luxury-everest-bas
 import { DEFAULT_ANNAPURNA_LUXURY_LODGE } from "@/lib/orbit/annapurna-luxury-lodge-defaults";
 import { DEFAULT_MUSTANG_HELI_VIP } from "@/lib/orbit/mustang-heli-vip-defaults";
 import { DEFAULT_EVEREST_BASE_CAMP_TREK } from "@/lib/orbit/everest-base-camp-trek-defaults";
+import { DEFAULT_EVEREST_BASE_CAMP_HELICOPTER_TOUR } from "@/lib/orbit/everest-base-camp-helicopter-tour-defaults";
 import { DEFAULT_EVEREST_REGION } from "@/lib/orbit/everest-region-defaults";
 import { DEFAULT_ANNAPURNA_REGION } from "@/lib/orbit/annapurna-region-defaults";
 import { DEFAULT_LANGTANG_REGION } from "@/lib/orbit/langtang-region-defaults";
@@ -192,6 +193,10 @@ const MUSTANG_HELI_VIP_FILE = path.join(DATA_DIR, "mustang-heli-vip.json");
 const EVEREST_BASE_CAMP_TREK_FILE = path.join(
   DATA_DIR,
   "everest-base-camp-trek.json",
+);
+const EVEREST_BASE_CAMP_HELICOPTER_TOUR_FILE = path.join(
+  DATA_DIR,
+  "everest-base-camp-helicopter-tour.json",
 );
 const EVEREST_REGION_FILE = path.join(DATA_DIR, "everest-region.json");
 const ANNAPURNA_REGION_FILE = path.join(DATA_DIR, "annapurna-region.json");
@@ -2577,6 +2582,28 @@ export async function saveEverestBaseCampTrekContent(
   await ensureDataDir();
   await dbWriteFile(
     EVEREST_BASE_CAMP_TREK_FILE,
+    JSON.stringify(content, null, 2),
+  );
+}
+
+export async function getEverestBaseCampHelicopterTourContent(): Promise<TrekPageContent> {
+  try {
+    const raw = await dbReadFile(EVEREST_BASE_CAMP_HELICOPTER_TOUR_FILE);
+    return mergeTrekPage(
+      JSON.parse(raw) as Partial<TrekPageContent>,
+      DEFAULT_EVEREST_BASE_CAMP_HELICOPTER_TOUR,
+    );
+  } catch {
+    return DEFAULT_EVEREST_BASE_CAMP_HELICOPTER_TOUR;
+  }
+}
+
+export async function saveEverestBaseCampHelicopterTourContent(
+  content: TrekPageContent,
+): Promise<void> {
+  await ensureDataDir();
+  await dbWriteFile(
+    EVEREST_BASE_CAMP_HELICOPTER_TOUR_FILE,
     JSON.stringify(content, null, 2),
   );
 }

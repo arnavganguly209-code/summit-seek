@@ -1,0 +1,358 @@
+import type { TrekPageContent } from "@/types/trek-page-cms";
+import { SITE } from "@/lib/constants";
+
+const img = (id: string, w = 1600) =>
+  `https://images.unsplash.com/${id}?auto=format&fit=crop&w=${w}&q=80`;
+
+export const DEFAULT_EVEREST_BASE_CAMP_HELICOPTER_TOUR: TrekPageContent = {
+  coverImageUrl: img("photo-1609137144813-7d9921338f24", 2000),
+  coverTitle: "Everest Base Camp Helicopter Tour - 1 Day",
+  coverSubtitle:
+    "4–5 hour aerial journey from Kathmandu — Lukla stop, fly over Everest Base Camp, land at Kala Patthar (5,545 m), and breakfast at Hotel Everest View.",
+  heroMainImageUrl: img("photo-1609137144813-7d9921338f24", 2000),
+  heroSideImage1Url: img("photo-1544735716-392fe2489ffa", 900),
+  heroSideImage2Url: img("photo-1486870591958-9b9d0d1dda99", 900),
+  breadcrumbLabel: "Packages · Everest Helicopter",
+  title: "Everest Base Camp Helicopter Tour - 1 Day",
+  regionLabel: "Everest Region",
+  rating: 5,
+  reviewCount: 3,
+  tripAdvisorRating: "5.0",
+  googleRating: "5.0",
+  trustpilotRating: "5.0",
+  price: 1400,
+  compareAtPrice: 1500,
+  currencyPrefix: "US$",
+  perPersonLabel: "Price Per Person",
+  discountBadge: "7% OFF",
+  shortTripBadge: "Heli + Landing",
+  durationLabel: "1 Day",
+  difficultyLabel: "Easy",
+  groupSizeLabel: "1–5",
+  bookingNote:
+    "Shared group joining or private charter (max 5 passengers / weight limits apply). Package includes hotel–airport transfers, ~4–5 hour helicopter circuit with Kala Patthar landing and Hotel Everest View stop, oxygen on board, and taxes as listed. Park/local fees and Everest View breakfast included as arranged. Weather can cancel — keep buffer mornings in Kathmandu.",
+  groupDiscountHeading: "Group Discount Price",
+  groupDiscounts: [
+    { id: "gd1", paxLabel: "1 pax", price: 1500, visible: true },
+    { id: "gd2", paxLabel: "2-3 pax", price: 1400, visible: true },
+    { id: "gd3", paxLabel: "4 pax", price: 1350, visible: true },
+    { id: "gd4", paxLabel: "5 pax", price: 1300, visible: true },
+  ],
+  bookLabel: "Book This Trip",
+  bookHref: "/contact",
+  customizeLabel: "Customize Trip",
+  customizeHref: "/contact",
+  enquireLabel: "Inquire Now",
+  enquireHref: "/contact",
+  whatsappLabel: "WhatsApp Summit Seek",
+  whatsappHref: `https://wa.me/${SITE.whatsapp.replace(/\D/g, "")}`,
+  facts: [
+    { id: "f1", label: "Duration", value: "1 Day (~4–5 hrs)", visible: true },
+    { id: "f2", label: "Difficulty", value: "Easy / Leisure", visible: true },
+    { id: "f3", label: "Max Altitude", value: "5,545 m", visible: true },
+    { id: "f4", label: "Starts / Ends", value: "Kathmandu", visible: true },
+    { id: "f5", label: "Region", value: "Khumbu / Everest", visible: true },
+    { id: "f6", label: "Group Size", value: "1–5 (heli capacity)", visible: true },
+    { id: "f7", label: "Activities", value: "Helicopter with landing", visible: true },
+    {
+      id: "f8",
+      label: "Best Season",
+      value: "Feb–May & Sep–Dec",
+      visible: true,
+    },
+  ],
+  overviewHeading: "Trip introduction",
+  overviewBody:
+    "Everest Base Camp Helicopter Tour – 1 Day is the fastest way to experience the Khumbu without a multi-day trek — a ~4–5 hour flight from Kathmandu with landings at Kala Patthar (5,545 m) and a scenic breakfast stop at Hotel Everest View above Namche.\n\nAfter hotel pickup you depart Tribhuvan Domestic Terminal, fly to Lukla for refueling, then continue over Namche, Tengboche, and Everest Base Camp toward the Khumbu Glacier and Icefall. At Kala Patthar you get ~10–15 minutes on the ground for 360° views of Everest, Lhotse, Nuptse, Pumori, Ama Dablam, and Cho Oyu (shuttles may split passengers due to altitude weight limits). Then enjoy Everest View Hotel before returning via Lukla to Kathmandu.\n\nIdeal for limited-time travelers, families, and anyone seeking a comfortable Everest encounter. Summit Seek offers shared joining and private charter options with clear group pricing.",
+  overviewImageUrl: img("photo-1544735716-392fe2489ffa"),
+  highlightsHeading: "Highlights",
+  highlights: [
+    "Land at Kala Patthar (5,545 m) for Everest panoramas",
+    "Fly over Everest Base Camp, Khumbu Glacier & Icefall",
+    "Breakfast stop at Hotel Everest View (~3,880 m)",
+    "Lukla refuel stops with Himalayan valley views",
+    "Aerial views of Namche, Tengboche, Ama Dablam & more",
+    "Completed in a single morning (~4–5 hours)",
+    "Shared or private charter for up to 5 passengers",
+    "Oxygen available on board",
+  ],
+  advantagesHeading: "Why book with Summit Seek",
+  advantages: [
+    "Hotel pickup and drop by private vehicle",
+    "4–5 hour helicopter circuit as listed",
+    "Kala Patthar landing and Hotel Everest View stop",
+    "Park / local fees as arranged in the package",
+    "Breakfast at Everest View Hotel as arranged",
+    "Emergency oxygen on board",
+    "Government taxes and service charges as listed",
+    "Weather monitoring and reschedule support within your stay",
+  ],
+  whyHeading: "Why choose the EBC helicopter tour?",
+  whyPoints: [
+    "See Everest heights without 12–15 days of trekking",
+    "Landing at Kala Patthar beats a fly-over-only experience",
+    "Luxury breakfast with mountain views at Everest View Hotel",
+    "Suitable for most ages and fitness levels",
+    "Daily morning departures when weather allows",
+  ],
+  beginnersHeading: "Is this tour good for beginners?",
+  beginnersBody:
+    "Yes — graded Easy / Leisure with no trekking required. Brief exposure at 5,545 m is short; helicopters carry oxygen. People with serious heart or lung conditions should consult a doctor first.\n\nDress in warm layers, sunglasses, and gloves. Travel insurance covering helicopter tours is strongly recommended.",
+  prepHeading: "How to prepare",
+  prepPoints: [
+    "Confirm morning pickup time the evening before",
+    "Wear layered warm clothing, long trousers, gloves, and sunglasses",
+    "Bring passport for check-in and weight measurement",
+    "Travel light — small daypack only; respect heli weight limits",
+    "Keep a weather buffer morning in Kathmandu",
+    "Verify insurance covers helicopter sightseeing flights",
+  ],
+  itineraryHeading: "1-day itinerary",
+  itineraryIntro:
+    "Typical shared/private morning departure from Kathmandu. Exact times vary with weather, ATC, and shuttle landings at Kala Patthar (often max ~3 people / ~250 kg per touchdown).",
+  days: [
+    {
+      id: "d1",
+      dayLabel: "Day 1",
+      title: "Kathmandu – Lukla – Kala Patthar – Everest View – Kathmandu",
+      maxAltitude: "5,545 m",
+      meals: "Breakfast at Hotel Everest View as arranged",
+      accommodation: "—",
+      description:
+        "Hotel pickup to TIA domestic terminal; check-in, weight check, and safety briefing. Fly Kathmandu→Lukla (~45 min) for refuel (15–30 min). Continue Lukla→Kala Patthar via EBC (~30 min); land ~10–15 min for photos and panoramas. Fly to Hotel Everest View / Syangboche for breakfast (~45–90 min). Return via Lukla refuel to Kathmandu (~45 min). Hotel drop — end of tour (~4–5 hours total air/ground time).",
+      imageUrl: "",
+      visible: true,
+    },
+  ],
+  availabilityHeading: "Dates & availability",
+  availabilityBody:
+    "Best February–May and September–December for clear flying. Available most mornings year-round when weather allows. Peak months may cost more and fill faster — book ahead.",
+  availabilityNotes: [
+    "Shared group joining and private charter options",
+    "Maximum 5 passengers / total weight limits (~490–500 kg)",
+    "Kala Patthar landings may use 2–3 shuttle runs",
+    "Full refund or free reschedule if weather cancels (per operator policy)",
+  ],
+  addonsHeading: "Optional add-ons",
+  addons: [
+    {
+      id: "a1",
+      title: "Private charter upgrade",
+      description: "Exclusive helicopter for your party (flexible timing).",
+      priceLabel: "On request",
+      visible: true,
+    },
+    {
+      id: "a2",
+      title: "Lukla join / exit",
+      description: "Start or finish the sector from Lukla if already in Khumbu.",
+      priceLabel: "On request",
+      visible: true,
+    },
+    {
+      id: "a3",
+      title: "Personal oxygen outside aircraft",
+      description: "Extra cylinder for ground use if medically advised.",
+      priceLabel: "On request",
+      visible: true,
+    },
+  ],
+  includesHeading: "Trip includes",
+  includes: [
+    "Hotel–airport pickup and drop by private vehicle",
+    "4–5 hour helicopter flight as listed",
+    "Landing at Kala Patthar and stop at Hotel Everest View",
+    "Breakfast at Everest View Hotel as arranged",
+    "Sagarmatha / Khumbu local fees as arranged",
+    "Emergency oxygen on board",
+    "Company service charges and applicable taxes as listed",
+  ],
+  excludesHeading: "Trip excludes",
+  excludes: [
+    "Nepal visa fees",
+    "Kathmandu accommodation",
+    "Personal expenses, drinks, and tips",
+    "Travel / medical insurance covering helicopter tours",
+    "Personal clothing and camera gear",
+    "Costs from weather delays beyond operator reschedule policy",
+    "Anything not listed under inclusions",
+  ],
+  galleryHeading: "Trip gallery",
+  gallery: [
+    {
+      id: "g1",
+      url: img("photo-1609137144813-7d9921338f24"),
+      caption: "Helicopter approaches above the Khumbu",
+      visible: true,
+    },
+    {
+      id: "g2",
+      url: img("photo-1544735716-392fe2489ffa"),
+      caption: "Everest Base Camp country from the air",
+      visible: true,
+    },
+    {
+      id: "g3",
+      url: img("photo-1486870591958-9b9d0d1dda99"),
+      caption: "Glacier light near Lobuche and Kala Patthar",
+      visible: true,
+    },
+    {
+      id: "g4",
+      url: img("photo-1519681393784-d120267933ba"),
+      caption: "High Himalayan ridges on a clear flying day",
+      visible: true,
+    },
+  ],
+  essentialHeading: "Essential information",
+  essentialBlocks: [
+    {
+      id: "e1",
+      title: "Best season",
+      body: "February–May and September–December offer the most reliable visibility. Morning departures have higher success rates than afternoons.",
+      imageUrl: "",
+      visible: true,
+    },
+    {
+      id: "e2",
+      title: "Altitude & difficulty",
+      body: "Highest landing is Kala Patthar at 5,545 m for a short stop. Graded Easy — no trekking. Oxygen is available on board.",
+      imageUrl: "",
+      visible: true,
+    },
+    {
+      id: "e3",
+      title: "Weight & landing limits",
+      body: "Helicopters have total weight limits (~490–500 kg). Kala Patthar landings often take only ~3 people / ~250 kg per touchdown, with shuttle runs for the full group.",
+      imageUrl: "",
+      visible: true,
+    },
+    {
+      id: "e4",
+      title: "Routes",
+      body: "Kathmandu → Lukla → Kala Patthar (via EBC) → Hotel Everest View → Lukla → Kathmandu.",
+      imageUrl: "",
+      visible: true,
+    },
+  ],
+  equipmentHeading: "What to bring",
+  equipmentIntro:
+    "Travel extremely light. Soft daypack only — no large suitcases.",
+  equipmentGroups: [
+    {
+      id: "eq1",
+      title: "Clothing",
+      items: [
+        "Warm layered jacket",
+        "Long trousers",
+        "Gloves and warm hat",
+        "Comfortable closed shoes",
+      ],
+      visible: true,
+    },
+    {
+      id: "eq2",
+      title: "Sun & altitude",
+      items: [
+        "UV sunglasses",
+        "SPF 50+ sunscreen",
+        "Optional motion-sickness tablets",
+      ],
+      visible: true,
+    },
+    {
+      id: "eq3",
+      title: "Camera & bag",
+      items: [
+        "Camera with spare batteries (cold drains power)",
+        "Small daypack only",
+      ],
+      visible: true,
+    },
+    {
+      id: "eq4",
+      title: "Documents",
+      items: [
+        "Passport (required at check-in)",
+        "Travel insurance certificate",
+        "Summit Seek booking confirmation",
+      ],
+      visible: true,
+    },
+  ],
+  companyProvidesHeading: "What Summit Seek can provide",
+  companyProvides: [
+    "Helicopter seat / charter coordination",
+    "Airport transfers as listed",
+    "Fee handling as arranged",
+    "Weather updates and reschedule support",
+  ],
+  faqsHeading: "Frequently asked questions",
+  faqs: [
+    {
+      id: "q1",
+      question: "What is the Everest Base Camp Helicopter Tour?",
+      answer:
+        "A one-day ~4–5 hour flight from Kathmandu with Lukla stops, overflight of Everest Base Camp, landing at Kala Patthar (5,545 m), and a breakfast stop at Hotel Everest View before returning to Kathmandu.",
+      visible: true,
+    },
+    {
+      id: "q2",
+      question: "How much does it cost?",
+      answer:
+        "This listing starts at US$1,400 for 2–3 pax (US$1,500 for 1; US$1,350 for 4; US$1,300 for 5). Market shared flights often list around US$1,500–1,700; private charters are higher.",
+      visible: true,
+    },
+    {
+      id: "q3",
+      question: "Do we land at Kala Patthar?",
+      answer:
+        "Yes — short ground time (~10–15 minutes). Due to altitude, the helicopter may shuttle ~3 passengers at a time so everyone gets a turn.",
+      visible: true,
+    },
+    {
+      id: "q4",
+      question: "Is breakfast included?",
+      answer:
+        "Breakfast at Hotel Everest View is included as arranged in this Summit Seek package.",
+      visible: true,
+    },
+    {
+      id: "q5",
+      question: "What if weather cancels the flight?",
+      answer:
+        "Operators typically offer a full refund or free reschedule within your Kathmandu stay. Keep buffer mornings and carry suitable insurance.",
+      visible: true,
+    },
+    {
+      id: "q6",
+      question: "Is there an age limit?",
+      answer:
+        "Generally suitable for all ages; children above ~2.5 years are often counted as adults for seating/weight. Confirm when booking.",
+      visible: true,
+    },
+    {
+      id: "q7",
+      question: "Can I join from Lukla?",
+      answer:
+        "Yes — Lukla join/exit can be arranged with advance confirmation (usually the day before).",
+      visible: true,
+    },
+    {
+      id: "q8",
+      question: "When is the best time?",
+      answer:
+        "February–May and September–December usually offer the clearest flying weather. Morning departures succeed more often.",
+      visible: true,
+    },
+  ],
+  ctaHeading: "Ready for Everest by helicopter?",
+  ctaBody: `Tell us your preferred date and passenger count (1–5) — we will confirm shared or private availability and a clear quote. WhatsApp ${SITE.whatsappDisplay} or email ${SITE.email}.`,
+  ctaPrimaryLabel: "Enquire now",
+  ctaPrimaryHref: "/contact",
+  ctaSecondaryLabel: "Packing checklist",
+  ctaSecondaryHref: "/travel-guide/packing-checklist",
+  metaTitle: "Everest Base Camp Helicopter Tour 1 Day | Summit Seek",
+  metaDescription:
+    "Book 1-day EBC helicopter tour from Kathmandu — Kala Patthar landing, Everest View breakfast, Lukla stops & group rates from US$1,300.",
+};
