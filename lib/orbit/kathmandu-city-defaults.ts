@@ -1,0 +1,362 @@
+import type { TrekPageContent } from "@/types/trek-page-cms";
+import { SITE } from "@/lib/constants";
+
+const img = (id: string, w = 1600) =>
+  `https://images.unsplash.com/${id}?auto=format&fit=crop&w=${w}&q=80`;
+
+export const DEFAULT_KATHMANDU_CITY: TrekPageContent = {
+  coverImageUrl: img("photo-1587474260584-136574528ed5", 2000),
+  coverTitle: "Kathmandu City Day Tour - 1 Day",
+  coverSubtitle:
+    "Classic UNESCO circuit in ~6 hours — Swayambhunath, Patan Durbar Square, Pashupatinath, and Boudhanath, with private vehicle and licensed city guide.",
+  heroMainImageUrl: img("photo-1587474260584-136574528ed5", 2000),
+  heroSideImage1Url: img("photo-1548013146-72479768bada", 900),
+  heroSideImage2Url: img("photo-1605640840605-14ac1853827d", 900),
+  breadcrumbLabel: "Nepal Tours · City Day Tour",
+  title: "Kathmandu City Day Tour - 1 Day",
+  regionLabel: "Kathmandu Valley",
+  rating: 5,
+  reviewCount: 2,
+  tripAdvisorRating: "5.0",
+  googleRating: "5.0",
+  trustpilotRating: "5.0",
+  price: 60,
+  compareAtPrice: 70,
+  currencyPrefix: "US$",
+  perPersonLabel: "Price Per Person",
+  discountBadge: "14% OFF",
+  shortTripBadge: "UNESCO Day Circuit",
+  durationLabel: "1 Day",
+  difficultyLabel: "Easy",
+  groupSizeLabel: "1+",
+  bookingNote:
+    "Private full-day sightseeing from your Kathmandu hotel (~6–7 hours). Package includes AC private vehicle, licensed English-speaking guide, and monument entrance fees as listed. Lunch and tips are on your own unless pre-booked. Ideal first day in the valley before a trek.",
+  groupDiscountHeading: "Group Discount Price",
+  groupDiscounts: [
+    { id: "gd1", paxLabel: "1 pax", price: 70, visible: true },
+    { id: "gd2", paxLabel: "2-3 pax", price: 60, visible: true },
+    { id: "gd3", paxLabel: "4-6 pax", price: 55, visible: true },
+    { id: "gd4", paxLabel: "7-15 pax", price: 50, visible: true },
+  ],
+  bookLabel: "Book This Trip",
+  bookHref: "/contact",
+  customizeLabel: "Customize Trip",
+  customizeHref: "/contact",
+  enquireLabel: "Inquire Now",
+  enquireHref: "/contact",
+  whatsappLabel: "WhatsApp Summit Seek",
+  whatsappHref: `https://wa.me/${SITE.whatsapp.replace(/\D/g, "")}`,
+  facts: [
+    { id: "f1", label: "Duration", value: "1 Day (~6 hrs)", visible: true },
+    { id: "f2", label: "Difficulty", value: "Easy", visible: true },
+    { id: "f3", label: "Max Altitude", value: "1,350 m", visible: true },
+    { id: "f4", label: "Starts / Ends", value: "Kathmandu hotel", visible: true },
+    { id: "f5", label: "Region", value: "Kathmandu Valley", visible: true },
+    { id: "f6", label: "Group Size", value: "Private group", visible: true },
+    {
+      id: "f7",
+      label: "Activities",
+      value: "Culture, History & Religion",
+      visible: true,
+    },
+    {
+      id: "f8",
+      label: "Best Season",
+      value: "Year-round",
+      visible: true,
+    },
+  ],
+  overviewHeading: "Trip introduction",
+  overviewBody:
+    "Kathmandu City Day Tour is a classic ~6-hour private sightseeing circuit through the valley’s most iconic UNESCO and pilgrimage sites — the “city of temples,” home of the living goddess Kumari, and gateway to Nepal.\n\nWith a licensed English-speaking guide and private AC vehicle, you visit Swayambhunath (Monkey Temple) for stupa views over the valley, Patan Durbar Square for Newari wood carving and courtyards, Pashupatinath on the Bagmati (Lord Shiva’s great Hindu shrine; non-Hindus view from the east bank terraces), and Boudhanath — the great Tibetan Buddhist mandala stupa with monasteries and Phulbari shopping lanes.\n\nAny season works; June–July are wettest. Summit Seek includes hotel pickup/drop, guide, vehicle sized to your group, monument fees as listed, and clear group pricing — perfect before or after a Himalayan trek.",
+  overviewImageUrl: img("photo-1548013146-72479768bada"),
+  highlightsHeading: "Highlights",
+  highlights: [
+    "Swayambhunath Stupa — panoramic Kathmandu views and monkey temple atmosphere",
+    "Patan Durbar Square — Newari architecture, carvings, and courtyards",
+    "Pashupatinath Temple — sacred Shiva complex on the Bagmati",
+    "Boudhanath Stupa — massive Buddhist mandala and Tibetan culture",
+    "Private AC vehicle and licensed English-speaking city guide",
+    "Hotel pickup and drop in Kathmandu",
+    "Flexible lunch stop (restaurant of your choice)",
+    "Ideal orientation day for first-time visitors",
+  ],
+  advantagesHeading: "Why book with Summit Seek",
+  advantages: [
+    "Private AC transportation (car, van, jeep, or coach by group size)",
+    "Government-licensed English-speaking city tour guide",
+    "Hotel pickup and drop in Kathmandu",
+    "Monument entrance fees as listed",
+    "Family- and kids-friendly pacing",
+    "Flexible lunch break location",
+    "Applicable government taxes as listed",
+    "Clear private and group pricing",
+  ],
+  whyHeading: "Why choose this Kathmandu day tour?",
+  whyPoints: [
+    "Covers four must-see heritage sites in one efficient circuit",
+    "Private pacing — not a crowded coach shuffle",
+    "Licensed guide for history, etiquette, and traffic timing",
+    "Works year-round as a trek buffer or layover day",
+    "Easy add-on before Bhaktapur, Patan deeper walks, or mountain flights",
+  ],
+  beginnersHeading: "Is this tour good for beginners?",
+  beginnersBody:
+    "Yes — graded Easy and ideal for travelers interested in architecture, culture, carvings, and religion. Expect moderate walking at each site, temple steps, and city traffic between stops (~6–7 hours total).\n\nNot recommended for severe mobility impairment or late-stage pregnancy without prior discussion. Wear comfortable shoes and allow for Kathmandu traffic variability.",
+  prepHeading: "How to prepare",
+  prepPoints: [
+    "Wear comfortable walking shoes (moderate walking at each site)",
+    "Dress modestly for temples; remove leather items at Pashupatinath as required",
+    "Bring sun protection, water, and a light layer (winter: jacket)",
+    "Carry passport/ID and small NPR cash for snacks and shopping",
+    "Monsoon: waterproof jacket and shoes",
+    "Confirm morning pickup (~8:30 a.m.) with your hotel address",
+  ],
+  itineraryHeading: "1-day itinerary",
+  itineraryIntro:
+    "Typical ~6-hour circuit from hotel pickup (~8:30 a.m.) to drop (~4:00 p.m.). Traffic can shift timings; Patan is preferred over Kathmandu Durbar Square when Basantapur works are ongoing.",
+  days: [
+    {
+      id: "d1",
+      dayLabel: "Day 1",
+      title: "Swayambhunath – Patan Durbar Square – Pashupatinath – Boudhanath",
+      maxAltitude: "1,350 m",
+      meals: "Lunch on own (flexible stop)",
+      accommodation: "—",
+      description:
+        "08:30 Hotel pickup by private vehicle. 09:00–10:00 Swayambhunath (Monkey Temple) — Buddha eyes, 13 stages to nirvana, valley panorama, small thangka market. 10:00–10:45 Drive to Patan. 10:45–12:00 Patan Durbar Square — Newari courtyards, wood carving, optional local Newari flavors nearby. 12:00–12:45 Drive to Pashupatinath. 12:45–13:45 Pashupatinath Temple complex (Hindus enter inner premises; others view from east bank terraces). 13:45–14:15 Drive to Boudha. 14:15–15:00 Lunch near Boudhanath (your choice). 15:00–16:00 Boudhanath Stupa circuit, monasteries, Phulbari shopping lanes. ~16:00 Hotel drop — end of tour.",
+      imageUrl: "",
+      visible: true,
+    },
+  ],
+  availabilityHeading: "Dates & availability",
+  availabilityBody:
+    "Private departures daily year-round. Weather is mild most months; June–July are wettest. Festival days add atmosphere but also crowds and traffic — tell us if you want to time for a specific jatra.",
+  availabilityNotes: [
+    "Private groups of any size",
+    "Morning start preferred to ease traffic",
+    "Book ahead for festival periods and large groups",
+    "Other-language guides available on request (surcharge may apply)",
+  ],
+  addonsHeading: "Optional add-ons",
+  addons: [
+    {
+      id: "a1",
+      title: "Newari food tour extension",
+      description: "Local eateries for momo, bara, yomari, aila, and Asan market flavors.",
+      priceLabel: "On request",
+      visible: true,
+    },
+    {
+      id: "a2",
+      title: "Bhaktapur or pottery half-day",
+      description: "Combine or extend with Bhaktapur Durbar Square / Pottery Square.",
+      priceLabel: "On request",
+      visible: true,
+    },
+    {
+      id: "a3",
+      title: "Other-language guide",
+      description: "Non-English guide on request (surcharge typically applies).",
+      priceLabel: "On request",
+      visible: true,
+    },
+  ],
+  includesHeading: "Trip includes",
+  includes: [
+    "Private AC transportation sized to your group",
+    "Professional English-speaking licensed tour guide",
+    "Hotel pickup and drop in Kathmandu",
+    "Monument entrance fees as listed",
+    "Applicable government taxes as listed",
+  ],
+  excludesHeading: "Trip excludes",
+  excludes: [
+    "Lunch and drinks (flexible stop — pay directly)",
+    "Tips for guide and driver",
+    "Personal shopping and snacks",
+    "Travel insurance",
+    "Anything not listed under inclusions",
+  ],
+  galleryHeading: "Trip gallery",
+  gallery: [
+    {
+      id: "g1",
+      url: img("photo-1587474260584-136574528ed5"),
+      caption: "Kathmandu city and temple day touring",
+      visible: true,
+    },
+    {
+      id: "g2",
+      url: img("photo-1548013146-72479768bada"),
+      caption: "Valley heritage atmospheres",
+      visible: true,
+    },
+    {
+      id: "g3",
+      url: img("photo-1605640840605-14ac1853827d"),
+      caption: "Pagoda temples and brick courtyards",
+      visible: true,
+    },
+    {
+      id: "g4",
+      url: img("photo-1566552881560-0be862a7c445"),
+      caption: "Sacred courtyards and pilgrimage sites",
+      visible: true,
+    },
+  ],
+  essentialHeading: "Essential information",
+  essentialBlocks: [
+    {
+      id: "e1",
+      title: "Best season",
+      body: "Year-round. Spring (Mar–May) is especially pleasant. Winter needs a jacket; monsoon (Jun–Aug) needs waterproofs but remains doable.",
+      imageUrl: "",
+      visible: true,
+    },
+    {
+      id: "e2",
+      title: "Altitude & difficulty",
+      body: "Kathmandu ~1,350 m. Easy sightseeing with moderate walking and temple steps — about 6–7 hours including drives.",
+      imageUrl: "",
+      visible: true,
+    },
+    {
+      id: "e3",
+      title: "Entrance fees",
+      body: "Major sites charge entry (e.g. Durbar Squares, Swayambhu, Boudha, Pashupatinath). Fees are included as listed; your guide handles the counters.",
+      imageUrl: "",
+      visible: true,
+    },
+    {
+      id: "e4",
+      title: "Routes",
+      body: "Hotel → Swayambhunath → Patan Durbar Square → Pashupatinath → Boudhanath → hotel. Order may adjust for traffic or closures.",
+      imageUrl: "",
+      visible: true,
+    },
+  ],
+  equipmentHeading: "What to bring",
+  equipmentIntro:
+    "Travel light for a city circuit. Comfortable shoes matter more than packing volume.",
+  equipmentGroups: [
+    {
+      id: "eq1",
+      title: "Clothing",
+      items: [
+        "Comfortable day clothes",
+        "Modest layers for temple visits",
+        "Light jacket in winter (late Nov–Feb)",
+        "Waterproof shell in monsoon",
+      ],
+      visible: true,
+    },
+    {
+      id: "eq2",
+      title: "Footwear & bag",
+      items: [
+        "Comfortable walking shoes",
+        "Small daypack",
+        "Reusable water bottle",
+      ],
+      visible: true,
+    },
+    {
+      id: "eq3",
+      title: "Sun & personal",
+      items: [
+        "Hat, sunglasses, sunscreen",
+        "Hand sanitizer",
+        "Umbrella in monsoon",
+        "Portable charger and camera",
+        "Small NPR cash for lunch and shopping",
+      ],
+      visible: true,
+    },
+    {
+      id: "eq4",
+      title: "Documents",
+      items: [
+        "Passport or ID",
+        "Summit Seek booking confirmation",
+        "Hotel name and address for pickup",
+      ],
+      visible: true,
+    },
+  ],
+  companyProvidesHeading: "What Summit Seek can provide",
+  companyProvides: [
+    "Licensed city guide and private AC vehicle",
+    "Entrance fee handling as listed",
+    "Hotel pickup/drop coordination",
+    "Custom combine days (Bhaktapur, food tour, etc.)",
+  ],
+  faqsHeading: "Frequently asked questions",
+  faqs: [
+    {
+      id: "q1",
+      question: "What sites are covered?",
+      answer:
+        "The classic four: Swayambhunath, Patan Durbar Square, Pashupatinath, and Boudhanath — with private vehicle and licensed guide.",
+      visible: true,
+    },
+    {
+      id: "q2",
+      question: "How long does the tour last?",
+      answer:
+        "About 6–7 hours depending on traffic and how long you linger at each site. Typical window is roughly 8:30 a.m. to 4:00 p.m.",
+      visible: true,
+    },
+    {
+      id: "q3",
+      question: "How much does it cost?",
+      answer:
+        "This listing starts at US$60 for 2–3 pax (US$70 for 1; US$55 for 4–6; US$50 for 7–15). Market day packages often list around US$50–100 depending on group size.",
+      visible: true,
+    },
+    {
+      id: "q4",
+      question: "Is hotel pickup included?",
+      answer:
+        "Yes — private vehicle and guide pick you up from your Kathmandu hotel and drop you back at the end.",
+      visible: true,
+    },
+    {
+      id: "q5",
+      question: "Are entrance fees included?",
+      answer:
+        "Yes, monument entrance fees are included as listed. Your guide manages ticket counters so you can focus on the sites.",
+      visible: true,
+    },
+    {
+      id: "q6",
+      question: "Is lunch included?",
+      answer:
+        "No — we build in a flexible lunch break (often near Boudha). You choose the restaurant and pay directly.",
+      visible: true,
+    },
+    {
+      id: "q7",
+      question: "Can non-Hindus enter Pashupatinath?",
+      answer:
+        "The inner temple premises are for Hindus; non-Hindus typically view the complex from terraces across the Bagmati. Your guide explains respectful viewing points.",
+      visible: true,
+    },
+    {
+      id: "q8",
+      question: "Who is this tour recommended for?",
+      answer:
+        "Travelers interested in architecture, culture, carvings, and religion. Discuss mobility needs in advance if walking or steps are difficult.",
+      visible: true,
+    },
+  ],
+  ctaHeading: "Ready for Kathmandu sightseeing?",
+  ctaBody: `Tell us your preferred date and hotel — we will confirm pickup and a clear quote. WhatsApp ${SITE.whatsappDisplay} or email ${SITE.email}.`,
+  ctaPrimaryLabel: "Enquire now",
+  ctaPrimaryHref: "/contact",
+  ctaSecondaryLabel: "Packing checklist",
+  ctaSecondaryHref: "/travel-guide/packing-checklist",
+  metaTitle: "Kathmandu City Day Tour 1 Day | Summit Seek",
+  metaDescription:
+    "Book 1-day Kathmandu City Tour — Swayambhu, Patan, Pashupatinath, Boudha, private car, licensed guide & group rates from US$50.",
+};
