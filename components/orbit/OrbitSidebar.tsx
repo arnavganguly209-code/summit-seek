@@ -152,6 +152,11 @@ const nav = [
         icon: Mountain,
       },
       {
+        href: "/orbit/dashboard/website/mustang-heli-vip",
+        label: "VIP Mustang Helicopter",
+        icon: Mountain,
+      },
+      {
         href: "/orbit/dashboard/website/shivapuri-yoga-hike",
         label: "Shivapuri Yoga Hike",
         icon: Mountain,

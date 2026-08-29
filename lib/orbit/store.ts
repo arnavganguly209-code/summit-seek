@@ -101,6 +101,7 @@ import { DEFAULT_KATHMANDU_CITY } from "@/lib/orbit/kathmandu-city-defaults";
 import { DEFAULT_EVEREST_HELI_VIEW } from "@/lib/orbit/everest-heli-view-defaults";
 import { DEFAULT_LUXURY_EVEREST_BASE_CAMP } from "@/lib/orbit/luxury-everest-base-camp-defaults";
 import { DEFAULT_ANNAPURNA_LUXURY_LODGE } from "@/lib/orbit/annapurna-luxury-lodge-defaults";
+import { DEFAULT_MUSTANG_HELI_VIP } from "@/lib/orbit/mustang-heli-vip-defaults";
 import { DEFAULT_EVEREST_REGION } from "@/lib/orbit/everest-region-defaults";
 import { DEFAULT_ANNAPURNA_REGION } from "@/lib/orbit/annapurna-region-defaults";
 import { DEFAULT_LANGTANG_REGION } from "@/lib/orbit/langtang-region-defaults";
@@ -186,6 +187,7 @@ const ANNAPURNA_LUXURY_LODGE_FILE = path.join(
   DATA_DIR,
   "annapurna-luxury-lodge.json",
 );
+const MUSTANG_HELI_VIP_FILE = path.join(DATA_DIR, "mustang-heli-vip.json");
 const EVEREST_REGION_FILE = path.join(DATA_DIR, "everest-region.json");
 const ANNAPURNA_REGION_FILE = path.join(DATA_DIR, "annapurna-region.json");
 const LANGTANG_REGION_FILE = path.join(DATA_DIR, "langtang-region.json");
@@ -2531,6 +2533,25 @@ export async function saveAnnapurnaLuxuryLodgeContent(
     ANNAPURNA_LUXURY_LODGE_FILE,
     JSON.stringify(content, null, 2),
   );
+}
+
+export async function getMustangHeliVipContent(): Promise<TrekPageContent> {
+  try {
+    const raw = await dbReadFile(MUSTANG_HELI_VIP_FILE);
+    return mergeTrekPage(
+      JSON.parse(raw) as Partial<TrekPageContent>,
+      DEFAULT_MUSTANG_HELI_VIP,
+    );
+  } catch {
+    return DEFAULT_MUSTANG_HELI_VIP;
+  }
+}
+
+export async function saveMustangHeliVipContent(
+  content: TrekPageContent,
+): Promise<void> {
+  await ensureDataDir();
+  await dbWriteFile(MUSTANG_HELI_VIP_FILE, JSON.stringify(content, null, 2));
 }
 
 function mergeDestinationRegion(
