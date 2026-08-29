@@ -83,6 +83,7 @@ import { DEFAULT_LOWER_DOLPO } from "@/lib/orbit/lower-dolpo-defaults";
 import { DEFAULT_SHEY_GOMPA } from "@/lib/orbit/shey-gompa-defaults";
 import { DEFAULT_PHOKSUNDO } from "@/lib/orbit/phoksundo-defaults";
 import { DEFAULT_KANCHENJUNGA_CIRCUIT } from "@/lib/orbit/kanchenjunga-circuit-defaults";
+import { DEFAULT_KANCHENJUNGA_NORTH } from "@/lib/orbit/kanchenjunga-north-defaults";
 import { DEFAULT_EVEREST_REGION } from "@/lib/orbit/everest-region-defaults";
 import { DEFAULT_ANNAPURNA_REGION } from "@/lib/orbit/annapurna-region-defaults";
 import { DEFAULT_LANGTANG_REGION } from "@/lib/orbit/langtang-region-defaults";
@@ -144,6 +145,7 @@ const LOWER_DOLPO_FILE = path.join(DATA_DIR, "lower-dolpo.json");
 const SHEY_GOMPA_FILE = path.join(DATA_DIR, "shey-gompa.json");
 const PHOKSUNDO_FILE = path.join(DATA_DIR, "phoksundo.json");
 const KANCHENJUNGA_CIRCUIT_FILE = path.join(DATA_DIR, "kanchenjunga-circuit.json");
+const KANCHENJUNGA_NORTH_FILE = path.join(DATA_DIR, "kanchenjunga-north.json");
 const EVEREST_REGION_FILE = path.join(DATA_DIR, "everest-region.json");
 const ANNAPURNA_REGION_FILE = path.join(DATA_DIR, "annapurna-region.json");
 const LANGTANG_REGION_FILE = path.join(DATA_DIR, "langtang-region.json");
@@ -2146,6 +2148,25 @@ export async function saveKanchenjungaCircuitContent(
 ): Promise<void> {
   await ensureDataDir();
   await dbWriteFile(KANCHENJUNGA_CIRCUIT_FILE, JSON.stringify(content, null, 2));
+}
+
+export async function getKanchenjungaNorthContent(): Promise<TrekPageContent> {
+  try {
+    const raw = await dbReadFile(KANCHENJUNGA_NORTH_FILE);
+    return mergeTrekPage(
+      JSON.parse(raw) as Partial<TrekPageContent>,
+      DEFAULT_KANCHENJUNGA_NORTH,
+    );
+  } catch {
+    return DEFAULT_KANCHENJUNGA_NORTH;
+  }
+}
+
+export async function saveKanchenjungaNorthContent(
+  content: TrekPageContent,
+): Promise<void> {
+  await ensureDataDir();
+  await dbWriteFile(KANCHENJUNGA_NORTH_FILE, JSON.stringify(content, null, 2));
 }
 
 function mergeDestinationRegion(
