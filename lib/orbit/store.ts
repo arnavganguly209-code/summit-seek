@@ -91,6 +91,7 @@ import { DEFAULT_MAKALU_BARUN } from "@/lib/orbit/makalu-barun-defaults";
 import { DEFAULT_ARUN_VALLEY } from "@/lib/orbit/arun-valley-defaults";
 import { DEFAULT_SHERPANI_COL } from "@/lib/orbit/sherpani-col-defaults";
 import { DEFAULT_YALA_PEAK } from "@/lib/orbit/yala-peak-defaults";
+import { DEFAULT_MERA_PEAK } from "@/lib/orbit/mera-peak-defaults";
 import { DEFAULT_EVEREST_REGION } from "@/lib/orbit/everest-region-defaults";
 import { DEFAULT_ANNAPURNA_REGION } from "@/lib/orbit/annapurna-region-defaults";
 import { DEFAULT_LANGTANG_REGION } from "@/lib/orbit/langtang-region-defaults";
@@ -160,6 +161,7 @@ const MAKALU_BARUN_FILE = path.join(DATA_DIR, "makalu-barun.json");
 const ARUN_VALLEY_FILE = path.join(DATA_DIR, "arun-valley.json");
 const SHERPANI_COL_FILE = path.join(DATA_DIR, "sherpani-col.json");
 const YALA_PEAK_FILE = path.join(DATA_DIR, "yala-peak.json");
+const MERA_PEAK_FILE = path.join(DATA_DIR, "mera-peak.json");
 const EVEREST_REGION_FILE = path.join(DATA_DIR, "everest-region.json");
 const ANNAPURNA_REGION_FILE = path.join(DATA_DIR, "annapurna-region.json");
 const LANGTANG_REGION_FILE = path.join(DATA_DIR, "langtang-region.json");
@@ -2309,6 +2311,25 @@ export async function saveYalaPeakContent(
 ): Promise<void> {
   await ensureDataDir();
   await dbWriteFile(YALA_PEAK_FILE, JSON.stringify(content, null, 2));
+}
+
+export async function getMeraPeakContent(): Promise<TrekPageContent> {
+  try {
+    const raw = await dbReadFile(MERA_PEAK_FILE);
+    return mergeTrekPage(
+      JSON.parse(raw) as Partial<TrekPageContent>,
+      DEFAULT_MERA_PEAK,
+    );
+  } catch {
+    return DEFAULT_MERA_PEAK;
+  }
+}
+
+export async function saveMeraPeakContent(
+  content: TrekPageContent,
+): Promise<void> {
+  await ensureDataDir();
+  await dbWriteFile(MERA_PEAK_FILE, JSON.stringify(content, null, 2));
 }
 
 function mergeDestinationRegion(
