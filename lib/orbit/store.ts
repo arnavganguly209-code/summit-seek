@@ -107,6 +107,7 @@ import { DEFAULT_EVEREST_BASE_CAMP_HELICOPTER_TOUR } from "@/lib/orbit/everest-b
 import { DEFAULT_ANNAPURNA_CIRCUIT_TREK } from "@/lib/orbit/annapurna-circuit-trek-defaults";
 import { DEFAULT_LANGTANG_VALLEY_TREK } from "@/lib/orbit/langtang-valley-trek-defaults";
 import { DEFAULT_MANASLU_CIRCUIT_TREK } from "@/lib/orbit/manaslu-circuit-trek-defaults";
+import { DEFAULT_ANNAPURNA_BASE_CAMP_TREK } from "@/lib/orbit/annapurna-base-camp-trek-defaults";
 import { DEFAULT_EVEREST_REGION } from "@/lib/orbit/everest-region-defaults";
 import { DEFAULT_ANNAPURNA_REGION } from "@/lib/orbit/annapurna-region-defaults";
 import { DEFAULT_LANGTANG_REGION } from "@/lib/orbit/langtang-region-defaults";
@@ -212,6 +213,10 @@ const LANGTANG_VALLEY_TREK_FILE = path.join(
 const MANASLU_CIRCUIT_TREK_FILE = path.join(
   DATA_DIR,
   "manaslu-circuit-trek.json",
+);
+const ANNAPURNA_BASE_CAMP_TREK_FILE = path.join(
+  DATA_DIR,
+  "annapurna-base-camp-trek.json",
 );
 const EVEREST_REGION_FILE = path.join(DATA_DIR, "everest-region.json");
 const ANNAPURNA_REGION_FILE = path.join(DATA_DIR, "annapurna-region.json");
@@ -2685,6 +2690,28 @@ export async function saveManasluCircuitTrekContent(
   await ensureDataDir();
   await dbWriteFile(
     MANASLU_CIRCUIT_TREK_FILE,
+    JSON.stringify(content, null, 2),
+  );
+}
+
+export async function getAnnapurnaBaseCampTrekContent(): Promise<TrekPageContent> {
+  try {
+    const raw = await dbReadFile(ANNAPURNA_BASE_CAMP_TREK_FILE);
+    return mergeTrekPage(
+      JSON.parse(raw) as Partial<TrekPageContent>,
+      DEFAULT_ANNAPURNA_BASE_CAMP_TREK,
+    );
+  } catch {
+    return DEFAULT_ANNAPURNA_BASE_CAMP_TREK;
+  }
+}
+
+export async function saveAnnapurnaBaseCampTrekContent(
+  content: TrekPageContent,
+): Promise<void> {
+  await ensureDataDir();
+  await dbWriteFile(
+    ANNAPURNA_BASE_CAMP_TREK_FILE,
     JSON.stringify(content, null, 2),
   );
 }

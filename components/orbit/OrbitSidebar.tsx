@@ -62,6 +62,11 @@ const nav = [
         icon: Mountain,
       },
       {
+        href: "/orbit/dashboard/website/annapurna-base-camp-trek",
+        label: "ABC Trek 15 Days",
+        icon: Mountain,
+      },
+      {
         href: "/orbit/dashboard/website/everest-base-camp",
         label: "Everest Base Camp",
         icon: Mountain,
