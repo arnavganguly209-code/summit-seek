@@ -6,6 +6,8 @@ type Props = {
   heading: string;
   description: string;
   eyebrow?: string;
+  /** Number of columns on xl screens — default 4 */
+  columns?: 3 | 4;
 };
 
 export function CategoryPackagesGrid({
@@ -13,8 +15,13 @@ export function CategoryPackagesGrid({
   heading,
   description,
   eyebrow = "Summit Seek",
+  columns = 4,
 }: Props) {
   const list = packages.filter((p) => p.visible !== false);
+  const gridCols =
+    columns === 3
+      ? "xl:grid-cols-3"
+      : "xl:grid-cols-4";
 
   return (
     <div className="min-h-[70vh] bg-[#f7f8fb]">
@@ -36,7 +43,9 @@ export function CategoryPackagesGrid({
         className="mx-auto w-full max-w-[1320px] px-4 py-8 sm:px-6 sm:py-10 lg:px-8 lg:py-12"
         aria-label={`${heading} packages`}
       >
-        <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 sm:gap-6 xl:grid-cols-4">
+        <div
+          className={`grid grid-cols-1 gap-5 sm:grid-cols-2 sm:gap-6 ${gridCols}`}
+        >
           {list.map((pkg) => (
             <FeaturedPackageCard key={pkg.id} pkg={pkg} />
           ))}
