@@ -35,6 +35,11 @@ import { DEFAULT_ABOUT_INTRO } from "@/lib/orbit/about-intro-defaults";
 import { DEFAULT_BEST_SELLING } from "@/lib/orbit/best-selling-defaults";
 import { DEFAULT_WHAT_WE_OFFER } from "@/lib/orbit/what-we-offer-defaults";
 import { DEFAULT_UPCOMING_TRIPS } from "@/lib/orbit/upcoming-trips-defaults";
+import { normalizePackageHref } from "@/lib/orbit/package-hrefs";
+import {
+  normalizeUpcomingTripsContent,
+  upcomingTripsChanged,
+} from "@/lib/orbit/sanitize-upcoming-trips";
 import { DEFAULT_TRAVELER_REVIEWS } from "@/lib/orbit/traveler-reviews-defaults";
 import { DEFAULT_TRAVEL_ARTICLES } from "@/lib/orbit/travel-articles-defaults";
 import { DEFAULT_FOOTER } from "@/lib/orbit/footer-defaults";
@@ -493,6 +498,9 @@ function mergeUpcomingTrips(
                     ...fallbackTrip,
                     ...trip,
                     id: trip.id || `trip-${mi}-${ti}`,
+                    bookHref: normalizePackageHref(
+                      trip.bookHref?.trim() || fallbackTrip.bookHref,
+                    ),
                     price: Number(trip.price) || 0,
                     compareAtPrice:
                       trip.compareAtPrice === null || trip.compareAtPrice === undefined
@@ -527,12 +535,19 @@ function mergeUpcomingTrips(
 }
 
 export async function getUpcomingTrips(): Promise<UpcomingTripsContent> {
+  let content: UpcomingTripsContent;
   try {
     const raw = await dbReadFile(UPCOMING_TRIPS_FILE);
-    return mergeUpcomingTrips(JSON.parse(raw) as Partial<UpcomingTripsContent>);
+    content = mergeUpcomingTrips(JSON.parse(raw) as Partial<UpcomingTripsContent>);
   } catch {
-    return DEFAULT_UPCOMING_TRIPS;
+    content = DEFAULT_UPCOMING_TRIPS;
   }
+
+  const normalized = normalizeUpcomingTripsContent(content);
+  if (upcomingTripsChanged(content, normalized)) {
+    await saveUpcomingTrips(normalized);
+  }
+  return normalized;
 }
 
 export async function saveUpcomingTrips(content: UpcomingTripsContent): Promise<void> {

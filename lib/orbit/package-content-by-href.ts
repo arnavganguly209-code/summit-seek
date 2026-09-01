@@ -126,6 +126,10 @@ export function parseDurationDays(label: string, fallback: number): number {
   return match ? Number(match[1]) : fallback;
 }
 
+export function isLinkablePackageHref(href: string): boolean {
+  return Boolean(LOADERS[normalizePackageHref(href)]);
+}
+
 export async function getPackageContentByHref(
   href: string,
 ): Promise<TrekPageContent | null> {

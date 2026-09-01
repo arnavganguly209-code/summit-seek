@@ -7,3 +7,23 @@
 
 [[plugins]]
   package = "@netlify/plugin-nextjs"
+
+[[redirects]]
+  from = "/packages/ghorepani-poon-hill-trek"
+  to = "/treks/poon-hill"
+  status = 301
+
+[[redirects]]
+  from = "/packages/upper-mustang-trek"
+  to = "/treks/upper-mustang"
+  status = 301
+
+[[redirects]]
+  from = "/packages/guerrilla-trek"
+  to = "/treks/arun-valley"
+  status = 301
+
+[[redirects]]
+  from = "/packages/renjo-la-gokyo-heli"
+  to = "/treks/gokyo-lakes"
+  status = 301

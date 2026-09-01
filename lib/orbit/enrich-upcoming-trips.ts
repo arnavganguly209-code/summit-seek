@@ -9,10 +9,10 @@ import {
 function mergeTripWithPackage(
   trip: UpcomingTrip,
   byHref: Record<string, TrekPageContent>,
-): UpcomingTrip {
+): UpcomingTrip | null {
   const normalized = normalizePackageHref(trip.bookHref || "");
   const pkg = byHref[normalized];
-  if (!pkg) return trip;
+  if (!pkg) return null;
 
   return {
     ...trip,
@@ -36,7 +36,9 @@ export async function enrichUpcomingTrips(
     ...content,
     months: content.months.map((month) => ({
       ...month,
-      trips: month.trips.map((trip) => mergeTripWithPackage(trip, byHref)),
+      trips: month.trips
+        .map((trip) => mergeTripWithPackage(trip, byHref))
+        .filter((trip): trip is UpcomingTrip => trip !== null && trip.visible !== false),
     })),
   };
 }

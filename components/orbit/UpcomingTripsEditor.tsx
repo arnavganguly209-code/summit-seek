@@ -21,15 +21,15 @@ type Props = {
 function newTrip(): UpcomingTrip {
   return {
     id: `trip-${Date.now().toString(36)}`,
-    title: "New Trek",
-    durationDays: 10,
+    title: "Select a package",
+    durationDays: 1,
     startsLabel: "Oct 01, 2026",
     endsLabel: "Oct 10, 2026",
     status: "Available",
     badgeLabel: "4 seat",
-    price: 999,
-    compareAtPrice: 1200,
-    bookHref: "/packages",
+    price: 0,
+    compareAtPrice: null,
+    bookHref: "",
     visible: true,
   };
 }
@@ -126,6 +126,15 @@ export function UpcomingTripsEditor({ initial, packages }: Props) {
     setError("");
     setToast("");
     try {
+      for (const month of content.months) {
+        for (const trip of month.trips) {
+          if (!trip.bookHref || !normalizePackageHref(trip.bookHref)) {
+            setError(`Trip "${trip.title}" in ${month.label} needs a linked package.`);
+            setSaving(false);
+            return;
+          }
+        }
+      }
       const res = await fetch("/api/orbit/upcoming-trips", {
         method: "PUT",
         headers: { "Content-Type": "application/json" },

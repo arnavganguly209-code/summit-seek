@@ -1,6 +1,11 @@
 import { NextResponse } from "next/server";
 import { isOrbitAuthenticated } from "@/lib/orbit/auth";
+import {
+  isLinkablePackageHref,
+  normalizePackageHref,
+} from "@/lib/orbit/package-content-by-href";
 import { getUpcomingTrips, saveUpcomingTrips } from "@/lib/orbit/store";
+import { normalizeUpcomingTripsContent } from "@/lib/orbit/sanitize-upcoming-trips";
 import type { UpcomingTripsContent } from "@/types/upcoming-trips";
 
 export const dynamic = "force-dynamic";
@@ -14,7 +19,9 @@ export async function PUT(req: Request) {
     return NextResponse.json({ ok: false, error: "Unauthorized" }, { status: 401 });
   }
   try {
-    const body = (await req.json()) as UpcomingTripsContent;
+    const body = normalizeUpcomingTripsContent(
+      (await req.json()) as UpcomingTripsContent,
+    );
     if (!body.heading?.trim()) {
       return NextResponse.json({ ok: false, error: "Heading is required." }, { status: 400 });
     }
@@ -26,6 +33,7 @@ export async function PUT(req: Request) {
         return NextResponse.json({ ok: false, error: "Each month needs a label." }, { status: 400 });
       }
       for (const trip of month.trips || []) {
+        trip.bookHref = normalizePackageHref(trip.bookHref || "");
         trip.price = Number(trip.price) || 0;
         trip.durationDays = Number(trip.durationDays) || 1;
         if (trip.compareAtPrice != null) {
@@ -34,6 +42,15 @@ export async function PUT(req: Request) {
         if (!trip.title?.trim()) {
           return NextResponse.json(
             { ok: false, error: "Every trip needs a title." },
+            { status: 400 },
+          );
+        }
+        if (!trip.bookHref || !isLinkablePackageHref(trip.bookHref)) {
+          return NextResponse.json(
+            {
+              ok: false,
+              error: `Trip "${trip.title}" must link to a live package page.`,
+            },
             { status: 400 },
           );
         }
