@@ -137,6 +137,11 @@ const nav = [
         icon: Mountain,
       },
       {
+        href: "/orbit/dashboard/website/manaslu-circuit-trek",
+        label: "Manaslu Circuit 14 Days",
+        icon: Mountain,
+      },
+      {
         href: "/orbit/dashboard/website/manaslu-tsum",
         label: "Manaslu Tsum Valley",
         icon: Mountain,
