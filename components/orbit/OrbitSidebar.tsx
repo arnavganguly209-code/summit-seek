@@ -207,6 +207,26 @@ const nav = [
         icon: Mountain,
       },
       {
+        href: "/orbit/dashboard/website/chitwan-jungle-safari",
+        label: "Chitwan Jungle Safari",
+        icon: Mountain,
+      },
+      {
+        href: "/orbit/dashboard/website/chitwan-wildlife-lodge-safari",
+        label: "Chitwan Lodge Safari",
+        icon: Mountain,
+      },
+      {
+        href: "/orbit/dashboard/website/bardiya-jungle-safari",
+        label: "Bardiya Jungle Safari",
+        icon: Mountain,
+      },
+      {
+        href: "/orbit/dashboard/website/koshi-tappu-safari",
+        label: "Koshi Tappu Safari",
+        icon: Mountain,
+      },
+      {
         href: "/orbit/dashboard/website/upper-dolpo",
         label: "Upper Dolpo Trek",
         icon: Mountain,
@@ -339,6 +359,11 @@ const nav = [
       {
         href: "/orbit/dashboard/website/makalu-region",
         label: "Makalu Region",
+        icon: Mountain,
+      },
+      {
+        href: "/orbit/dashboard/website/hidden-himalayas",
+        label: "Wildlife & Hidden Himalayas",
         icon: Mountain,
       },
       { href: "/orbit/dashboard/website/best-selling", label: "Best Selling Packages", icon: Package },

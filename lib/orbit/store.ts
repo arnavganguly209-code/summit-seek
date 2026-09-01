@@ -121,6 +121,13 @@ import { DEFAULT_MUSTANG_REGION } from "@/lib/orbit/mustang-region-defaults";
 import { DEFAULT_DOLPO_REGION } from "@/lib/orbit/dolpo-region-defaults";
 import { DEFAULT_KANCHENJUNGA_REGION } from "@/lib/orbit/kanchenjunga-region-defaults";
 import { DEFAULT_MAKALU_REGION } from "@/lib/orbit/makalu-region-defaults";
+import { DEFAULT_HIDDEN_HIMALAYAS_REGION } from "@/lib/orbit/hidden-himalayas-region-defaults";
+import {
+  DEFAULT_BARDIYA_JUNGLE_SAFARI,
+  DEFAULT_CHITWAN_JUNGLE_SAFARI,
+  DEFAULT_CHITWAN_WILDLIFE_LODGE_SAFARI,
+  DEFAULT_KOSHI_TAPPU_SAFARI,
+} from "@/lib/orbit/wildlife-safari-tours";
 
 const DATA_DIR = path.join(process.cwd(), "data");
 const HERO_FILE = path.join(DATA_DIR, "hero.json");
@@ -231,6 +238,14 @@ const MUSTANG_REGION_FILE = path.join(DATA_DIR, "mustang-region.json");
 const DOLPO_REGION_FILE = path.join(DATA_DIR, "dolpo-region.json");
 const KANCHENJUNGA_REGION_FILE = path.join(DATA_DIR, "kanchenjunga-region.json");
 const MAKALU_REGION_FILE = path.join(DATA_DIR, "makalu-region.json");
+const HIDDEN_HIMALAYAS_REGION_FILE = path.join(DATA_DIR, "hidden-himalayas-region.json");
+const CHITWAN_JUNGLE_SAFARI_FILE = path.join(DATA_DIR, "chitwan-jungle-safari.json");
+const BARDIYA_JUNGLE_SAFARI_FILE = path.join(DATA_DIR, "bardiya-jungle-safari.json");
+const KOSHI_TAPPU_SAFARI_FILE = path.join(DATA_DIR, "koshi-tappu-safari.json");
+const CHITWAN_WILDLIFE_LODGE_SAFARI_FILE = path.join(
+  DATA_DIR,
+  "chitwan-wildlife-lodge-safari.json",
+);
 const MEDIA_FILE = path.join(DATA_DIR, "media-library.json");
 
 /** Durable upload root — survives `git reset --hard` (unlike public/). */
@@ -2940,6 +2955,104 @@ export async function saveMakaluRegionContent(
 ): Promise<void> {
   await ensureDataDir();
   await dbWriteFile(MAKALU_REGION_FILE, JSON.stringify(content, null, 2));
+}
+
+export async function getHiddenHimalayasRegionContent(): Promise<DestinationRegionContent> {
+  try {
+    const raw = await dbReadFile(HIDDEN_HIMALAYAS_REGION_FILE);
+    return mergeDestinationRegion(
+      JSON.parse(raw) as Partial<DestinationRegionContent>,
+      DEFAULT_HIDDEN_HIMALAYAS_REGION,
+    );
+  } catch {
+    return DEFAULT_HIDDEN_HIMALAYAS_REGION;
+  }
+}
+
+export async function saveHiddenHimalayasRegionContent(
+  content: DestinationRegionContent,
+): Promise<void> {
+  await ensureDataDir();
+  await dbWriteFile(HIDDEN_HIMALAYAS_REGION_FILE, JSON.stringify(content, null, 2));
+}
+
+export async function getChitwanJungleSafariContent(): Promise<TrekPageContent> {
+  try {
+    const raw = await dbReadFile(CHITWAN_JUNGLE_SAFARI_FILE);
+    return mergeTrekPage(
+      JSON.parse(raw) as Partial<TrekPageContent>,
+      DEFAULT_CHITWAN_JUNGLE_SAFARI,
+    );
+  } catch {
+    return DEFAULT_CHITWAN_JUNGLE_SAFARI;
+  }
+}
+
+export async function saveChitwanJungleSafariContent(
+  content: TrekPageContent,
+): Promise<void> {
+  await ensureDataDir();
+  await dbWriteFile(CHITWAN_JUNGLE_SAFARI_FILE, JSON.stringify(content, null, 2));
+}
+
+export async function getBardiyaJungleSafariContent(): Promise<TrekPageContent> {
+  try {
+    const raw = await dbReadFile(BARDIYA_JUNGLE_SAFARI_FILE);
+    return mergeTrekPage(
+      JSON.parse(raw) as Partial<TrekPageContent>,
+      DEFAULT_BARDIYA_JUNGLE_SAFARI,
+    );
+  } catch {
+    return DEFAULT_BARDIYA_JUNGLE_SAFARI;
+  }
+}
+
+export async function saveBardiyaJungleSafariContent(
+  content: TrekPageContent,
+): Promise<void> {
+  await ensureDataDir();
+  await dbWriteFile(BARDIYA_JUNGLE_SAFARI_FILE, JSON.stringify(content, null, 2));
+}
+
+export async function getKoshiTappuSafariContent(): Promise<TrekPageContent> {
+  try {
+    const raw = await dbReadFile(KOSHI_TAPPU_SAFARI_FILE);
+    return mergeTrekPage(
+      JSON.parse(raw) as Partial<TrekPageContent>,
+      DEFAULT_KOSHI_TAPPU_SAFARI,
+    );
+  } catch {
+    return DEFAULT_KOSHI_TAPPU_SAFARI;
+  }
+}
+
+export async function saveKoshiTappuSafariContent(
+  content: TrekPageContent,
+): Promise<void> {
+  await ensureDataDir();
+  await dbWriteFile(KOSHI_TAPPU_SAFARI_FILE, JSON.stringify(content, null, 2));
+}
+
+export async function getChitwanWildlifeLodgeSafariContent(): Promise<TrekPageContent> {
+  try {
+    const raw = await dbReadFile(CHITWAN_WILDLIFE_LODGE_SAFARI_FILE);
+    return mergeTrekPage(
+      JSON.parse(raw) as Partial<TrekPageContent>,
+      DEFAULT_CHITWAN_WILDLIFE_LODGE_SAFARI,
+    );
+  } catch {
+    return DEFAULT_CHITWAN_WILDLIFE_LODGE_SAFARI;
+  }
+}
+
+export async function saveChitwanWildlifeLodgeSafariContent(
+  content: TrekPageContent,
+): Promise<void> {
+  await ensureDataDir();
+  await dbWriteFile(
+    CHITWAN_WILDLIFE_LODGE_SAFARI_FILE,
+    JSON.stringify(content, null, 2),
+  );
 }
 
 const LIBRARY_EXT_MIME: Record<string, string> = {

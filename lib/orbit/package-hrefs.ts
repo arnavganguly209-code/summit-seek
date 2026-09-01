@@ -63,6 +63,10 @@ export const LINKABLE_PACKAGE_OPTIONS: LinkablePackageOption[] = [
   { href: "/tours/mustang-heli-vip", label: "VIP Mustang Helicopter Tour", group: "Tours" },
   { href: "/tours/mustang-jeep", label: "Mustang Jeep Tour", group: "Tours" },
   { href: "/tours/shivapuri-yoga-hike", label: "Shivapuri Yoga Hike", group: "Tours" },
+  { href: "/tours/chitwan-jungle-safari", label: "Chitwan Jungle Safari", group: "Tours" },
+  { href: "/tours/chitwan-wildlife-lodge-safari", label: "Chitwan Wildlife Lodge Safari", group: "Tours" },
+  { href: "/tours/bardiya-jungle-safari", label: "Bardiya Jungle Safari", group: "Tours" },
+  { href: "/tours/koshi-tappu-safari", label: "Koshi Tappu Safari", group: "Tours" },
 ];
 
 export function normalizePackageHref(href: string): string {

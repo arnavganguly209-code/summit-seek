@@ -1,0 +1,32 @@
+import { NextResponse } from "next/server";
+import { isOrbitAuthenticated } from "@/lib/orbit/auth";
+import {
+  getHiddenHimalayasRegionContent,
+  saveHiddenHimalayasRegionContent,
+} from "@/lib/orbit/store";
+import type { DestinationRegionContent } from "@/types/destination-region-cms";
+
+export const dynamic = "force-dynamic";
+
+export async function GET() {
+  return NextResponse.json(await getHiddenHimalayasRegionContent());
+}
+
+export async function PUT(req: Request) {
+  if (!(await isOrbitAuthenticated())) {
+    return NextResponse.json({ ok: false, error: "Unauthorized" }, { status: 401 });
+  }
+  try {
+    const body = (await req.json()) as DestinationRegionContent;
+    if (!body.heading?.trim()) {
+      return NextResponse.json({ ok: false, error: "Heading is required." }, { status: 400 });
+    }
+    await saveHiddenHimalayasRegionContent(body);
+    return NextResponse.json({ ok: true, content: body });
+  } catch {
+    return NextResponse.json(
+      { ok: false, error: "Failed to save Hidden Himalayas region page." },
+      { status: 500 },
+    );
+  }
+}
