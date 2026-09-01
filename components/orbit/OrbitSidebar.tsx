@@ -367,6 +367,7 @@ const nav = [
         icon: Mountain,
       },
       { href: "/orbit/dashboard/website/best-selling", label: "Best Selling Packages", icon: Package },
+      { href: "/orbit/dashboard/website/day-tours", label: "Day Tours Listing", icon: BriefcaseBusiness },
       { href: "/orbit/dashboard/website/services", label: "What We Offer", icon: BriefcaseBusiness },
       {
         href: "/orbit/dashboard/website/upcoming-trips",

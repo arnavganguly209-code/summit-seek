@@ -28,6 +28,7 @@ import type { HealthSafetyContent } from "@/types/health-safety-cms";
 import type { MoneyCurrencyContent } from "@/types/money-currency-cms";
 import type { PackingChecklistContent } from "@/types/packing-checklist-cms";
 import type { TrekPageContent } from "@/types/trek-page-cms";
+import type { DayToursListingContent } from "@/types/day-tours-listing";
 import type { DestinationRegionContent } from "@/types/destination-region-cms";
 import { DEFAULT_HERO } from "@/lib/orbit/defaults";
 import { DEFAULT_FEATURED_PACKAGES } from "@/lib/orbit/featured-packages-defaults";
@@ -121,6 +122,7 @@ import { DEFAULT_MUSTANG_REGION } from "@/lib/orbit/mustang-region-defaults";
 import { DEFAULT_DOLPO_REGION } from "@/lib/orbit/dolpo-region-defaults";
 import { DEFAULT_KANCHENJUNGA_REGION } from "@/lib/orbit/kanchenjunga-region-defaults";
 import { DEFAULT_MAKALU_REGION } from "@/lib/orbit/makalu-region-defaults";
+import { DEFAULT_DAY_TOURS } from "@/lib/orbit/day-tours-defaults";
 import { DEFAULT_HIDDEN_HIMALAYAS_REGION } from "@/lib/orbit/hidden-himalayas-region-defaults";
 import {
   DEFAULT_BARDIYA_JUNGLE_SAFARI,
@@ -136,6 +138,7 @@ const ABOUT_INTRO_FILE = path.join(DATA_DIR, "about-intro.json");
 const BEST_SELLING_FILE = path.join(DATA_DIR, "best-selling-packages.json");
 const WHAT_WE_OFFER_FILE = path.join(DATA_DIR, "what-we-offer.json");
 const UPCOMING_TRIPS_FILE = path.join(DATA_DIR, "upcoming-trips.json");
+const DAY_TOURS_FILE = path.join(DATA_DIR, "day-tours.json");
 const TRAVELER_REVIEWS_FILE = path.join(DATA_DIR, "traveler-reviews.json");
 const TRAVEL_ARTICLES_FILE = path.join(DATA_DIR, "travel-articles.json");
 const FOOTER_FILE = path.join(DATA_DIR, "footer.json");
@@ -568,6 +571,50 @@ export async function getUpcomingTrips(): Promise<UpcomingTripsContent> {
 export async function saveUpcomingTrips(content: UpcomingTripsContent): Promise<void> {
   await ensureDataDir();
   await dbWriteFile(UPCOMING_TRIPS_FILE, JSON.stringify(content, null, 2));
+}
+
+function mergeDayToursListing(
+  stored: Partial<DayToursListingContent> | null,
+): DayToursListingContent {
+  if (!stored) return DEFAULT_DAY_TOURS;
+  const packages =
+    Array.isArray(stored.packages) && stored.packages.length > 0
+      ? stored.packages.map((pkg, i) => {
+          const fallback = DEFAULT_DAY_TOURS.packages[i] || DEFAULT_DAY_TOURS.packages[0];
+          return {
+            ...fallback,
+            ...pkg,
+            id: pkg.id || fallback.id,
+            href: normalizePackageHref(pkg.href?.trim() || fallback.href),
+            startLocation: pkg.startLocation?.trim() || fallback.startLocation,
+            reviewCount: Number(pkg.reviewCount) || 0,
+            visible: pkg.visible !== false,
+          };
+        })
+      : DEFAULT_DAY_TOURS.packages;
+
+  return {
+    eyebrow: stored.eyebrow?.trim() || DEFAULT_DAY_TOURS.eyebrow,
+    heading: stored.heading?.trim() || DEFAULT_DAY_TOURS.heading,
+    description: stored.description?.trim() || DEFAULT_DAY_TOURS.description,
+    metaTitle: stored.metaTitle?.trim() || DEFAULT_DAY_TOURS.metaTitle,
+    metaDescription: stored.metaDescription?.trim() || DEFAULT_DAY_TOURS.metaDescription,
+    packages,
+  };
+}
+
+export async function getDayToursListing(): Promise<DayToursListingContent> {
+  try {
+    const raw = await dbReadFile(DAY_TOURS_FILE);
+    return mergeDayToursListing(JSON.parse(raw) as Partial<DayToursListingContent>);
+  } catch {
+    return DEFAULT_DAY_TOURS;
+  }
+}
+
+export async function saveDayToursListing(content: DayToursListingContent): Promise<void> {
+  await ensureDataDir();
+  await dbWriteFile(DAY_TOURS_FILE, JSON.stringify(content, null, 2));
 }
 
 function mergeTravelerReviews(
