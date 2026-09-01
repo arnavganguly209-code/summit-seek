@@ -102,6 +102,11 @@ const nav = [
         icon: Mountain,
       },
       {
+        href: "/orbit/dashboard/website/annapurna-circuit-trek",
+        label: "Annapurna Circuit 15 Days",
+        icon: Mountain,
+      },
+      {
         href: "/orbit/dashboard/website/langtang-valley",
         label: "Langtang Valley Trek",
         icon: Mountain,
