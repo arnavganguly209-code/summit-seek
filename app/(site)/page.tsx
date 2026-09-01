@@ -18,6 +18,7 @@ import {
   getUpcomingTrips,
   getWhatWeOffer,
 } from "@/lib/orbit/store";
+import { enrichUpcomingTrips } from "@/lib/orbit/enrich-upcoming-trips";
 
 export const dynamic = "force-dynamic";
 
@@ -46,7 +47,7 @@ export default async function HomePage() {
     getAboutIntro(),
     getBestSellingPackages(),
     getWhatWeOffer(),
-    getUpcomingTrips(),
+    getUpcomingTrips().then(enrichUpcomingTrips),
     getTravelerReviews(),
     getTravelArticles(),
   ]);

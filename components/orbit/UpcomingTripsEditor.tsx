@@ -8,8 +8,15 @@ import type {
   UpcomingTrip,
   UpcomingTripsContent,
 } from "@/types/upcoming-trips";
+import {
+  normalizePackageHref,
+  type LinkablePackageOption,
+} from "@/lib/orbit/package-hrefs";
 
-type Props = { initial: UpcomingTripsContent };
+type Props = {
+  initial: UpcomingTripsContent;
+  packages: LinkablePackageOption[];
+};
 
 function newTrip(): UpcomingTrip {
   return {
@@ -35,11 +42,12 @@ function newMonth(): UpcomingMonthTab {
   };
 }
 
-export function UpcomingTripsEditor({ initial }: Props) {
+export function UpcomingTripsEditor({ initial, packages }: Props) {
   const router = useRouter();
   const [content, setContent] = useState(initial);
   const [activeMonth, setActiveMonth] = useState(initial.months[0]?.id || "");
   const [saving, setSaving] = useState(false);
+  const [resolvingTripId, setResolvingTripId] = useState<string | null>(null);
   const [toast, setToast] = useState("");
   const [error, setError] = useState("");
 
@@ -76,6 +84,43 @@ export function UpcomingTripsEditor({ initial }: Props) {
     }));
   };
 
+  const pickPackage = async (monthId: string, tripId: string, href: string) => {
+    if (!href) return;
+    setResolvingTripId(tripId);
+    setError("");
+    try {
+      const res = await fetch(
+        `/api/orbit/resolve-package?href=${encodeURIComponent(href)}`,
+      );
+      const data = (await res.json()) as {
+        ok?: boolean;
+        href?: string;
+        title?: string;
+        durationDays?: number;
+        price?: number;
+        compareAtPrice?: number | null;
+        error?: string;
+      };
+      if (!res.ok || !data.ok || !data.href) {
+        updateTrip(monthId, tripId, { bookHref: normalizePackageHref(href) });
+        setError(data.error || "Could not load package details.");
+        setResolvingTripId(null);
+        return;
+      }
+      updateTrip(monthId, tripId, {
+        bookHref: data.href,
+        title: data.title || "",
+        durationDays: data.durationDays || 1,
+        price: data.price || 0,
+        compareAtPrice: data.compareAtPrice ?? null,
+      });
+    } catch {
+      updateTrip(monthId, tripId, { bookHref: normalizePackageHref(href) });
+      setError("Network error while loading package.");
+    }
+    setResolvingTripId(null);
+  };
+
   const save = async () => {
     setSaving(true);
     setError("");
@@ -110,7 +155,8 @@ export function UpcomingTripsEditor({ initial }: Props) {
           </p>
           <h1 className="mt-1 text-2xl font-bold text-white">Upcoming Trips</h1>
           <p className="mt-1.5 max-w-xl text-[14px] text-white/55">
-            Edit month tabs, trip lists, prices, seats, note text, and Book Now links.
+            Add month tabs, pick linked packages, set departure dates, seats, and status.
+            Title and price sync from the package page on the live site.
           </p>
         </div>
         <button
@@ -260,8 +306,19 @@ export function UpcomingTripsEditor({ initial }: Props) {
                   </button>
                 </div>
               </div>
+              <PackageSelect
+                label="Linked package"
+                packages={packages}
+                value={normalizePackageHref(trip.bookHref)}
+                loading={resolvingTripId === trip.id}
+                onChange={(href) => void pickPackage(month.id, trip.id, href)}
+              />
+              <p className="text-[12px] text-white/45">
+                Live site shows title, days, and price from{" "}
+                <span className="font-mono text-white/60">{trip.bookHref || "—"}</span>
+              </p>
               <Field
-                label="Title"
+                label="Title (fallback)"
                 value={trip.title}
                 onChange={(v) => updateTrip(month.id, trip.id, { title: v })}
               />
@@ -283,13 +340,8 @@ export function UpcomingTripsEditor({ initial }: Props) {
                   value={trip.badgeLabel}
                   onChange={(v) => updateTrip(month.id, trip.id, { badgeLabel: v })}
                 />
-                <Field
-                  label="Book link"
-                  value={trip.bookHref}
-                  onChange={(v) => updateTrip(month.id, trip.id, { bookHref: v })}
-                />
               </div>
-              <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
+              <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
                 <Field
                   label="Starts"
                   value={trip.startsLabel}
@@ -301,14 +353,14 @@ export function UpcomingTripsEditor({ initial }: Props) {
                   onChange={(v) => updateTrip(month.id, trip.id, { endsLabel: v })}
                 />
                 <Field
-                  label="Price"
+                  label="Price (fallback)"
                   value={String(trip.price)}
                   onChange={(v) =>
                     updateTrip(month.id, trip.id, { price: Number(v) || 0 })
                   }
                 />
                 <Field
-                  label="Compare at"
+                  label="Compare at (fallback)"
                   value={
                     trip.compareAtPrice == null ? "" : String(trip.compareAtPrice)
                   }
@@ -324,6 +376,56 @@ export function UpcomingTripsEditor({ initial }: Props) {
         </div>
       ) : null}
     </div>
+  );
+}
+
+function PackageSelect({
+  label,
+  packages,
+  value,
+  loading,
+  onChange,
+}: {
+  label: string;
+  packages: LinkablePackageOption[];
+  value: string;
+  loading?: boolean;
+  onChange: (href: string) => void;
+}) {
+  const groups = ["Packages", "Treks", "Tours"] as const;
+
+  return (
+    <label className="block">
+      <span className="mb-1 block text-[11px] font-semibold uppercase tracking-[0.1em] text-white/40">
+        {label}
+      </span>
+      <div className="relative">
+        <select
+          value={value}
+          onChange={(e) => onChange(e.target.value)}
+          disabled={loading}
+          className="h-10 w-full appearance-none rounded-md border border-white/10 bg-black/30 px-3 pr-10 text-[13px] text-white outline-none focus:border-[#F58220]/50 disabled:opacity-60"
+        >
+          <option value="">Select package…</option>
+          {groups.map((group) => {
+            const items = packages.filter((pkg) => pkg.group === group);
+            if (!items.length) return null;
+            return (
+              <optgroup key={group} label={group}>
+                {items.map((pkg) => (
+                  <option key={pkg.href} value={pkg.href}>
+                    {pkg.label}
+                  </option>
+                ))}
+              </optgroup>
+            );
+          })}
+        </select>
+        {loading ? (
+          <Loader2 className="pointer-events-none absolute right-3 top-1/2 size-4 -translate-y-1/2 animate-spin text-[#F58220]" />
+        ) : null}
+      </div>
+    </label>
   );
 }
 

@@ -51,7 +51,7 @@ export const DEFAULT_UPCOMING_TRIPS: UpcomingTripsContent = {
           badgeLabel: "4 seat",
           price: 1850,
           compareAtPrice: 2150,
-          bookHref: "/packages/upper-mustang-trek",
+          bookHref: "/treks/upper-mustang",
           visible: true,
         },
         {
@@ -64,7 +64,7 @@ export const DEFAULT_UPCOMING_TRIPS: UpcomingTripsContent = {
           badgeLabel: "8 seat",
           price: 615,
           compareAtPrice: 750,
-          bookHref: "/packages/ghorepani-poon-hill-trek",
+          bookHref: "/treks/poon-hill",
           visible: true,
         },
         {
@@ -109,7 +109,7 @@ export const DEFAULT_UPCOMING_TRIPS: UpcomingTripsContent = {
           badgeLabel: "6 seat",
           price: 1785,
           compareAtPrice: 2000,
-          bookHref: "/packages/guerrilla-trek",
+          bookHref: "/treks/arun-valley",
           visible: true,
         },
         {
@@ -119,7 +119,7 @@ export const DEFAULT_UPCOMING_TRIPS: UpcomingTripsContent = {
           startsLabel: "Oct 10, 2026",
           endsLabel: "Oct 23, 2026",
           status: "Available",
-          badgeLabel: "18 days",
+          badgeLabel: "6 seat",
           price: 1090,
           compareAtPrice: 1350,
           bookHref: "/packages/annapurna-circuit-trek",
@@ -174,7 +174,7 @@ export const DEFAULT_UPCOMING_TRIPS: UpcomingTripsContent = {
           badgeLabel: "3 seat",
           price: 1850,
           compareAtPrice: 2150,
-          bookHref: "/packages/upper-mustang-trek",
+          bookHref: "/treks/upper-mustang",
           visible: true,
         },
       ],
@@ -193,7 +193,7 @@ export const DEFAULT_UPCOMING_TRIPS: UpcomingTripsContent = {
           badgeLabel: "2 seat",
           price: 2530,
           compareAtPrice: 2750,
-          bookHref: "/packages/renjo-la-gokyo-heli",
+          bookHref: "/treks/gokyo-lakes",
           visible: true,
         },
         {
@@ -245,7 +245,7 @@ export const DEFAULT_UPCOMING_TRIPS: UpcomingTripsContent = {
           badgeLabel: "9 seat",
           price: 615,
           compareAtPrice: 750,
-          bookHref: "/packages/ghorepani-poon-hill-trek",
+          bookHref: "/treks/poon-hill",
           visible: true,
         },
         {
