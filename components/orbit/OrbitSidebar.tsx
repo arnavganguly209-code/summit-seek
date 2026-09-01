@@ -112,6 +112,11 @@ const nav = [
         icon: Mountain,
       },
       {
+        href: "/orbit/dashboard/website/langtang-valley-trek",
+        label: "Langtang Valley 9 Days",
+        icon: Mountain,
+      },
+      {
         href: "/orbit/dashboard/website/gosainkunda",
         label: "Gosainkunda Trek",
         icon: Mountain,
