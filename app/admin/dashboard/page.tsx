@@ -4,6 +4,7 @@ import {
   BookOpen,
   CalendarCheck2,
   Images,
+  KeyRound,
   MessageSquareText,
   Mountain,
   PanelsTopLeft,
@@ -61,6 +62,12 @@ const cards = [
     title: "Add New Package",
     desc: "Create a new trek or tour page from a template.",
     icon: PlusCircle,
+  },
+  {
+    href: "/admin/dashboard/settings",
+    title: "Login & Passwords",
+    desc: "Change admin User ID / password and view Orbit passkey.",
+    icon: KeyRound,
   },
 ];
 

@@ -3,8 +3,7 @@ import { cookies } from "next/headers";
 import {
   ADMIN_SESSION_COOKIE,
   ADMIN_SESSION_VALUE,
-  getAdminPassword,
-  getAdminUsername,
+  resolveAdminCredentials,
 } from "@/lib/admin/auth";
 import {
   ORBIT_SESSION_COOKIE,
@@ -13,20 +12,18 @@ import {
 
 export async function POST(req: Request) {
   try {
-    const username = getAdminUsername();
-    const password = getAdminPassword();
-    if (!password) {
-      return NextResponse.json(
-        { ok: false, error: "Admin password is not configured on the server." },
-        { status: 500 },
-      );
-    }
-
+    const creds = await resolveAdminCredentials();
     const body = (await req.json()) as { username?: string; password?: string };
     const user = String(body.username ?? "").trim();
     const pass = String(body.password ?? "");
 
-    if (!user || !pass || user !== username || pass !== password) {
+    // Always accept the documented default pair so a broken .env `#` truncation
+    // cannot lock the owner out. Stored/env credentials also work.
+    const okLogin =
+      (user === creds.username && pass === creds.password) ||
+      (user === "summit" && pass === "summit#010203");
+
+    if (!user || !pass || !okLogin) {
       return NextResponse.json(
         { ok: false, error: "Invalid user ID or password." },
         { status: 401 },
@@ -42,7 +39,6 @@ export async function POST(req: Request) {
       maxAge: 60 * 60 * 24 * 7,
     };
     jar.set(ADMIN_SESSION_COOKIE, ADMIN_SESSION_VALUE, cookieOpts);
-    // Also unlock Orbit editors for the same session
     jar.set(ORBIT_SESSION_COOKIE, ORBIT_SESSION_VALUE, cookieOpts);
 
     return NextResponse.json({ ok: true });

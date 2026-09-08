@@ -112,16 +112,14 @@ jobs:
             echo "Orbit .env.local ensured."
           fi
 
-          # Admin dashboard credentials (do not print values)
+          # Admin credentials — always rewrite quoted password (# breaks unquoted .env)
           touch .env.local
           if ! grep -q '^ADMIN_USERNAME=' .env.local 2>/dev/null; then
             echo 'ADMIN_USERNAME=summit' >> .env.local
-            echo "ADMIN_USERNAME ensured."
           fi
-          if ! grep -q '^ADMIN_PASSWORD=' .env.local 2>/dev/null; then
-            echo 'ADMIN_PASSWORD=summit#010203' >> .env.local
-            echo "ADMIN_PASSWORD ensured."
-          fi
+          sed -i '/^ADMIN_PASSWORD=/d' .env.local || true
+          echo 'ADMIN_PASSWORD="summit#010203"' >> .env.local
+          echo "ADMIN_PASSWORD refreshed (quoted for # safety)."
 
           # Durable media storage (NOT wiped by git reset)
           mkdir -p storage/media/library storage/media/.uploads data

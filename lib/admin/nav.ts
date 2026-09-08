@@ -42,6 +42,11 @@ export const ADMIN_NAV: AdminNavSection[] = [
         label: "Booking Requests",
         description: "Book This Trip submissions",
       },
+      {
+        href: "/admin/dashboard/settings",
+        label: "Login & Passwords",
+        description: "Change admin ID/password, view Orbit key",
+      },
     ],
   },
   {

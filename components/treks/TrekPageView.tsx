@@ -60,7 +60,7 @@ export function TrekPageView({ content }: { content: TrekPageContent }) {
   const [activeTab, setActiveTab] = useState<string>("overview");
   const [openDay, setOpenDay] = useState<string | null>(content.days[0]?.id ?? null);
   const [openFaq, setOpenFaq] = useState<string | null>(null);
-  const [groupOpen, setGroupOpen] = useState(true);
+  const [groupOpen, setGroupOpen] = useState(false);
 
   const facts = content.facts.filter((f) => f.visible !== false);
   const days = content.days.filter((d) => d.visible !== false);
@@ -72,15 +72,12 @@ export function TrekPageView({ content }: { content: TrekPageContent }) {
   const groupDiscounts = (content.groupDiscounts || []).filter((g) => g.visible !== false);
 
   const bookingHref = useMemo(() => {
-    const base = content.bookHref || "/contact";
-    if (!base.startsWith("/contact")) return base;
     const params = new URLSearchParams({
-      kind: "booking",
       package: pathname || "",
       title: content.title || "",
     });
-    return `/contact?${params.toString()}`;
-  }, [content.bookHref, content.title, pathname]);
+    return `/book?${params.toString()}`;
+  }, [content.title, pathname]);
 
   const enquireHref = useMemo(() => {
     const base = content.enquireHref || "/contact";
@@ -92,6 +89,17 @@ export function TrekPageView({ content }: { content: TrekPageContent }) {
     });
     return `/contact?${params.toString()}`;
   }, [content.enquireHref, content.title, pathname]);
+
+  const customizeHref = useMemo(() => {
+    const base = content.customizeHref || "/contact";
+    if (!base.startsWith("/contact")) return base;
+    const params = new URLSearchParams({
+      kind: "enquiry",
+      package: pathname || "",
+      title: content.title || "",
+    });
+    return `/contact?${params.toString()}`;
+  }, [content.customizeHref, content.title, pathname]);
 
   const heroMain = content.heroMainImageUrl || content.coverImageUrl;
   const heroSide1 = content.heroSideImage1Url;
@@ -174,6 +182,27 @@ export function TrekPageView({ content }: { content: TrekPageContent }) {
           {content.bookLabel || "Book This Trip"}
         </Link>
 
+        <div className="mt-2.5 space-y-2.5">
+          <Link
+            href={customizeHref}
+            className={cn(
+              ui,
+              "flex h-11 items-center justify-center rounded-lg bg-[#16a34a] text-[13px] font-extrabold uppercase tracking-[0.04em] text-white transition hover:bg-[#15803d]",
+            )}
+          >
+            {content.customizeLabel || "Customize Trip"}
+          </Link>
+          <Link
+            href={enquireHref}
+            className={cn(
+              ui,
+              "flex h-11 items-center justify-center rounded-lg border-2 border-[#1d4ed8] bg-white text-[13px] font-extrabold uppercase tracking-[0.04em] text-[#1d4ed8] transition hover:bg-[#eff6ff]",
+            )}
+          >
+            {content.enquireLabel || "Inquire Now"}
+          </Link>
+        </div>
+
         {groupDiscounts.length > 0 ? (
           <div className="mt-4 overflow-hidden rounded-xl border border-[#cfe0f5] bg-[#eef5fc]">
             <button
@@ -216,27 +245,6 @@ export function TrekPageView({ content }: { content: TrekPageContent }) {
             {content.bookingNote}
           </p>
         ) : null}
-
-        <div className="mt-4 space-y-2.5">
-          <Link
-            href={content.customizeHref || "/contact"}
-            className={cn(
-              ui,
-              "flex h-11 items-center justify-center rounded-lg bg-[#16a34a] text-[13px] font-extrabold uppercase tracking-[0.04em] text-white transition hover:bg-[#15803d]",
-            )}
-          >
-            {content.customizeLabel || "Customize Trip"}
-          </Link>
-          <Link
-            href={enquireHref}
-            className={cn(
-              ui,
-              "flex h-11 items-center justify-center rounded-lg border-2 border-[#1d4ed8] bg-white text-[13px] font-extrabold uppercase tracking-[0.04em] text-[#1d4ed8] transition hover:bg-[#eff6ff]",
-            )}
-          >
-            {content.enquireLabel}
-          </Link>
-        </div>
       </div>
     </aside>
   );

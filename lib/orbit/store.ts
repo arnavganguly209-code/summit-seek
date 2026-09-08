@@ -30,6 +30,7 @@ import type { PackingChecklistContent } from "@/types/packing-checklist-cms";
 import type { TrekPageContent } from "@/types/trek-page-cms";
 import type { DayToursListingContent } from "@/types/day-tours-listing";
 import type { EnquiriesContent } from "@/types/enquiries";
+import type { BookingsContent } from "@/types/bookings";
 import type { DestinationRegionContent } from "@/types/destination-region-cms";
 import { DEFAULT_HERO } from "@/lib/orbit/defaults";
 import { DEFAULT_FEATURED_PACKAGES } from "@/lib/orbit/featured-packages-defaults";
@@ -125,6 +126,7 @@ import { DEFAULT_KANCHENJUNGA_REGION } from "@/lib/orbit/kanchenjunga-region-def
 import { DEFAULT_MAKALU_REGION } from "@/lib/orbit/makalu-region-defaults";
 import { DEFAULT_DAY_TOURS } from "@/lib/orbit/day-tours-defaults";
 import { DEFAULT_ENQUIRIES, mergeEnquiries } from "@/lib/admin/enquiries";
+import { DEFAULT_BOOKINGS, mergeBookings } from "@/lib/admin/bookings";
 import { DEFAULT_HIDDEN_HIMALAYAS_REGION } from "@/lib/orbit/hidden-himalayas-region-defaults";
 import {
   DEFAULT_BARDIYA_JUNGLE_SAFARI,
@@ -142,6 +144,7 @@ const WHAT_WE_OFFER_FILE = path.join(DATA_DIR, "what-we-offer.json");
 const UPCOMING_TRIPS_FILE = path.join(DATA_DIR, "upcoming-trips.json");
 const DAY_TOURS_FILE = path.join(DATA_DIR, "day-tours.json");
 const ENQUIRIES_FILE = path.join(DATA_DIR, "enquiries.json");
+const BOOKINGS_FILE = path.join(DATA_DIR, "bookings.json");
 const TRAVELER_REVIEWS_FILE = path.join(DATA_DIR, "traveler-reviews.json");
 const TRAVEL_ARTICLES_FILE = path.join(DATA_DIR, "travel-articles.json");
 const FOOTER_FILE = path.join(DATA_DIR, "footer.json");
@@ -632,6 +635,20 @@ export async function getEnquiries(): Promise<EnquiriesContent> {
 export async function saveEnquiries(content: EnquiriesContent): Promise<void> {
   await ensureDataDir();
   await dbWriteFile(ENQUIRIES_FILE, JSON.stringify(content, null, 2));
+}
+
+export async function getBookings(): Promise<BookingsContent> {
+  try {
+    const raw = await dbReadFile(BOOKINGS_FILE);
+    return mergeBookings(JSON.parse(raw) as Partial<BookingsContent>);
+  } catch {
+    return DEFAULT_BOOKINGS;
+  }
+}
+
+export async function saveBookings(content: BookingsContent): Promise<void> {
+  await ensureDataDir();
+  await dbWriteFile(BOOKINGS_FILE, JSON.stringify(content, null, 2));
 }
 
 function mergeTravelerReviews(
