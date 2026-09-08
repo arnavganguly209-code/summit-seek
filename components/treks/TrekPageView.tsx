@@ -3,6 +3,7 @@
 import { useEffect, useMemo, useState, type ReactNode } from "react";
 import Image from "next/image";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import {
   CheckCircle2,
   ChevronDown,
@@ -55,6 +56,7 @@ function SectionTitle({ children }: { children: ReactNode }) {
 }
 
 export function TrekPageView({ content }: { content: TrekPageContent }) {
+  const pathname = usePathname();
   const [activeTab, setActiveTab] = useState<string>("overview");
   const [openDay, setOpenDay] = useState<string | null>(content.days[0]?.id ?? null);
   const [openFaq, setOpenFaq] = useState<string | null>(null);
@@ -68,6 +70,28 @@ export function TrekPageView({ content }: { content: TrekPageContent }) {
   const equip = content.equipmentGroups.filter((e) => e.visible !== false);
   const faqs = content.faqs.filter((f) => f.visible !== false);
   const groupDiscounts = (content.groupDiscounts || []).filter((g) => g.visible !== false);
+
+  const bookingHref = useMemo(() => {
+    const base = content.bookHref || "/contact";
+    if (!base.startsWith("/contact")) return base;
+    const params = new URLSearchParams({
+      kind: "booking",
+      package: pathname || "",
+      title: content.title || "",
+    });
+    return `/contact?${params.toString()}`;
+  }, [content.bookHref, content.title, pathname]);
+
+  const enquireHref = useMemo(() => {
+    const base = content.enquireHref || "/contact";
+    if (!base.startsWith("/contact")) return base;
+    const params = new URLSearchParams({
+      kind: "enquiry",
+      package: pathname || "",
+      title: content.title || "",
+    });
+    return `/contact?${params.toString()}`;
+  }, [content.enquireHref, content.title, pathname]);
 
   const heroMain = content.heroMainImageUrl || content.coverImageUrl;
   const heroSide1 = content.heroSideImage1Url;
@@ -140,6 +164,16 @@ export function TrekPageView({ content }: { content: TrekPageContent }) {
           ) : null}
         </p>
 
+        <Link
+          href={bookingHref}
+          className={cn(
+            ui,
+            "mt-4 flex h-14 items-center justify-center rounded-xl bg-[#1d4ed8] text-[14px] font-extrabold uppercase tracking-[0.06em] text-white shadow-[0_12px_28px_rgba(29,78,216,0.35)] transition hover:bg-[#1e40af] hover:shadow-[0_14px_32px_rgba(29,78,216,0.45)]",
+          )}
+        >
+          {content.bookLabel || "Book This Trip"}
+        </Link>
+
         {groupDiscounts.length > 0 ? (
           <div className="mt-4 overflow-hidden rounded-xl border border-[#cfe0f5] bg-[#eef5fc]">
             <button
@@ -183,16 +217,7 @@ export function TrekPageView({ content }: { content: TrekPageContent }) {
           </p>
         ) : null}
 
-        <div className="mt-5 space-y-2.5">
-          <Link
-            href={content.bookHref || "/contact"}
-            className={cn(
-              ui,
-              "flex h-12 items-center justify-center rounded-lg bg-[#1d4ed8] text-[13px] font-extrabold uppercase tracking-[0.04em] text-white transition hover:bg-[#1e40af]",
-            )}
-          >
-            {content.bookLabel}
-          </Link>
+        <div className="mt-4 space-y-2.5">
           <Link
             href={content.customizeHref || "/contact"}
             className={cn(
@@ -203,7 +228,7 @@ export function TrekPageView({ content }: { content: TrekPageContent }) {
             {content.customizeLabel || "Customize Trip"}
           </Link>
           <Link
-            href={content.enquireHref || "/contact"}
+            href={enquireHref}
             className={cn(
               ui,
               "flex h-11 items-center justify-center rounded-lg border-2 border-[#1d4ed8] bg-white text-[13px] font-extrabold uppercase tracking-[0.04em] text-[#1d4ed8] transition hover:bg-[#eff6ff]",
@@ -860,6 +885,30 @@ export function TrekPageView({ content }: { content: TrekPageContent }) {
           {BookingCard}
         </div>
       </div>
+
+      {/* Mobile sticky Book CTA — always visible while browsing the trip */}
+      <div className="fixed inset-x-0 bottom-0 z-40 border-t border-[#dce6f2] bg-white/95 p-3 shadow-[0_-12px_40px_rgba(8,18,30,0.12)] backdrop-blur-xl lg:hidden">
+        <div className="mx-auto flex max-w-lg items-center gap-3">
+          <div className="min-w-0 flex-1">
+            <p className={cn(ui, "truncate text-[12px] font-semibold text-[#6b7585]")}>
+              {content.perPersonLabel}
+            </p>
+            <p className={cn(ui, "text-[1.15rem] font-extrabold text-[#16a34a]")}>
+              {formatMoney(content.currencyPrefix, content.price)}
+            </p>
+          </div>
+          <Link
+            href={bookingHref}
+            className={cn(
+              ui,
+              "inline-flex h-12 shrink-0 items-center justify-center rounded-xl bg-[#1d4ed8] px-5 text-[13px] font-extrabold uppercase tracking-[0.05em] text-white shadow-[0_10px_24px_rgba(29,78,216,0.35)]",
+            )}
+          >
+            {content.bookLabel || "Book This Trip"}
+          </Link>
+        </div>
+      </div>
+      <div className="h-[76px] lg:hidden" aria-hidden />
     </div>
   );
 }

@@ -29,6 +29,7 @@ import type { MoneyCurrencyContent } from "@/types/money-currency-cms";
 import type { PackingChecklistContent } from "@/types/packing-checklist-cms";
 import type { TrekPageContent } from "@/types/trek-page-cms";
 import type { DayToursListingContent } from "@/types/day-tours-listing";
+import type { EnquiriesContent } from "@/types/enquiries";
 import type { DestinationRegionContent } from "@/types/destination-region-cms";
 import { DEFAULT_HERO } from "@/lib/orbit/defaults";
 import { DEFAULT_FEATURED_PACKAGES } from "@/lib/orbit/featured-packages-defaults";
@@ -123,6 +124,7 @@ import { DEFAULT_DOLPO_REGION } from "@/lib/orbit/dolpo-region-defaults";
 import { DEFAULT_KANCHENJUNGA_REGION } from "@/lib/orbit/kanchenjunga-region-defaults";
 import { DEFAULT_MAKALU_REGION } from "@/lib/orbit/makalu-region-defaults";
 import { DEFAULT_DAY_TOURS } from "@/lib/orbit/day-tours-defaults";
+import { DEFAULT_ENQUIRIES, mergeEnquiries } from "@/lib/admin/enquiries";
 import { DEFAULT_HIDDEN_HIMALAYAS_REGION } from "@/lib/orbit/hidden-himalayas-region-defaults";
 import {
   DEFAULT_BARDIYA_JUNGLE_SAFARI,
@@ -139,6 +141,7 @@ const BEST_SELLING_FILE = path.join(DATA_DIR, "best-selling-packages.json");
 const WHAT_WE_OFFER_FILE = path.join(DATA_DIR, "what-we-offer.json");
 const UPCOMING_TRIPS_FILE = path.join(DATA_DIR, "upcoming-trips.json");
 const DAY_TOURS_FILE = path.join(DATA_DIR, "day-tours.json");
+const ENQUIRIES_FILE = path.join(DATA_DIR, "enquiries.json");
 const TRAVELER_REVIEWS_FILE = path.join(DATA_DIR, "traveler-reviews.json");
 const TRAVEL_ARTICLES_FILE = path.join(DATA_DIR, "travel-articles.json");
 const FOOTER_FILE = path.join(DATA_DIR, "footer.json");
@@ -615,6 +618,20 @@ export async function getDayToursListing(): Promise<DayToursListingContent> {
 export async function saveDayToursListing(content: DayToursListingContent): Promise<void> {
   await ensureDataDir();
   await dbWriteFile(DAY_TOURS_FILE, JSON.stringify(content, null, 2));
+}
+
+export async function getEnquiries(): Promise<EnquiriesContent> {
+  try {
+    const raw = await dbReadFile(ENQUIRIES_FILE);
+    return mergeEnquiries(JSON.parse(raw) as Partial<EnquiriesContent>);
+  } catch {
+    return DEFAULT_ENQUIRIES;
+  }
+}
+
+export async function saveEnquiries(content: EnquiriesContent): Promise<void> {
+  await ensureDataDir();
+  await dbWriteFile(ENQUIRIES_FILE, JSON.stringify(content, null, 2));
 }
 
 function mergeTravelerReviews(

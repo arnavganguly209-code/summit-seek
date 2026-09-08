@@ -22,8 +22,14 @@ export async function generateMetadata(): Promise<Metadata> {
   };
 }
 
-export default async function ContactPage() {
+export default async function ContactPage({
+  searchParams,
+}: {
+  searchParams?: Promise<{ kind?: string; package?: string; title?: string }>;
+}) {
   const content = await getContactContent();
+  const params = (await searchParams) || {};
+  const initialKind = params.kind === "booking" ? "booking" : "enquiry";
 
   return (
     <>
@@ -32,7 +38,12 @@ export default async function ContactPage() {
         title={content.coverTitle}
         subtitle={content.coverSubtitle}
       />
-      <ContactPageClient content={content} />
+      <ContactPageClient
+        content={content}
+        initialKind={initialKind}
+        packageHref={params.package || ""}
+        packageTitle={params.title || ""}
+      />
     </>
   );
 }

@@ -26,30 +26,68 @@ const iconMap = {
 const frame =
   "rounded-2xl border border-[#e6ebf2] bg-white p-6 shadow-[0_10px_40px_rgba(8,18,30,0.06)] sm:p-8";
 
-export function ContactPageClient({ content }: { content: ContactPageContent }) {
+export function ContactPageClient({
+  content,
+  initialKind = "enquiry",
+  packageHref = "",
+  packageTitle = "",
+}: {
+  content: ContactPageContent;
+  initialKind?: "enquiry" | "booking";
+  packageHref?: string;
+  packageTitle?: string;
+}) {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [phone, setPhone] = useState("");
-  const [subject, setSubject] = useState("");
+  const [subject, setSubject] = useState(
+    packageTitle
+      ? initialKind === "booking"
+        ? `Booking request: ${packageTitle}`
+        : `Enquiry: ${packageTitle}`
+      : "",
+  );
   const [message, setMessage] = useState("");
   const [loading, setLoading] = useState(false);
   const [done, setDone] = useState("");
   const [error, setError] = useState("");
 
-  const onSubmit = (e: FormEvent) => {
+  const onSubmit = async (e: FormEvent) => {
     e.preventDefault();
     setError("");
     setDone("");
     setLoading(true);
-    window.setTimeout(() => {
-      setLoading(false);
+    try {
+      const res = await fetch("/api/enquiries", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          kind: initialKind,
+          name,
+          email,
+          phone,
+          subject,
+          message,
+          packageHref,
+          packageTitle,
+        }),
+      });
+      const data = (await res.json()) as { ok?: boolean; error?: string };
+      if (!res.ok || !data.ok) {
+        setError(data.error || "Failed to send message.");
+        setLoading(false);
+        return;
+      }
       setDone("Thank you. Your message was received — our team will reply soon.");
       setName("");
       setEmail("");
       setPhone("");
       setSubject("");
       setMessage("");
-    }, 700);
+    } catch {
+      setError("Network error. Please try again or WhatsApp us.");
+    }
+    setLoading(false);
   };
 
   const socials = content.socials.filter((s) => s.visible !== false);
