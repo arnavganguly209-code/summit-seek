@@ -1,6 +1,7 @@
 "use client";
 
-import { FormEvent, useEffect, useMemo, useRef, useState } from "react";
+import { FormEvent, useEffect, useMemo, useRef, useState, type CSSProperties } from "react";
+import { createPortal } from "react-dom";
 import { motion } from "framer-motion";
 import {
   Search,
@@ -15,6 +16,7 @@ import {
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import type { HeroContent, HeroFeatureIcon } from "@/types/hero";
+import { cn } from "@/lib/utils";
 
 const ease = [0.22, 1, 0.36, 1] as const;
 
@@ -46,14 +48,52 @@ export function Hero({ content, preview = false }: Props) {
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
   const wrapRef = useRef<HTMLDivElement>(null);
+  const [panelStyle, setPanelStyle] = useState<CSSProperties | null>(null);
+  const [mounted, setMounted] = useState(false);
+
+  const showPanel = open && query.trim().length > 0;
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   useEffect(() => {
     const onDoc = (e: MouseEvent) => {
-      if (!wrapRef.current?.contains(e.target as Node)) setOpen(false);
+      if (!wrapRef.current?.contains(e.target as Node)) {
+        const t = e.target as HTMLElement | null;
+        if (t?.closest?.("[data-hero-search-panel]")) return;
+        setOpen(false);
+      }
     };
     document.addEventListener("mousedown", onDoc);
     return () => document.removeEventListener("mousedown", onDoc);
   }, []);
+
+  useEffect(() => {
+    if (!showPanel) {
+      setPanelStyle(null);
+      return;
+    }
+    const place = () => {
+      const el = wrapRef.current;
+      if (!el) return;
+      const r = el.getBoundingClientRect();
+      setPanelStyle({
+        position: "fixed",
+        left: Math.max(12, r.left),
+        width: Math.min(r.width, window.innerWidth - 24),
+        top: r.bottom + 8,
+        zIndex: 9999,
+      });
+    };
+    place();
+    window.addEventListener("resize", place);
+    window.addEventListener("scroll", place, true);
+    return () => {
+      window.removeEventListener("resize", place);
+      window.removeEventListener("scroll", place, true);
+    };
+  }, [showPanel, query, results.length, loading]);
 
   useEffect(() => {
     const q = query.trim();
@@ -99,7 +139,6 @@ export function Hero({ content, preview = false }: Props) {
   };
 
   const lineAnim = content.headlineAnimation && !preview;
-  const showPanel = open && query.trim().length > 0;
 
   const emptyHint = useMemo(
     () => (loading ? "Searching packages…" : "No matching packages found."),
@@ -110,7 +149,10 @@ export function Hero({ content, preview = false }: Props) {
 
   return (
     <section
-      className="relative isolate h-[100svh] min-h-[640px] w-full overflow-hidden bg-[#050b14]"
+      className={cn(
+        "relative isolate h-[100svh] min-h-[640px] w-full overflow-x-hidden bg-[#050b14]",
+        showPanel ? "z-[70]" : "z-0",
+      )}
       aria-label="Hero"
     >
       <video
@@ -213,49 +255,58 @@ export function Hero({ content, preview = false }: Props) {
               </button>
             </form>
 
-            {showPanel ? (
-              <div className="absolute left-0 right-0 top-[calc(100%+8px)] z-50 overflow-hidden rounded-2xl border border-[#e2e8f0] bg-white shadow-[0_24px_60px_rgba(8,18,30,0.28)]">
-                <div className="max-h-[min(420px,50vh)] overflow-auto">
-                  {results.length === 0 ? (
-                    <p className="px-4 py-5 text-left text-[13px] text-[#6b7585]">{emptyHint}</p>
-                  ) : (
-                    <ul className="divide-y divide-[#eef2f7]">
-                      {results.map((item) => (
-                        <li key={item.href}>
-                          <Link
-                            href={item.href}
-                            onClick={() => setOpen(false)}
-                            className="flex items-center gap-3 px-4 py-3 text-left transition hover:bg-[#f5f8fc]"
-                          >
-                            <span className="flex size-10 shrink-0 items-center justify-center rounded-xl bg-[#0b1524]/06 text-[#0b1524]">
-                              <MapPin className="size-4" />
-                            </span>
-                            <span className="min-w-0 flex-1">
-                              <span className="block truncate text-[14px] font-bold text-[#0b1524]">
-                                {item.label}
-                              </span>
-                              <span className="mt-0.5 block text-[12px] text-[#6b7585]">
-                                {item.group}
-                                {item.durationLabel ? ` · ${item.durationLabel}` : ""}
-                              </span>
-                            </span>
-                            {item.price != null ? (
-                              <span className="shrink-0 text-[13px] font-extrabold text-[#16a34a]">
-                                US${item.price.toLocaleString("en-US")}
-                              </span>
-                            ) : null}
-                          </Link>
-                        </li>
-                      ))}
-                    </ul>
-                  )}
-                </div>
-              </div>
-            ) : null}
+            {mounted && showPanel && panelStyle
+              ? createPortal(
+                  <div
+                    data-hero-search-panel
+                    style={panelStyle}
+                    className="overflow-hidden rounded-2xl border border-[#e2e8f0] bg-white shadow-[0_28px_70px_rgba(8,18,30,0.35)]"
+                  >
+                    <div className="max-h-[min(420px,52vh)] overflow-auto overscroll-contain">
+                      {results.length === 0 ? (
+                        <p className="px-4 py-5 text-left text-[13px] text-[#6b7585]">
+                          {emptyHint}
+                        </p>
+                      ) : (
+                        <ul className="divide-y divide-[#eef2f7]">
+                          {results.map((item) => (
+                            <li key={item.href}>
+                              <Link
+                                href={item.href}
+                                onClick={() => setOpen(false)}
+                                className="flex items-center gap-3 px-4 py-3 text-left transition hover:bg-[#f5f8fc]"
+                              >
+                                <span className="flex size-10 shrink-0 items-center justify-center rounded-xl bg-[#0b1524]/06 text-[#0b1524]">
+                                  <MapPin className="size-4" />
+                                </span>
+                                <span className="min-w-0 flex-1">
+                                  <span className="block truncate text-[14px] font-bold text-[#0b1524]">
+                                    {item.label}
+                                  </span>
+                                  <span className="mt-0.5 block text-[12px] text-[#6b7585]">
+                                    {item.group}
+                                    {item.durationLabel ? ` · ${item.durationLabel}` : ""}
+                                  </span>
+                                </span>
+                                {item.price != null ? (
+                                  <span className="shrink-0 text-[13px] font-extrabold text-[#16a34a]">
+                                    US${item.price.toLocaleString("en-US")}
+                                  </span>
+                                ) : null}
+                              </Link>
+                            </li>
+                          ))}
+                        </ul>
+                      )}
+                    </div>
+                  </div>,
+                  document.body,
+                )
+              : null}
           </div>
         </div>
 
-        <div className="absolute inset-x-0 bottom-0 z-10 hidden sm:block">
+        <div className="absolute inset-x-0 bottom-0 z-[1] hidden sm:block">
           <div className="border-t border-white/15 bg-white/[0.08] backdrop-blur-xl">
             <div className="mx-auto grid max-w-[1280px] grid-cols-1 divide-y divide-white/15 sm:grid-cols-2 sm:divide-x sm:divide-y-0 lg:grid-cols-4">
               {content.features.map((feature) => {

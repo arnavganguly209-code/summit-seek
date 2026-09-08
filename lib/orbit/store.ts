@@ -876,6 +876,8 @@ function mergeContact(stored: Partial<ContactPageContent> | null): ContactPageCo
     phone: stored.phone?.trim() || DEFAULT_CONTACT.phone,
     phoneDisplay: stored.phoneDisplay?.trim() || DEFAULT_CONTACT.phoneDisplay,
     email: stored.email?.trim() || DEFAULT_CONTACT.email,
+    whatsapp: stored.whatsapp?.trim() || DEFAULT_CONTACT.whatsapp,
+    whatsappDisplay: stored.whatsappDisplay?.trim() || DEFAULT_CONTACT.whatsappDisplay,
     mapEmbedUrl: stored.mapEmbedUrl?.trim() || DEFAULT_CONTACT.mapEmbedUrl,
   };
 }

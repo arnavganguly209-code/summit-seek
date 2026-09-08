@@ -1,6 +1,7 @@
 import { redirect } from "next/navigation";
 import { isAdminAuthenticated } from "@/lib/admin/auth";
 import { AdminSidebar } from "@/components/admin/AdminSidebar";
+import { AdminTopBar } from "@/components/admin/AdminTopBar";
 
 export default async function AdminDashboardLayout({
   children,
@@ -12,7 +13,7 @@ export default async function AdminDashboardLayout({
   }
 
   return (
-    <div className="relative flex min-h-svh overflow-hidden bg-[#060a12] text-white">
+    <div className="relative flex min-h-svh flex-col overflow-hidden bg-[#060a12] text-white lg:flex-row">
       <div
         className="pointer-events-none absolute inset-0 opacity-90"
         style={{
@@ -22,25 +23,8 @@ export default async function AdminDashboardLayout({
         aria-hidden
       />
       <AdminSidebar />
-      <div className="relative flex min-w-0 flex-1 flex-col">
-        <header className="flex h-16 items-center justify-between border-b border-white/[0.08] bg-black/25 px-5 backdrop-blur-xl sm:px-7">
-          <div>
-            <p className="text-[10px] font-bold uppercase tracking-[0.22em] text-[#F58220]">
-              Premium Admin
-            </p>
-            <p className="text-[15px] font-semibold tracking-tight text-white">
-              Summit Seek Dashboard
-            </p>
-          </div>
-          <a
-            href="/"
-            target="_blank"
-            rel="noreferrer"
-            className="rounded-lg border border-white/10 px-3 py-1.5 text-[12px] font-semibold text-white/70 transition hover:bg-white/5 hover:text-white"
-          >
-            View live site
-          </a>
-        </header>
+      <div className="relative flex min-w-0 min-h-0 flex-1 flex-col">
+        <AdminTopBar />
         <main className="flex-1 overflow-auto p-5 sm:p-7 lg:p-8">{children}</main>
       </div>
     </div>

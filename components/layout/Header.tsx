@@ -40,11 +40,15 @@ function megaKindForLabel(label: string): MegaKind | null {
 type Props = {
   logoUrl?: string;
   logoUrlLight?: string;
+  phone?: string;
+  phoneDisplay?: string;
 };
 
 export function Header({
   logoUrl = "/logo-summit-seek-blue.png",
   logoUrlLight = "/logo-summit-seek-white.png",
+  phone = SITE.phone,
+  phoneDisplay = SITE.phoneDisplay,
 }: Props) {
   const pathname = usePathname();
   // Home keeps transparent-over-hero; packages & inner pages use solid bar like scrolled home.
@@ -189,9 +193,9 @@ export function Header({
         <div className="ml-auto hidden items-center gap-2.5 pl-4 lg:flex xl:gap-3 xl:pl-8">
           <HeaderWatchlistLink solid={solid} />
           <a
-            href={`tel:${SITE.phone}`}
+            href={`tel:${phone}`}
             className="group flex min-w-0 flex-col leading-tight"
-            aria-label={`Call us at ${SITE.phoneDisplay}`}
+            aria-label={`Call us at ${phoneDisplay}`}
           >
             <span
               className={cn(
@@ -207,7 +211,7 @@ export function Header({
                 solid ? "text-[#0b1524]" : "text-white",
               )}
             >
-              {SITE.phoneDisplay}
+              {phoneDisplay}
             </span>
           </a>
         </div>
@@ -309,7 +313,7 @@ export function Header({
                   onNavigate={() => setMobileOpen(false)}
                 />
                 <a
-                  href={`tel:${SITE.phone}`}
+                  href={`tel:${phone}`}
                   className="flex min-w-0 flex-col leading-tight"
                   onClick={() => setMobileOpen(false)}
                 >
@@ -317,7 +321,7 @@ export function Header({
                     Need Help? Call Us
                   </span>
                   <span className="text-[15px] font-bold text-[#0b1524]">
-                    {SITE.phoneDisplay}
+                    {phoneDisplay}
                   </span>
                 </a>
               </div>

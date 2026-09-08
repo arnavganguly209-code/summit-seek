@@ -44,8 +44,8 @@ export const ADMIN_NAV: AdminNavSection[] = [
       },
       {
         href: "/admin/dashboard/settings",
-        label: "Login & Passwords",
-        description: "Change admin ID/password, view Orbit key",
+        label: "Settings",
+        description: "Login, passwords, phone & email",
       },
     ],
   },
