@@ -1,27 +1,26 @@
 "use client";
 
-import { useState } from "react";
 import Link from "next/link";
 import {
   ArrowUpRight,
   CalendarDays,
-  Heart,
   MapPin,
   Star,
 } from "lucide-react";
 import type { FeaturedPackage } from "@/types/featured-packages";
-import { cn } from "@/lib/utils";
+import { WatchlistHeartButton } from "@/components/watchlist/WatchlistHeartButton";
 
 function formatUsd(price: number) {
   return `US$${price.toLocaleString("en-US")}`;
 }
 
 export function FeaturedPackageCard({ pkg }: { pkg: FeaturedPackage }) {
-  const [saved, setSaved] = useState(false);
   const samePlace =
     pkg.startLocation.trim().toLowerCase() ===
     pkg.endLocation.trim().toLowerCase();
   const hasImage = Boolean(pkg.imageUrl?.trim());
+  const durationLabel =
+    pkg.durationDays === 1 ? "1 Day" : `${pkg.durationDays} Days`;
 
   return (
     <article className="group flex h-full flex-col overflow-hidden rounded-[16px] border border-[#e6ebf2] bg-white shadow-[0_8px_28px_rgba(11,21,36,0.06)] transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_18px_40px_rgba(11,21,36,0.11)]">
@@ -45,28 +44,23 @@ export function FeaturedPackageCard({ pkg }: { pkg: FeaturedPackage }) {
           )}
           <div className="absolute inset-0 bg-gradient-to-t from-[#0b1524]/30 via-transparent to-transparent" />
         </Link>
-        <button
-          type="button"
-          aria-label={saved ? "Remove from wishlist" : "Add to wishlist"}
-          aria-pressed={saved}
-          onClick={() => setSaved((v) => !v)}
+        <WatchlistHeartButton
+          href={pkg.href}
+          title={pkg.title}
+          imageUrl={pkg.imageUrl}
+          price={pkg.price}
+          compareAtPrice={pkg.compareAtPrice}
+          durationLabel={durationLabel}
           className="absolute right-3 top-3 z-10 flex size-9 items-center justify-center rounded-full border border-white/50 bg-white/95 text-[#0b1524] shadow-[0_6px_16px_rgba(11,21,36,0.14)] backdrop-blur-sm transition hover:bg-white"
-        >
-          <Heart
-            className={cn(
-              "size-4",
-              saved ? "fill-[#c23b3b] text-[#c23b3b]" : "text-[#0b1524]",
-            )}
-          />
-        </button>
+          iconClassName="size-4"
+        />
       </div>
 
       <div className="flex flex-1 flex-col px-4 pb-4 pt-3.5 font-[family-name:var(--font-ui)]">
         <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-[12px] font-medium text-[#5a6577]">
           <span className="inline-flex items-center gap-1.5">
             <CalendarDays className="size-3.5 text-[#1d4ed8]" />
-            Duration: {pkg.durationDays}{" "}
-            {pkg.durationDays === 1 ? "Day" : "Days"}
+            Duration: {durationLabel}
           </span>
           {pkg.reviewCount > 0 ? (
             <span className="inline-flex items-center gap-1">

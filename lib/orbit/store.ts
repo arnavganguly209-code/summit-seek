@@ -31,7 +31,12 @@ import type { TrekPageContent } from "@/types/trek-page-cms";
 import type { DayToursListingContent } from "@/types/day-tours-listing";
 import type { EnquiriesContent } from "@/types/enquiries";
 import type { BookingsContent } from "@/types/bookings";
+import type { WatchlistsContent } from "@/types/watchlist";
 import type { DestinationRegionContent } from "@/types/destination-region-cms";
+import {
+  DEFAULT_WATCHLISTS,
+  mergeWatchlists,
+} from "@/lib/watchlist/helpers";
 import { DEFAULT_HERO } from "@/lib/orbit/defaults";
 import { DEFAULT_FEATURED_PACKAGES } from "@/lib/orbit/featured-packages-defaults";
 import { DEFAULT_ABOUT_INTRO } from "@/lib/orbit/about-intro-defaults";
@@ -145,6 +150,7 @@ const UPCOMING_TRIPS_FILE = path.join(DATA_DIR, "upcoming-trips.json");
 const DAY_TOURS_FILE = path.join(DATA_DIR, "day-tours.json");
 const ENQUIRIES_FILE = path.join(DATA_DIR, "enquiries.json");
 const BOOKINGS_FILE = path.join(DATA_DIR, "bookings.json");
+const WATCHLISTS_FILE = path.join(DATA_DIR, "watchlists.json");
 const TRAVELER_REVIEWS_FILE = path.join(DATA_DIR, "traveler-reviews.json");
 const TRAVEL_ARTICLES_FILE = path.join(DATA_DIR, "travel-articles.json");
 const FOOTER_FILE = path.join(DATA_DIR, "footer.json");
@@ -649,6 +655,20 @@ export async function getBookings(): Promise<BookingsContent> {
 export async function saveBookings(content: BookingsContent): Promise<void> {
   await ensureDataDir();
   await dbWriteFile(BOOKINGS_FILE, JSON.stringify(content, null, 2));
+}
+
+export async function getWatchlists(): Promise<WatchlistsContent> {
+  try {
+    const raw = await dbReadFile(WATCHLISTS_FILE);
+    return mergeWatchlists(JSON.parse(raw) as Partial<WatchlistsContent>);
+  } catch {
+    return DEFAULT_WATCHLISTS;
+  }
+}
+
+export async function saveWatchlists(content: WatchlistsContent): Promise<void> {
+  await ensureDataDir();
+  await dbWriteFile(WATCHLISTS_FILE, JSON.stringify(mergeWatchlists(content), null, 2));
 }
 
 function mergeTravelerReviews(

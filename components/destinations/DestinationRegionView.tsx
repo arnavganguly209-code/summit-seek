@@ -2,12 +2,13 @@
 
 import Link from "next/link";
 import Image from "next/image";
-import { ArrowUpRight, CalendarDays, Heart, MapPin, Star } from "lucide-react";
+import { ArrowUpRight, CalendarDays, MapPin, Star } from "lucide-react";
 import type {
   DestinationPackage,
   DestinationRegionContent,
 } from "@/types/destination-region-cms";
 import { PageCover } from "@/components/site/PageCover";
+import { WatchlistHeartButton } from "@/components/watchlist/WatchlistHeartButton";
 import { cn } from "@/lib/utils";
 
 /** Plus Jakarta Sans — all destination + package surfaces */
@@ -48,13 +49,16 @@ function DestinationPackageCard({ pkg }: { pkg: DestinationPackage }) {
           </div>
         )}
         <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-[#0b1524]/35 via-transparent to-transparent opacity-80" />
-        <button
-          type="button"
-          aria-label="Save to wishlist"
-          className="absolute right-4 top-4 flex size-11 items-center justify-center rounded-full bg-white/95 text-[#5a6577] shadow-[0_10px_24px_rgba(8,18,30,0.18)] transition hover:scale-105 hover:text-[#e11d48]"
-        >
-          <Heart className="size-4" strokeWidth={2} />
-        </button>
+        <WatchlistHeartButton
+          href={pkg.href || "#"}
+          title={pkg.title}
+          imageUrl={pkg.imageUrl}
+          price={pkg.price}
+          compareAtPrice={pkg.compareAtPrice}
+          durationLabel={durationLabel(pkg.durationDays)}
+          className="absolute right-4 top-4 z-10 flex size-11 items-center justify-center rounded-full bg-white/95 text-[#5a6577] shadow-[0_10px_24px_rgba(8,18,30,0.18)] transition hover:scale-105"
+          iconClassName="size-4"
+        />
         <span className="absolute bottom-4 left-4 inline-flex items-center gap-1.5 rounded-lg bg-[#0b1524]/82 px-3 py-1.5 text-[12px] font-bold tracking-wide text-white backdrop-blur-sm">
           <CalendarDays className="size-3.5 text-[#F5B400]" strokeWidth={2.25} />
           {durationLabel(pkg.durationDays)}

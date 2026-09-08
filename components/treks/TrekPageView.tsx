@@ -7,11 +7,11 @@ import { usePathname } from "next/navigation";
 import {
   CheckCircle2,
   ChevronDown,
-  Heart,
   MessageCircle,
   Share2,
 } from "lucide-react";
 import type { TrekPageContent } from "@/types/trek-page-cms";
+import { WatchlistHeartButton } from "@/components/watchlist/WatchlistHeartButton";
 import { cn } from "@/lib/utils";
 
 const ui = "font-[family-name:var(--font-ui)]";
@@ -384,13 +384,16 @@ export function TrekPageView({ content }: { content: TrekPageContent }) {
             </div>
           </div>
           <div className="flex items-center gap-2">
-            <button
-              type="button"
-              aria-label="Wishlist"
-              className="flex size-10 items-center justify-center rounded-full border border-[#e4eaf3] text-[#5a6577] transition hover:border-[#0b1524] hover:text-[#0b1524]"
-            >
-              <Heart className="size-4" />
-            </button>
+            <WatchlistHeartButton
+              href={pathname || ""}
+              title={content.title}
+              imageUrl={content.coverImageUrl || content.heroMainImageUrl || ""}
+              price={content.price}
+              compareAtPrice={content.compareAtPrice ?? null}
+              durationLabel={content.durationLabel || ""}
+              className="flex size-10 items-center justify-center rounded-full border border-[#e4eaf3] hover:border-[#e11d48]/50"
+              iconClassName="size-4"
+            />
             <button
               type="button"
               aria-label="Share"

@@ -5,7 +5,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { AnimatePresence, motion } from "framer-motion";
-import { Menu, X, ChevronDown, Search } from "lucide-react";
+import { Menu, X, ChevronDown } from "lucide-react";
 import { SITE } from "@/lib/constants";
 import {
   DestinationsDropdown,
@@ -23,6 +23,7 @@ import {
   CompanyDropdown,
   CompanyMobilePanel,
 } from "@/components/layout/CompanyDropdown";
+import { HeaderWatchlistLink } from "@/components/watchlist/HeaderWatchlistLink";
 import { mainNav, type MegaKind } from "@/lib/data/navigation";
 import { cn } from "@/lib/utils";
 
@@ -184,18 +185,9 @@ export function Header({
           })}
         </nav>
 
-        {/* Need Help? Call Us — replaces search/heart/sign-in/sign-up */}
+        {/* Watchlist + Need Help? Call Us */}
         <div className="ml-auto hidden items-center gap-2.5 pl-4 lg:flex xl:gap-3 xl:pl-8">
-          <Link
-            href="/blog"
-            className={cn(
-              "inline-flex size-9 shrink-0 items-center justify-center transition",
-              solid ? "text-[#0b1524] hover:text-[#1d4ed8]" : "text-white hover:text-[#93c5fd]",
-            )}
-            aria-label="Search travel blogs"
-          >
-            <Search className="size-[18px] stroke-[1.75]" />
-          </Link>
+          <HeaderWatchlistLink solid={solid} />
           <a
             href={`tel:${SITE.phone}`}
             className="group flex min-w-0 flex-col leading-tight"
@@ -220,17 +212,20 @@ export function Header({
           </a>
         </div>
 
-        <button
-          type="button"
-          className={cn(
-            "ml-auto inline-flex size-10 items-center justify-center rounded-md xl:hidden",
-            solid ? "text-[#0b1524]" : "text-white",
-          )}
-          aria-label={mobileOpen ? "Close menu" : "Open menu"}
-          onClick={() => setMobileOpen((v) => !v)}
-        >
-          {mobileOpen ? <X className="size-5" /> : <Menu className="size-5" />}
-        </button>
+        <div className="ml-auto flex items-center gap-1 xl:hidden">
+          <HeaderWatchlistLink solid={solid} className="lg:hidden" />
+          <button
+            type="button"
+            className={cn(
+              "inline-flex size-10 items-center justify-center rounded-md",
+              solid ? "text-[#0b1524]" : "text-white",
+            )}
+            aria-label={mobileOpen ? "Close menu" : "Open menu"}
+            onClick={() => setMobileOpen((v) => !v)}
+          >
+            {mobileOpen ? <X className="size-5" /> : <Menu className="size-5" />}
+          </button>
+        </div>
       </div>
 
       <AnimatePresence>
@@ -308,7 +303,11 @@ export function Header({
                 );
               })}
               <div className="mt-3 flex items-center gap-3 border-t border-black/10 pt-4">
-                <Search className="size-5 shrink-0 text-[#0b1524]" strokeWidth={1.75} />
+                <HeaderWatchlistLink
+                  solid
+                  className="size-10"
+                  onNavigate={() => setMobileOpen(false)}
+                />
                 <a
                   href={`tel:${SITE.phone}`}
                   className="flex min-w-0 flex-col leading-tight"
