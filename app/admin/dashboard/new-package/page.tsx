@@ -1,10 +1,10 @@
 import Link from "next/link";
 import { ArrowUpRight, PlusCircle } from "lucide-react";
 import { LINKABLE_PACKAGES } from "@/lib/orbit/package-content-by-href";
-import { orbitEditorHref } from "@/lib/admin/nav";
+import { adminEditorHref } from "@/lib/admin/nav";
 
 export default function AdminNewPackagePage() {
-  const samples = LINKABLE_PACKAGES.slice(0, 8);
+  const samples = LINKABLE_PACKAGES.slice(0, 12);
 
   return (
     <div className="mx-auto max-w-3xl space-y-8">
@@ -14,9 +14,8 @@ export default function AdminNewPackagePage() {
         </p>
         <h1 className="mt-1 text-2xl font-bold text-white">Add New Package</h1>
         <p className="mt-2 text-[14px] leading-relaxed text-white/55">
-          New trip pages are created from the existing full CMS template (same as Poon Hill):
-          images, itinerary days, pricing, gallery, and FAQs. Duplicate a similar package, then
-          edit every field in Orbit.
+          Open a similar trip template, update every field (images, itinerary, price,
+          gallery), and save — all inside Admin. Live page updates immediately.
         </p>
       </div>
 
@@ -24,15 +23,14 @@ export default function AdminNewPackagePage() {
         <div className="flex items-start gap-3">
           <PlusCircle className="mt-0.5 size-5 shrink-0 text-[#F58220]" />
           <div>
-            <p className="text-[15px] font-bold text-white">Recommended workflow</p>
+            <p className="text-[15px] font-bold text-white">Professional workflow</p>
             <ol className="mt-3 list-decimal space-y-2 pl-4 text-[13px] leading-relaxed text-white/70">
-              <li>Open a similar existing package editor from the list below.</li>
-              <li>Update title, price, duration, hero images, and itinerary content.</li>
+              <li>Pick a similar package template below.</li>
+              <li>Edit title, price, duration, hero images, and itinerary.</li>
               <li>Upload or replace gallery images from Media Library.</li>
               <li>Save & Publish — the live package page updates immediately.</li>
               <li>
-                Optionally add the package to Featured, Best Selling, Day Tours, or Upcoming Trips
-                listings.
+                Add it to Featured, Best Selling, Day Tours, or Upcoming Trips listings.
               </li>
             </ol>
           </div>
@@ -45,7 +43,7 @@ export default function AdminNewPackagePage() {
           {samples.map((pkg) => (
             <Link
               key={pkg.href}
-              href={orbitEditorHref(pkg.href)}
+              href={adminEditorHref(pkg.href)}
               className="group flex items-center justify-between gap-3 rounded-xl border border-white/10 bg-white/[0.03] px-4 py-3 transition hover:border-[#F58220]/40"
             >
               <span className="text-[13px] font-semibold text-white">{pkg.label}</span>

@@ -1,7 +1,12 @@
 import { redirect } from "next/navigation";
+import { cookies } from "next/headers";
 import { isAdminAuthenticated } from "@/lib/admin/auth";
 import { AdminSidebar } from "@/components/admin/AdminSidebar";
 import { AdminTopBar } from "@/components/admin/AdminTopBar";
+import {
+  ORBIT_SESSION_COOKIE,
+  ORBIT_SESSION_VALUE,
+} from "@/lib/orbit/defaults";
 
 export default async function AdminDashboardLayout({
   children,
@@ -10,6 +15,20 @@ export default async function AdminDashboardLayout({
 }) {
   if (!(await isAdminAuthenticated())) {
     redirect("/admin");
+  }
+
+  // Keep Orbit API session warm so editors/media uploads never bounce to /orbit login.
+  try {
+    const jar = await cookies();
+    jar.set(ORBIT_SESSION_COOKIE, ORBIT_SESSION_VALUE, {
+      httpOnly: true,
+      sameSite: "lax",
+      secure: process.env.NODE_ENV === "production",
+      path: "/",
+      maxAge: 60 * 60 * 24 * 7,
+    });
+  } catch {
+    /* cookie write may be restricted in some render paths */
   }
 
   return (

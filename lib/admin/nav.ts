@@ -10,10 +10,15 @@ export type AdminNavSection = {
   items: AdminNavItem[];
 };
 
-/** Orbit editor path for a live package href */
-export function orbitEditorHref(packageHref: string): string {
+/** Admin CMS editor path for a live package href (never /orbit). */
+export function adminEditorHref(packageHref: string): string {
   const slug = packageHref.split("/").filter(Boolean).pop() || "";
-  return `/orbit/dashboard/website/${slug}`;
+  return `/admin/dashboard/edit/${slug}`;
+}
+
+/** @deprecated use adminEditorHref — kept so older imports compile */
+export function orbitEditorHref(packageHref: string): string {
+  return adminEditorHref(packageHref);
 }
 
 export const ADMIN_NAV: AdminNavSection[] = [
@@ -24,7 +29,7 @@ export const ADMIN_NAV: AdminNavSection[] = [
       {
         href: "/admin/dashboard",
         label: "Dashboard Home",
-        description: "Quick links and status",
+        description: "Bookings, enquiries, packages overview",
       },
     ],
   },
@@ -42,45 +47,6 @@ export const ADMIN_NAV: AdminNavSection[] = [
         label: "Booking Requests",
         description: "Book This Trip submissions",
       },
-      {
-        href: "/admin/dashboard/settings",
-        label: "Settings",
-        description: "Login, passwords, phone & email",
-      },
-    ],
-  },
-  {
-    id: "website",
-    label: "Website Content",
-    items: [
-      {
-        href: "/orbit/dashboard/website/home/hero",
-        label: "Hero Section",
-        description: "Video, search copy, features",
-      },
-      {
-        href: "/orbit/dashboard/website/contact",
-        label: "Contact Page",
-        description: "Address, form labels, socials",
-      },
-      {
-        href: "/orbit/dashboard/website/blog",
-        label: "Blog Posts",
-        description: "Write and publish blog content",
-      },
-      {
-        href: "/orbit/dashboard/media",
-        label: "Media Library",
-        description: "Upload, replace, delete images",
-      },
-      {
-        href: "/orbit/dashboard/website/header",
-        label: "Header Logos",
-      },
-      {
-        href: "/orbit/dashboard/website/footer",
-        label: "Footer",
-      },
     ],
   },
   {
@@ -93,25 +59,71 @@ export const ADMIN_NAV: AdminNavSection[] = [
         description: "Edit every trek, tour & package",
       },
       {
-        href: "/orbit/dashboard/website/packages",
-        label: "Featured Packages (Home)",
+        href: "/admin/dashboard/new-package",
+        label: "Add / Duplicate Package",
+        description: "Start from a template and publish",
       },
       {
-        href: "/orbit/dashboard/website/best-selling",
+        href: "/admin/dashboard/edit/packages",
+        label: "Featured Packages (Home)",
+        description: "Homepage adventure tabs",
+      },
+      {
+        href: "/admin/dashboard/edit/best-selling",
         label: "Best Selling Packages",
       },
       {
-        href: "/orbit/dashboard/website/upcoming-trips",
+        href: "/admin/dashboard/edit/upcoming-trips",
         label: "Upcoming Trips",
       },
       {
-        href: "/orbit/dashboard/website/day-tours",
+        href: "/admin/dashboard/edit/day-tours",
         label: "Day Tours Listing",
       },
+    ],
+  },
+  {
+    id: "website",
+    label: "Website Content",
+    items: [
       {
-        href: "/admin/dashboard/new-package",
-        label: "Add New Package",
-        description: "Create a new trip page",
+        href: "/admin/dashboard/edit/home/hero",
+        label: "Hero Section",
+        description: "Video, search copy, features",
+      },
+      {
+        href: "/admin/dashboard/edit/contact",
+        label: "Contact Page",
+        description: "Address, form labels, socials",
+      },
+      {
+        href: "/admin/dashboard/edit/blog",
+        label: "Blog Posts",
+        description: "Write and publish blog content",
+      },
+      {
+        href: "/admin/dashboard/edit/media",
+        label: "Media Library",
+        description: "Upload, replace, delete images",
+      },
+      {
+        href: "/admin/dashboard/edit/header",
+        label: "Header Logos",
+      },
+      {
+        href: "/admin/dashboard/edit/footer",
+        label: "Footer",
+      },
+    ],
+  },
+  {
+    id: "settings",
+    label: "Settings",
+    items: [
+      {
+        href: "/admin/dashboard/settings",
+        label: "Login, Phone & Email",
+        description: "Passwords and public contact details",
       },
     ],
   },
