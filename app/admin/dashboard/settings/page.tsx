@@ -1,11 +1,10 @@
 "use client";
 
 import { FormEvent, useEffect, useState } from "react";
-import { CheckCircle2, KeyRound, Loader2, Phone } from "lucide-react";
+import { CheckCircle2, Loader2, Phone } from "lucide-react";
 
 export default function AdminSettingsPage() {
   const [username, setUsername] = useState("");
-  const [orbitPasskey, setOrbitPasskey] = useState("");
   const [currentPassword, setCurrentPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
@@ -32,7 +31,6 @@ export default function AdminSettingsPage() {
         const cred = (await credRes.json()) as {
           ok?: boolean;
           username?: string;
-          orbitPasskey?: string;
           error?: string;
         };
         const contact = (await contactRes.json()) as {
@@ -48,7 +46,6 @@ export default function AdminSettingsPage() {
           setError(cred.error || "Failed to load credentials.");
         } else {
           setUsername(cred.username || "");
-          setOrbitPasskey(cred.orbitPasskey || "");
         }
         if (contactRes.ok && contact.ok) {
           setEmail(contact.email || "");
@@ -136,7 +133,8 @@ export default function AdminSettingsPage() {
         </p>
         <h1 className="mt-1 text-2xl font-bold text-white">Login & Contact</h1>
         <p className="mt-2 text-[14px] text-white/55">
-          Change admin login, Orbit passkey view, and public phone / email shown on the site.
+          Change admin User ID / password and public phone / email. Orbit passkey is not
+          shown here.
         </p>
       </div>
 
@@ -234,18 +232,6 @@ export default function AdminSettingsPage() {
               {savingContact ? "Saving…" : "Save contact details"}
             </button>
           </form>
-
-          <div className="rounded-2xl border border-white/10 bg-white/[0.03] p-5">
-            <div className="flex items-center gap-2 text-[#F58220]">
-              <KeyRound className="size-4" />
-              <p className="text-[13px] font-bold">Orbit CMS passkey</p>
-            </div>
-            <p className="mt-2 font-mono text-[15px] text-white">{orbitPasskey || "—"}</p>
-            <p className="mt-2 text-[12px] text-white/45">
-              Use this passkey at <span className="text-white/70">/orbit</span>. Admin login also
-              unlocks Orbit editors automatically.
-            </p>
-          </div>
 
           <form
             onSubmit={onSubmitLogin}
