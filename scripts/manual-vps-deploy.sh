@@ -14,6 +14,14 @@ if [ ! -f .env.local ] || ! grep -q '^ORBIT_PASSKEY=' .env.local 2>/dev/null; th
   echo 'ORBIT_PASSKEY=713304977' >> .env.local
 fi
 
+touch .env.local
+if ! grep -q '^ADMIN_USERNAME=' .env.local 2>/dev/null; then
+  echo 'ADMIN_USERNAME=summit' >> .env.local
+fi
+if ! grep -q '^ADMIN_PASSWORD=' .env.local 2>/dev/null; then
+  echo 'ADMIN_PASSWORD=summit#010203' >> .env.local
+fi
+
 if [ ! -f .env ] || ! grep -q '^DATABASE_URL=' .env 2>/dev/null; then
   echo "ERROR: DATABASE_URL missing in /var/www/summit-seek/.env"
   exit 1
